@@ -27,7 +27,6 @@ class Brand(models.Model):
         ordering = ['id']
 
 class Asset(models.Model):
-    name = models.CharField(max_length=255, null=False, verbose_name='Nombre del bien')
     model = models.CharField(max_length=255, null=False,  verbose_name='Modelo')
     serial_number = models.CharField(max_length=255, null=False, unique=True, verbose_name='Número de serie')
     state_asset = models.CharField(max_length=255, null=False, verbose_name='Bien del estado')
@@ -39,9 +38,8 @@ class Asset(models.Model):
 
     def to_dict(self):
         return {
-            "name": self.name,
             "model": self.model,
-            "serial": self.serial_number,
+            "serial_number": self.serial_number,
             "state_asset": self.state_asset,
             "status": self.status,
             "fk_category": self.fk_category.name,  
