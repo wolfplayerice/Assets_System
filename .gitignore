@@ -1,4 +1,6 @@
 app/app/__pycache__
 pasant-env/
 app/inventory/__pycache__
-app/inventory/migrations
+app/inventory/migrations/__pycache__
+app/inventory/migrations/
+!app/inventory/migrations/! __init__.py
