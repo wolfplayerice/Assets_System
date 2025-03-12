@@ -1,2 +1,4 @@
-app\app\__pycache__
+app/app/__pycache__
 pasant-env/
+app/inventory/__pycache__
+app/inventory/migrations
