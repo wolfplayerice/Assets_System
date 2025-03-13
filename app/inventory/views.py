@@ -4,7 +4,7 @@ from .models import Asset
 # Create your views here.
 
 
-def index(request):
+def inventory(request):
     return render(request, 'index.html')
 
 def list_assets(request):

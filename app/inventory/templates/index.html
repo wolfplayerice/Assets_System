@@ -1,45 +1,32 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dato tablas prueba cavernicola</title>
-    <link href="{% static 'css/index.css' %} " rel="stylesheet">
-    <link href="{% static 'css/DataTables/datatables.css' %} " rel="stylesheet"> <!-- Datatables-->
-    <link href="{% static 'css/DataTables/datatables.min.css' %} " rel="stylesheet"> <!-- Datatables-->
-    <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
-</head>
-<body>
-    <div
-        class="container mt-4">
-        <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                <div class="table-responsive">
-                    <table id="datatable-assets" class="table">
-                        <thead>
-                            <tr>
-                                <th class="centered" scope="col">#</th>
-                                <th class="centered" scope="col">Marca</th>
-                                <th class="centered" scope="col">Modelo</th>
-                                <th class="centered" scope="col">Category</th>
-                                <th class="centered" scope="col">Serial</th>
-                                <th class="centered" scope="col">BBVA</th>
-                                <th class="centered" scope="col">Estatus</th>
-                                <th class="centered" scope="col">Opciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablebody_assets"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        
-    </div>
+{% extends 'dashboard.html' %}
 
-    <script src="{% static 'js/DataTables/datatables.js' %}"></script> <!-- Datatables-->
-    <script src="{% static 'js/DataTables/datatables.min.js' %}"></script> <!-- Datatables-->
-    <script src="{% static 'js/index.js' %}"></script> <!-- custom js-->
-    
-</body>
-</html>
+{% block content %}
+
+
+<table id="datatable-assets" class="table">
+    <thead>
+        <tr>
+            <th class="centered" scope="col">#</th>
+            <th class="centered" scope="col">Marca</th>
+            <th class="centered" scope="col">Modelo</th>
+            <th class="centered" scope="col">Category</th>
+            <th class="centered" scope="col">Serial</th>
+            <th class="centered" scope="col">BBVA</th>
+            <th class="centered" scope="col">Estatus</th>
+            <th class="centered" scope="col">Opciones</th>
+        </tr>
+    </thead>
+    <tbody id="tablebody_assets">
+        
+    </tbody>
+</table>
+
+
+
+
+</div>
+
+
+
+
+{% endblock %}

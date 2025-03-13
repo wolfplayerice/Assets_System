@@ -21,6 +21,7 @@ from dashboard.views import dashboard
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('prueba.urls')),  # Incluye las URLs de tu aplicación
-    path("inventory/", include("inventory.urls")),
     path("dashboard/", include("dashboard.urls")),
+    path("inventory/", include("inventory.urls")),
+
 ]

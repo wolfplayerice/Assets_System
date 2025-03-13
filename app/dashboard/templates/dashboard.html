@@ -17,6 +17,10 @@
   <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <link href="{% static 'css/index.css' %} " rel="stylesheet">
+  <link href="{% static 'css/DataTables/datatables.css' %} " rel="stylesheet"> <!-- Datatables-->
+  <link href="{% static 'css/DataTables/datatables.min.css' %} " rel="stylesheet"> <!-- Datatables-->
+  <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
 </head>
 <style>
   .user-name {
@@ -176,11 +180,9 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+              <a href="{% url 'inventory:inventory' %}" class="nav-link">
                 <i class="nav-icon fas fa-tools"></i>
-                <p>
-                  Bienes
-                </p>
+                <p>Bienes</p>
               </a>
             </li>
             <li class="nav-item">
@@ -330,9 +332,11 @@
                         </div>
                       </div>
 
-                      <!-- DataTable -->
                       {% block content %}
                       {% endblock %}
+                      <div id="dynamic-content">
+                        <!-- Aquí se cargará el contenido dinámico -->
+                      </div>
                       <!-- /.content-wrapper -->
                     </div>
                     <!-- /.Estadistica -->
@@ -387,9 +391,9 @@
         <!-- PAGE SCRIPTS -->
         <script src="{% static 'assets/dist/js/pages/dashboard2.js' %}"></script>
 
-        <!-- page script -->
-        <!-- page script -->
-        <!-- page script -->
+        <script src="{% static 'js/DataTables/datatables.js' %}"></script> <!-- Datatables-->
+        <script src="{% static 'js/DataTables/datatables.min.js' %}"></script> <!-- Datatables-->
+        <script src="{% static 'js/index.js' %}"></script> <!-- custom js-->
         <script>
           $(function () {
             $("#example1").DataTable({
@@ -417,6 +421,7 @@
             });
           });
         </script>
+        
 
 </body>
 

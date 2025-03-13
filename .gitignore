@@ -4,3 +4,9 @@ app/prueba/__pycache__/
 app/inventory/__pycache__/
 app/inventory/migrations/*
 !app/inventory/migrations/__init__.py
+app/category/__pycache__/
+app/category/migrations/*
+!app/category/migrations/__init__.py
+app/brand/__pycache__/
+app/brand/migrations/*
+!app/brand/migrations/__init__.py
