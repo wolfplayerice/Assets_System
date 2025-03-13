@@ -39,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles', 
     'prueba', 
     'dashboard', 
-    'inventory'
+    'inventory',
+    'category',
+    'brand'
 ]
 
 MIDDLEWARE = [

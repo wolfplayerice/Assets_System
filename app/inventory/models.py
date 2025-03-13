@@ -1,4 +1,6 @@
 from django.db import models
+from brand.models import Brand
+from category.models import Category
 
 # Create your models here.
 
@@ -6,30 +8,6 @@ ACTIVE_CHOICES = [
     (False, 'No operativo'),
     (True, 'Operativo')
 ]
-
-class Category(models.Model):
-    name = models.CharField(max_length=35, null=False, verbose_name='Categoria')
-
-    def __str__(self):
-        return f"{self.id} - {self.name}"
-    
-    class Meta:
-        verbose_name= 'Categoria'
-        verbose_name_plural = 'Categorias'
-        db_table= 'Categories'
-        ordering = ['id']
-
-class Brand(models.Model):
-    name= models.CharField(max_length=35, null=False, verbose_name='Marca')
-
-    def __str__(self):
-        return f"{self.id} - {self.name}"
-
-    class Meta:
-        verbose_name= 'Marca'
-        verbose_name_plural = 'Marcas'
-        db_table= 'Brands'
-        ordering = ['id']
 
 class Asset(models.Model):
     model = models.CharField(max_length=255, null=False,  verbose_name='Modelo')
