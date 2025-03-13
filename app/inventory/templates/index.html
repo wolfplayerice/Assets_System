@@ -8,10 +8,11 @@
     <link href="{% static 'css/index.css' %} " rel="stylesheet">
     <link href="{% static 'css/DataTables/datatables.css' %} " rel="stylesheet"> <!-- Datatables-->
     <link href="{% static 'css/DataTables/datatables.min.css' %} " rel="stylesheet"> <!-- Datatables-->
+    <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
 </head>
 <body>
     <div
-        class="container">
+        class="container mt-4">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
                 <div class="table-responsive">
@@ -25,6 +26,7 @@
                                 <th class="centered" scope="col">Serial</th>
                                 <th class="centered" scope="col">BBVA</th>
                                 <th class="centered" scope="col">Estatus</th>
+                                <th class="centered" scope="col">Opciones</th>
                             </tr>
                         </thead>
                         <tbody id="tablebody_assets"></tbody>

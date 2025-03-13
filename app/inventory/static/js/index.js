@@ -1,6 +1,14 @@
 let dataTable;
 let dataTableIsInitialized= false;
 
+const dataTableOptions={
+    columnDefs:[
+        { targets: [0,1,2,3,4,5,6,7], classname:"centered" },
+        { targets: [7], orderable: false },
+        { targets: [7], searchable: false }
+    ]
+};
+
 const initDataTable=async() => {
     if(dataTableIsInitialized){
         dataTable.destroy();
@@ -8,7 +16,7 @@ const initDataTable=async() => {
 
     await listAssets();
 
-    dataTable=$("#datatable-assets").DataTable({});
+    dataTable=$("#datatable-assets").DataTable(dataTableOptions);
 
     dataTableIsInitialized= true;
 };
@@ -29,6 +37,10 @@ const listAssets=async () => {
                     <td> ${asset.serial_number}</td>
                     <td> ${asset.state_asset}</td>
                     <td> ${asset.status}</td>
+                    <td>
+                        <button class='btn btn-sm btn-primary'><i class='fa-solid fa-pencil'></i></button>
+                        <button class='btn btn-sm btn-danger'><i class='fa-solid fa-trash-can'></i></button>
+                    </td>
                 </tr>
             `;
         });
