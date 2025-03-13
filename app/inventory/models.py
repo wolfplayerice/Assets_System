@@ -2,6 +2,11 @@ from django.db import models
 
 # Create your models here.
 
+ACTIVE_CHOICES = [
+    (False, 'No operativo'),
+    (True, 'Operativo')
+]
+
 class Category(models.Model):
     name = models.CharField(max_length=35, null=False, verbose_name='Categoria')
 
@@ -30,7 +35,8 @@ class Asset(models.Model):
     model = models.CharField(max_length=255, null=False,  verbose_name='Modelo')
     serial_number = models.CharField(max_length=255, null=False, unique=True, verbose_name='Número de serie')
     state_asset = models.CharField(max_length=255, null=False, verbose_name='Bien del estado')
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=False, null=False, choices=ACTIVE_CHOICES)
+    observation = models.TextField(blank=True)
 
     #Llaves foraneas
     fk_category = models.ForeignKey(Category, on_delete=models.CASCADE)
@@ -41,7 +47,7 @@ class Asset(models.Model):
             "model": self.model,
             "serial_number": self.serial_number,
             "state_asset": self.state_asset,
-            "status": self.status,
+            "status": "Operativo" if self.status else "No operativo",
             "fk_category": self.fk_category.name,  
             "fk_brand": self.fk_brand.name,        
         }
