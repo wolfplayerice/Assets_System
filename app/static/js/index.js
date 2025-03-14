@@ -46,7 +46,6 @@ const listAssets=async () => {
         });
         tablebody_assets.innerHTML=content;
     } catch (ex){
-        alert(ex);
     }
 }
 

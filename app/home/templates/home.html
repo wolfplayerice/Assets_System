@@ -112,7 +112,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+              <a href="{% url 'category:category' %}" class="nav-link">
                 <i class="nav-icon fas fa-microchip"></i>
                 <p>
                   Categorías
@@ -120,7 +120,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="pages/widgets.html" class="nav-link">
+              <a href="{% url 'brand:brand' %}" class="nav-link">
                 <i class="nav-icon fas fa-laptop"></i>
                 <p>
                   Marcas
@@ -321,6 +321,9 @@
         <script src="{% static 'js/DataTables/datatables.js' %}"></script> <!-- Datatables-->
         <script src="{% static 'js/DataTables/datatables.min.js' %}"></script> <!-- Datatables-->
         <script src="{% static 'js/index.js' %}"></script> <!-- custom js-->
+        <script src="{% static 'js/crudbrand.js' %}"></script> <!-- custom js-->
+        <script src="{% static 'js/crudcat.js' %}"></script> <!-- custom js-->
+
         <script>
           $(function () {
             $("#example1").DataTable({
