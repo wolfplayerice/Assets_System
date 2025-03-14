@@ -16,12 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from dashboard.views import dashboard
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('prueba.urls')),  # Incluye las URLs de tu aplicación
-    path("dashboard/", include("dashboard.urls")),
+    path("home/", include("home.urls")),
     path("inventory/", include("inventory.urls")),
 
 ]
