@@ -22,5 +22,6 @@ urlpatterns = [
     path('', include('prueba.urls')),  # Incluye las URLs de tu aplicación
     path("home/", include("home.urls")),
     path("inventory/", include("inventory.urls")),
+    path("login/", include("login.urls")),
 
 ]

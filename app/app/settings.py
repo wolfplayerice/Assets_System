@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'home', 
     'inventory',
     'category',
+    'login',
     'brand'
 ]
 

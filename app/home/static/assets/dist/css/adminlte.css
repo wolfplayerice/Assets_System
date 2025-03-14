@@ -11,7 +11,7 @@
  * Copyright 2011-2019 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
- 
+
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
@@ -19959,7 +19959,9 @@ html.maximized-card {
 }
 
 .login-page,
+
 .register-page {
+
   -ms-flex-align: center;
   align-items: center;
   background: #e9ecef;
@@ -30011,4 +30013,5 @@ a.text-muted:hover {
 [class*="accent-"] a.btn-dark {
   color: #ffffff;
 }
+
 /*# sourceMappingURL=adminlte.css.map */
