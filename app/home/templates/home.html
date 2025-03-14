@@ -98,7 +98,7 @@
             <!-- Add icons to the links using the .nav-icon class
               with font-awesome or any other icon font library -->
             <li class="nav-item has-treeview menu-open">
-              <a href="#" class="nav-link active">
+              <a href="{% url 'home:home' %}" class="nav-link active">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
@@ -294,9 +294,9 @@
 
         <!-- REQUIRED SCRIPTS -->
         <!-- jQuery -->
-        <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+        <script src="{% static '../assets/plugins/jquery/jquery.min.js' %}"></script>
         <!-- Bootstrap -->
-        <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static '../ssets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
         <!-- overlayScrollbars -->
         <script src="{% static 'assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
         <!-- AdminLTE App -->
@@ -321,33 +321,7 @@
         <script src="{% static 'js/DataTables/datatables.js' %}"></script> <!-- Datatables-->
         <script src="{% static 'js/DataTables/datatables.min.js' %}"></script> <!-- Datatables-->
         <script src="{% static 'js/index.js' %}"></script> <!-- custom js-->
-        <script>
-          $(function () {
-            $("#example1").DataTable({
-              "language": {
-                "search": "Buscador:",
-                "lengthMenu": "Mostrar _MENU_ entradas",
-                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
-                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
-                "infoFiltered": "(filtrado de _MAX_ entradas totales)",
-                "paginate": {
-                  "first": "Primero",
-                  "last": "Último",
-                  "next": "Siguiente",
-                  "previous": "Anterior"
-                }
-              }
-            });
-            $('#example2').DataTable({
-              "paging": true,
-              "lengthChange": false,
-              "searching": false,
-              "ordering": true,
-              "info": true,
-              "autoWidth": false,
-            });
-          });
-        </script>
+
         
 
 </body>
