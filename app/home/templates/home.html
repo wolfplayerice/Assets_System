@@ -98,7 +98,7 @@
             <!-- Add icons to the links using the .nav-icon class
               with font-awesome or any other icon font library -->
             <li class="nav-item has-treeview menu-open">
-              <a href="#" class="nav-link active">
+              <a href="{% url 'home:home' %}" class="nav-link active">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
                   Dashboard
@@ -294,9 +294,9 @@
 
         <!-- REQUIRED SCRIPTS -->
         <!-- jQuery -->
-        <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+        <script src="{% static '../assets/plugins/jquery/jquery.min.js' %}"></script>
         <!-- Bootstrap -->
-        <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static '../ssets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
         <!-- overlayScrollbars -->
         <script src="{% static 'assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
         <!-- AdminLTE App -->
