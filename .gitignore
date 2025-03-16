@@ -12,3 +12,4 @@ app/brand/migrations/*
 !app/brand/migrations/__init__.py
 *.pyc
 *.pyc
+*.pyc
