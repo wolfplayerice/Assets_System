@@ -2,4 +2,21 @@
     text-align: center !important;
     vertical-align: middle !important;
 }
+.centered {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
 
+.nav-link:hover {
+    background-color: #343a40; /* Color de fondo del hover */
+    color: white; /* Color del texto en hover */
+}
+
+.nav-link.active {
+    background-color: #007bff; /* Color de fondo cuando está activo */
+    color: white; /* Color del texto cuando está activo */
+}
+
+.nav-link.active i {
+    color: white; /* Color del icono cuando está activo */
+}
