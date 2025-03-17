@@ -13,3 +13,6 @@ app/brand/migrations/*
 *.pyc
 *.pyc
 *.pyc
+app/home/__pycache__/
+app/home/migrations/*
+!app/home/migrations/__init__.py
