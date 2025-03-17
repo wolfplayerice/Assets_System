@@ -37,7 +37,7 @@ def asset_create(request):
             )
             assets.save()
             messages.success(request, 'El activo se ha guardado correctamente.')
-            return HttpResponseRedirect(reverse('inventory:inventory')) 
+            return HttpResponseRedirect(reverse('home:inventory')) 
     else:
         asset_create_form = AssetCreate()
     
