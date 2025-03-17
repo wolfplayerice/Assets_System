@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'inventory',
     'category',
     'login',
-    'brand'
+    'brand',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
