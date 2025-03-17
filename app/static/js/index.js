@@ -40,7 +40,6 @@ const initDataTable = async () => {
 
 $(document).on('click', '.delete-btna', function () {
     var assetId = $(this).data('id');
-    console.log(assetId);
     // Alerta personalizada con sweetalert
     Swal.fire({
         title: '¿Estás seguro de eliminar este registro?',
