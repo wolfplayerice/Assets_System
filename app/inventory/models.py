@@ -25,6 +25,7 @@ class Asset(models.Model):
 
     def to_dict(self):
         return {
+            "id": self.id,
             "model": self.model,
             "serial_number": self.serial_number,
             "state_asset": self.state_asset,
