@@ -108,6 +108,23 @@
               </div>
             </div>
 
+            <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Error.</h5>
+                  </div>
+                  <div class="modal-body">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <script>
               $(document).ready(function () {
                 // Obtén referencias a los campos usando los ids personalizados
@@ -131,11 +148,17 @@
               });
             </script>
             <script>
-              $(document).ready(function() {
-                  {% if messages %}
-                      $('#successModal').modal('show');
-                  {% endif %}
+              $(document).ready(function () {
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                $('#successModal').modal('show');
+                {% elif message.tags == 'error' %}
+                $('#errorModal').modal('show');
+                {% endif %}
+                {% endfor %}
+                {% endif %}
               });
-              </script>
+            </script>
 
             {% endblock %}
