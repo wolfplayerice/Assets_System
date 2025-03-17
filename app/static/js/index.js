@@ -7,9 +7,8 @@ const dataTableOptions = {
         dataSrc: 'Asset' // Asegúrate de que esta sea la ruta correcta en tu respuesta JSON
     },
     columnDefs: [
-        { targets: [7], orderable: false },
-        { targets: [7], searchable: false },
-        { targets: [7], className: 'dt-center' }
+        { targets: [7], orderable: false, searchable: false  },
+        { targets: '_all', className: 'dt-center' }
     ],
     columns: [
         { data: null, render: (data, type, row, meta) => meta.row }, // Índice
@@ -29,12 +28,33 @@ const dataTableOptions = {
     ]
 };
 
+const dataTableOptions2 = {
+    ajax: {
+        url: "http://127.0.0.1:8000/inventory/list_assets/",
+        dataSrc: 'Asset' // Asegúrate de que esta sea la ruta correcta en tu respuesta JSON
+    },
+    columnDefs: [
+        { targets: '_all', className: 'dt-center' }
+    ],
+    columns: [
+        { data: null, render: (data, type, row, meta) => meta.row }, // Índice
+        { data: 'fk_brand' },
+        { data: 'model' },
+        { data: 'fk_category' },
+        { data: 'serial_number' },
+        { data: 'state_asset' },
+        { data: 'status' },
+    ]
+};
+
+
 const initDataTable = async () => {
     if (dataTableIsInitialized) {
         dataTable.destroy();
     }
 
     dataTable = $("#datatable-assets").DataTable(dataTableOptions);
+    dataTable = $("#datatable-assets-dash").DataTable(dataTableOptions2);
     dataTableIsInitialized = true;
 };
 
