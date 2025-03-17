@@ -20,6 +20,7 @@
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
   <!-- Incluye tu archivo CSS personalizado -->
   <link rel="stylesheet" href="{% static 'assets/dist/css/fondo_login.css' %}">
+  
   <style>
     .fade-in {
       opacity: 0;
@@ -40,8 +41,13 @@
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Inicia sesión para ingresar</p>
-      <form action="" method="post">
-        <div class="input-group mb-3">
+      <form method="POST">
+
+        {% csrf_token %}
+
+        {{ VerifyUser }}
+
+        <!-- <div class="input-group mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">
               <i class="fas fa-user"></i>
@@ -66,9 +72,9 @@
               </label>
             </div>
           </div>
-          <!-- /.col -->
+          /.col -->
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">ingresar</button>
+            <button class="btn btn-primary btn-block">Ingresar</button>
           </div>
           <!-- /.col -->
         </div>
@@ -90,6 +96,21 @@
     $('body').addClass('visible');
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if error %}
+  <script>
+    $(document).ready(function() {
+      $('body').addClass('visible');
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: '{{ error }}'
+      });
+      
+    });
+  </script>
+{% endif %}
 
 </body>
 </html>
