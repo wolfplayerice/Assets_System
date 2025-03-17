@@ -120,7 +120,7 @@ const initDataTablecategory = async () => {
 };
 $(document).on('click', '.delete-btn', function () {
     var categoryId = $(this).data('id');
-
+    //alerta personalizada con sweetalert
     Swal.fire({
         title: '¿Estás seguro de eliminar este registro?',
         text: "No podrás revertir esto.",
