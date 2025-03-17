@@ -1,65 +1,63 @@
-let dataTable;
+let dataTable = {};
 let dataTableIsInitialized = false;
 
-const dataTableOptions = {
-    ajax: {
-        url: "http://127.0.0.1:8000/inventory/list_assets/",
-        dataSrc: 'Asset' // Asegúrate de que esta sea la ruta correcta en tu respuesta JSON
-    },
-    columnDefs: [
-        { targets: [7], orderable: false, searchable: false },
-        { targets: "_all", className: 'dt-center' }
-    ],
-    columns: [
-        { data: null, render: (data, type, row, meta) => meta.row }, // Índice
-        { data: 'fk_brand' },
-        { data: 'model' },
-        { data: 'fk_category' },
-        { data: 'serial_number' },
-        { data: 'state_asset' },
-        { data: 'status' },
-        {
+function getDataTableConfig(includeActions = true) {
+    const baseConfig = {
+        ajax: {
+            url: "http://127.0.0.1:8000/inventory/list_assets/",
+            dataSrc: 'Asset'
+        },
+        columnDefs: [
+            { targets: "_all", className: 'centered' }
+        ],
+        columns: [
+            { data: null, render: (data, type, row, meta) => meta.row }, // Índice
+            { data: 'fk_brand' },
+            { data: 'model' },
+            { data: 'fk_category' },
+            { data: 'serial_number' },
+            { data: 'state_asset' },
+            { data: 'status' }
+        ]
+    };
+
+    if (includeActions) {
+        baseConfig.columns.push({
             data: null,
             render: (data, type, row) => `
-                <button class='btn btn-sm btn-primary btn-edit centered'><i class='fa-solid fa-pencil'></i></button>
-                <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}"><i class='fa-solid fa-trash-can'></i></button>
+                <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
+                <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
             `
-        }
-    ]
-};
+        });
 
-const dataTableOptions2 = {
-    ajax: {
-        url: "http://127.0.0.1:8000/inventory/list_assets/",
-        dataSrc: 'Asset' // Asegúrate de que esta sea la ruta correcta en tu respuesta JSON
-    },
-    columnDefs: [
-        { targets: "_all", className: 'dt-center' }
-    ],
-    columns: [
-        { data: null, render: (data, type, row, meta) => meta.row }, // Índice
-        { data: 'fk_brand' },
-        { data: 'model' },
-        { data: 'fk_category' },
-        { data: 'serial_number' },
-        { data: 'state_asset' },
-        { data: 'status' },
-    ]
-};
-
-const initDataTable = async () => {
-    if (dataTableIsInitialized) {
-        dataTable.destroy();
+        baseConfig.columnDefs.push({
+            targets: [7], 
+            orderable: false,
+            searchable: false
+        });
     }
 
-    dataTable = $("#datatable-assets").DataTable(dataTableOptions);
-    dataTable = $("#datatable-assets-dash").DataTable(dataTableOptions2);
-    dataTableIsInitialized = true;
+    return baseConfig;
+}
+
+const initDataTable = async (tableId, includeActions = true) => {
+    if (dataTable[tableId]) {
+        dataTable[tableId].destroy(); 
+    }
+
+    // Obtener la configuración base
+    const dataTableOptions = getDataTableConfig(includeActions);
+
+    // Inicializar DataTable en la tabla específica
+    dataTable[tableId] = $(`#${tableId}`).DataTable(dataTableOptions);
 };
+
 
 $(document).on('click', '.delete-btna', function () {
     var assetId = $(this).data('id');
-    // Alerta personalizada con sweetalert
+    var tableId = $(this).data('table-id'); // Obtener el ID de la tabla
+
+    // Alerta personalizada con SweetAlert
     Swal.fire({
         title: '¿Estás seguro de eliminar este registro?',
         text: "No podrás revertir esto.",
@@ -82,12 +80,17 @@ $(document).on('click', '.delete-btna', function () {
                         response.message,
                         'success'
                     );
-                    dataTable.ajax.reload(); // Recargar la tabla después de eliminar
+                    // Recargar la tabla correcta usando el ID de la tabla
+                    if (dataTable[tableId]) {
+                        dataTable[tableId].ajax.reload(null, false); // false para mantener la paginación actual
+                    } else {
+                        console.error("No se encontró la instancia de DataTables para la tabla:", tableId);
+                    }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     Swal.fire(
                         'Error!',
-                        "Error al eliminar la categoría: " + (jqXHR.responseJSON?.error || "Error desconocido"),
+                        "Error al eliminar el activo: " + (jqXHR.responseJSON?.error || "Error desconocido"),
                         'error'
                     );
                 }

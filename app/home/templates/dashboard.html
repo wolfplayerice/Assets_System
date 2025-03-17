@@ -1,99 +1,102 @@
-
-
 {% extends 'home.html' %}
 
 {% block content %}
 
 <div class="row">
-    <div class="col-12 col-sm-6 col-md-3">
-      <div class="info-box">
-        <span class="info-box-icon bg-info elevation-1"><i class="fas fa-desktop"></i></span>
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box">
+      <span class="info-box-icon bg-info elevation-1"><i class="fas fa-desktop"></i></span>
 
-        <div class="info-box-content">
-          <span class="info-box-text">Bienes</span>
-          <span class="info-box-number">
-            20
-          </span>
-        </div>
-        <!-- /.info-box-content -->
+      <div class="info-box-content">
+        <span class="info-box-text">Bienes</span>
+        <span class="info-box-number">
+          20
+        </span>
       </div>
-      <!-- /.info-box -->
+      <!-- /.info-box-content -->
     </div>
-    <!-- /.col -->
-    <div class="col-12 col-sm-6 col-md-3">
-      <div class="info-box mb-3">
-        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-desktop"></i><i
-            class="fas fa-check"></i></span>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-success elevation-1"><i class="fas fa-desktop"></i><i
+          class="fas fa-check"></i></span>
 
-        <div class="info-box-content">
-          <span class="info-box-text">Operativos</span>
-          <span class="info-box-number">15</span>
-        </div>
-        <!-- /.info-box-content -->
+      <div class="info-box-content">
+        <span class="info-box-text">Operativos</span>
+        <span class="info-box-number">15</span>
       </div>
-      <!-- /.info-box -->
+      <!-- /.info-box-content -->
     </div>
-    <!-- /.col -->
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
 
-    <!-- fix for small devices only 
+  <!-- fix for small devices only 
     <div class="clearfix hidden-md-up"></div>-->
 
-    <div class="col-12 col-sm-6 col-md-3">
-      <div class="info-box mb-3">
-        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-desktop"></i><i
-            class="fas fa-times"></i></span>
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-desktop"></i><i
+          class="fas fa-times"></i></span>
 
-        <div class="info-box-content">
-          <span class="info-box-text">Inoperativos</span>
-          <span class="info-box-number">5</span>
-        </div>
-        <!-- /.info-box-content -->
+      <div class="info-box-content">
+        <span class="info-box-text">Inoperativos</span>
+        <span class="info-box-number">5</span>
       </div>
-      <!-- /.info-box -->
+      <!-- /.info-box-content -->
     </div>
-    <!-- /.col -->
-    <div class="col-12 col-sm-6 col-md-3">
-      <div class="info-box mb-3">
-        <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
-
-        <div class="info-box-content">
-          <span class="info-box-text">Usuarios</span>
-          <span class="info-box-number">2</span>
-        </div>
-        <!-- /.info-box-content -->
-      </div>
-      <!-- /.info-box -->
-    </div>
-    <!-- /.col -->
+    <!-- /.info-box -->
   </div>
+  <!-- /.col -->
+  <div class="col-12 col-sm-6 col-md-3">
+    <div class="info-box mb-3">
+      <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
 
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card custom-card-height">
-        <div class="card-header">
-          <h5 class="card-title">Tabla de los Bienes</h5>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-12">
+      <div class="info-box-content">
+        <span class="info-box-text">Usuarios</span>
+        <span class="info-box-number">2</span>
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+</div>
 
-                <table id="datatable-assets-dash" class="table">
-                    <thead>
-                      <tr>
-                        <th class="centered" scope="col">#</th>
-                        <th class="centered" scope="col">Marca</th>
-                        <th class="centered" scope="col">Modelo</th>
-                        <th class="centered" scope="col">Categoria</th>
-                        <th class="centered" scope="col">Serial</th>
-                        <th class="centered" scope="col">BBVA</th>
-                        <th class="centered" scope="col">Estatus</th>
-                      </tr>
-                    </thead>
-                    <tbody id="tablebody_assets">
-      
-                    </tbody>
-                  </table>
-                  
+<div class="row">
+  <div class="col-md-12">
+    <div class="card custom-card-height">
+      <div class="card-header">
+        <h5 class="card-title">Tabla de los Bienes</h5>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
 
-  {% endblock %}
+            <table id="datatable-assets-dash" class="table">
+              <thead>
+                <tr>
+                  <th class="centered" scope="col">#</th>
+                  <th class="centered" scope="col">Marca</th>
+                  <th class="centered" scope="col">Modelo</th>
+                  <th class="centered" scope="col">Categoria</th>
+                  <th class="centered" scope="col">Serial</th>
+                  <th class="centered" scope="col">BBVA</th>
+                  <th class="centered" scope="col">Estatus</th>
+                </tr>
+              </thead>
+              <tbody id="tablebody_assets">
+
+              </tbody>
+            </table>
+
+            <script>
+              $(document).ready(function () {
+                initDataTable('datatable-assets-dash', false); // Excluir columna de acciones
+              });
+
+            </script>
+            {% endblock %}
