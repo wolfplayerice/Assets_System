@@ -26,20 +26,20 @@ def login(request):
             if User_Verification is not None:
 
                 auth_login(request, User_Verification)
-                return render(request, 'login.html', {
+                return render(request, '../home/dashboard.html', {
 
-                    'VerifyUser': VerifyUser_Form,
-                    'success': 'Inicio de sesión exitoso.'
+                    'success': 'Inicio de sesión exitoso.',
+                    'VerifyUser': VerifyUser_Form
 
                 })
-                # return redirect('../home/')
             
             else:
 
                 return render(request, 'login.html', {
 
-                    'VerifyUser': VerifyUser_Form,
-                    'error': 'Algunos de los datos ingresados son incorrectos. Por favor, intente de nuevo.'
+                    'error': 'Algunos de los datos ingresados son incorrectos. Por favor, intente de nuevo.',
+                    'VerifyUser': VerifyUser_Form
+
                 })
     
         else:

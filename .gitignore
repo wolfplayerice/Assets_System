@@ -16,3 +16,7 @@ app/brand/migrations/*
 app/home/__pycache__/
 app/home/migrations/*
 !app/home/migrations/__init__.py
+app/login/__pycache__/
+app/login/migrations/*
+!app/login/migrations/__init__.py
+app\category\__pycache__

@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.core.paginator import Paginator
 # Create your views here.
 
 
@@ -14,10 +15,55 @@ def inventory(request):
     asset_create_form = AssetCreate()
     return render(request, 'index.html', { 'form': asset_create_form})
 
+
 def list_assets(request):
+    all_data = request.GET.get('all', False)
+
     assets = Asset.objects.all()
+
+    # Usamos to_dict() para obtener los datos de cada asset
     data = {'Asset': [asset.to_dict() for asset in assets]}
-    return JsonResponse(data)
+
+    if all_data:
+        response_data = {
+            'Asset': data,
+        }
+        return JsonResponse(response_data)
+
+    try:
+        draw = int(request.GET.get('draw', 0))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))  # Número de registros por página
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'Invalid parameters'}, status=400)
+
+    search_value = request.GET.get('search[value]', None)
+
+    if search_value:
+        assets = assets.filter(name__icontains=search_value)
+
+    total_records = assets.count()
+    filtered_records = assets.count()
+
+    paginator = Paginator(assets, length)
+    page = (start // length) + 1
+
+    try:
+        assets_page = paginator.page(page)
+    except Exception:
+        assets_page = paginator.page(1)
+
+    # Usamos to_dict() para obtener los datos de cada asset en la página
+    data = [asset.to_dict() for asset in assets_page]
+
+    response_data = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': filtered_records,
+        'data': data,
+    }
+
+    return JsonResponse(response_data)
 
 def asset_create(request):
     if request.method == "POST":

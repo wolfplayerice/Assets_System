@@ -1,17 +1,20 @@
-let dataTable = {};
+let dataTable = {}; // Inicializamos dataTable como un objeto
 let dataTableIsInitialized = false;
 
 function getDataTableConfig(includeActions = true) {
     const baseConfig = {
         ajax: {
             url: "http://127.0.0.1:8000/inventory/list_assets/",
-            dataSrc: 'Asset'
+            dataSrc: 'data' // Cambiamos 'Asset' a 'data' para que coincida con la respuesta JSON
         },
         columnDefs: [
             { targets: "_all", className: 'centered' }
         ],
         columns: [
-            { data: null, render: (data, type, row, meta) => meta.row }, // Índice
+            { 
+                data: null, 
+                render: (data, type, row, meta) => meta.row + 1 // Índice comienza desde 1
+            },
             { data: 'fk_brand' },
             { data: 'model' },
             { data: 'fk_category' },
@@ -24,10 +27,17 @@ function getDataTableConfig(includeActions = true) {
     if (includeActions) {
         baseConfig.columns.push({
             data: null,
-            render: (data, type, row) => `
-                <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
-                <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
-            `
+            render: (data, type, row) => {
+                let buttons = '';
+                if (row.status === 'Inoperativo') {
+                    buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
+                }
+                buttons += `
+                    <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
+                    <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
+                `;
+                return buttons;
+            }
         });
 
         baseConfig.columnDefs.push({
@@ -40,7 +50,10 @@ function getDataTableConfig(includeActions = true) {
     return baseConfig;
 }
 
+// ...existing code...
+
 const initDataTable = async (tableId, includeActions = true) => {
+const initDataTable = async (tableId = "datatable-assets", includeActions = true) => {
     if (dataTable[tableId]) {
         dataTable[tableId].destroy(); 
     }
@@ -51,7 +64,6 @@ const initDataTable = async (tableId, includeActions = true) => {
     // Inicializar DataTable en la tabla específica
     dataTable[tableId] = $(`#${tableId}`).DataTable(dataTableOptions);
 };
-
 
 $(document).on('click', '.delete-btna', function () {
     var assetId = $(this).data('id');
@@ -99,6 +111,13 @@ $(document).on('click', '.delete-btna', function () {
     });
 });
 
+// Evento para mostrar el modal al hacer clic en el botón amarillo
+$(document).on('click', '.btn-inoperativo', function () {
+    const observation = $(this).data('observation');
+    $('#inoperativoModal .modal-body p').text(observation);
+    $('#inoperativoModal').modal('show');
+});
+
 // Función para obtener el valor de la cookie CSRF
 function getCookie(name) {
     let cookieValue = null;
@@ -117,5 +136,5 @@ function getCookie(name) {
 }
 
 window.addEventListener('load', async () => {
-    await initDataTable();
+    await initDataTable("datatable-assets"); // Pasamos el ID de la tabla
 });

@@ -92,36 +92,14 @@
 <!-- AdminLTE App -->
 <script src="{% static 'assets/dist/js/adminlte.min.js' %}"></script>
 
-<script>
-  $(document).ready(function() {
-    $('body').addClass('visible');
-  });
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{% static 'js/verify_user.js' %}"></script>
+<script src="{% static 'assets/js/verify_user.js' %}"></script>
 {% if success %}
   <div id="success-message" style="display: none;">{{ success }}</div>
 {% endif %}
 {% if error %}
   <div id="error-message" style="display: none;">{{ error }}</div>
 {% endif %}
-
-
-
-<!-- {% if error %}
-  <script>
-    $(document).ready(function() {
-      $('body').addClass('visible');
-      Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: '{{ error }}'
-      });
-      
-    });
-  </script>
-{% endif %} -->
 
 </body>
 </html>
