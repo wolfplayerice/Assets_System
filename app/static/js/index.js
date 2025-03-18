@@ -5,7 +5,7 @@ function getDataTableConfig(includeActions = true) {
     const baseConfig = {
         ajax: {
             url: "http://127.0.0.1:8000/inventory/list_assets/",
-            dataSrc: 'data' // Cambiamos 'Asset' a 'data' para que coincida con la respuesta JSON
+            dataSrc: 'data' 
         },
         columnDefs: [
             { targets: "_all", className: 'centered' }
@@ -74,7 +74,7 @@ $(document).on('click', '.delete-btna', function () {
                 url: `http://127.0.0.1:8000/inventory/delete_asset/${assetId}/`,
                 type: 'DELETE',
                 headers: {
-                    "X-CSRFToken": getCookie("csrftoken") // Asegúrate de que esta función esté definida
+                    "X-CSRFToken": getCookie("csrftoken") 
                 },
                 success: function (response) {
                     Swal.fire(
@@ -82,7 +82,7 @@ $(document).on('click', '.delete-btna', function () {
                         response.message,
                         'success'
                     );
-                    // Recargar la tabla correcta usando el ID de la tabla
+                    
                     if (dataTable[tableId]) {
                         dataTable[tableId].ajax.reload(null, false); // false para mantener la paginación actual
                     } else {
@@ -119,5 +119,5 @@ function getCookie(name) {
 }
 
 window.addEventListener('load', async () => {
-    await initDataTable("datatable-assets"); // Pasamos el ID de la tabla
+    await initDataTable("datatable-assets"); 
 });
