@@ -1,7 +1,17 @@
 {% extends 'home.html' %}
 
 {% block content %}
-
+<style>
+.btn-circle {
+  width: 20px;
+  height: 20px;
+  padding: 2px 0;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 10px;
+  line-height: 1.42857;
+}
+</style>
 <div class="row">
   <div class="col-12 col-sm-6 col-md-3">
     <div class="info-box">
@@ -98,5 +108,34 @@
                 initDataTable('datatable-assets-dash', false); // Excluir columna de acciones
               });
 
+              function initDataTable(tableId, includeActions) {
+                const dataTableOptions = {
+                  ajax: {
+                    url: "http://127.0.0.1:8000/inventory/list_assets/",
+                    dataSrc: 'Asset'
+                  },
+                  columnDefs: [
+                    { targets: "_all", className: 'centered' }
+                  ],
+                  columns: [
+                    { data: null, render: (data, type, row, meta) => meta.row }, // Índice
+                    { data: 'fk_brand' },
+                    { data: 'model' },
+                    { data: 'fk_category' },
+                    { data: 'serial_number' },
+                    { data: 'state_asset' },
+                    { data: 'status', render: (data, type, row) => {
+                        if (row.status === 'Inoperativo') {
+                          return `Inoperativo <button class='btn btn-sm btn-warning btn-circle centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
+                        } else {
+                          return data;
+                        }
+                      }
+                    }
+                  ]
+                };
+
+                $(`#${tableId}`).DataTable(dataTableOptions);
+              }
             </script>
             {% endblock %}
