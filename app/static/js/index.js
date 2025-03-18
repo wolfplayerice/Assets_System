@@ -1,17 +1,20 @@
-let dataTable = {};
+let dataTable = {}; // Inicializamos dataTable como un objeto
 let dataTableIsInitialized = false;
 
 function getDataTableConfig(includeActions = true) {
     const baseConfig = {
         ajax: {
             url: "http://127.0.0.1:8000/inventory/list_assets/",
-            dataSrc: 'Asset'
+            dataSrc: 'data' // Cambiamos 'Asset' a 'data' para que coincida con la respuesta JSON
         },
         columnDefs: [
             { targets: "_all", className: 'centered' }
         ],
         columns: [
-            { data: null, render: (data, type, row, meta) => meta.row }, // Índice
+            { 
+                data: null, 
+                render: (data, type, row, meta) => meta.row + 1 // Índice comienza desde 1
+            },
             { data: 'fk_brand' },
             { data: 'model' },
             { data: 'fk_category' },
@@ -40,7 +43,7 @@ function getDataTableConfig(includeActions = true) {
     return baseConfig;
 }
 
-const initDataTable = async (tableId, includeActions = true) => {
+const initDataTable = async (tableId = "datatable-assets", includeActions = true) => {
     if (dataTable[tableId]) {
         dataTable[tableId].destroy(); 
     }
@@ -51,7 +54,6 @@ const initDataTable = async (tableId, includeActions = true) => {
     // Inicializar DataTable en la tabla específica
     dataTable[tableId] = $(`#${tableId}`).DataTable(dataTableOptions);
 };
-
 
 $(document).on('click', '.delete-btna', function () {
     var assetId = $(this).data('id');
@@ -117,5 +119,5 @@ function getCookie(name) {
 }
 
 window.addEventListener('load', async () => {
-    await initDataTable();
+    await initDataTable("datatable-assets"); // Pasamos el ID de la tabla
 });
