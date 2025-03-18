@@ -33,8 +33,15 @@
               </div>
             </div>
 
-            <table id="datatable-assets" class="table">
+            <table id="datatable-assets" class="table responsive">
               <thead>
+                <div class="flex-row d-flex">
+                  <button class='btn btn-md btn-primary me-2' data-toggle="modal" data-target="#register-modal"> <i
+                      class='fa-solid fa-plus'></i>
+                  </button>
+                  <p>Añadir bien</p>
+                </div>
+
                 <tr>
                   <th class="centered" scope="col">#</th>
                   <th class="centered" scope="col">Marca</th>
@@ -43,8 +50,7 @@
                   <th class="centered" scope="col">Serial</th>
                   <th class="centered" scope="col">BBVA</th>
                   <th class="centered" scope="col">Estatus</th>
-                  <th class="centered" scope="col">Opciones <button class='btn btn-sm btn-primary centered'
-                      data-toggle="modal" data-target="#register-modal"> <i class='fa-solid fa-plus'></i></button> </th>
+                  <th class="centered" scope="col">Opciones</th>
                 </tr>
               </thead>
               <tbody id="tablebody_assets">
