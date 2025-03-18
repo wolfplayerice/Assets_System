@@ -27,17 +27,10 @@ function getDataTableConfig(includeActions = true) {
     if (includeActions) {
         baseConfig.columns.push({
             data: null,
-            render: (data, type, row) => {
-                let buttons = '';
-                if (row.status === 'Inoperativo') {
-                    buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
-                }
-                buttons += `
-                    <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
-                    <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
-                `;
-                return buttons;
-            }
+            render: (data, type, row) => `
+                <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
+                <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
+            `
         });
 
         baseConfig.columnDefs.push({
@@ -50,9 +43,6 @@ function getDataTableConfig(includeActions = true) {
     return baseConfig;
 }
 
-// ...existing code...
-
-const initDataTable = async (tableId, includeActions = true) => {
 const initDataTable = async (tableId = "datatable-assets", includeActions = true) => {
     if (dataTable[tableId]) {
         dataTable[tableId].destroy(); 
@@ -109,13 +99,6 @@ $(document).on('click', '.delete-btna', function () {
             });
         }
     });
-});
-
-// Evento para mostrar el modal al hacer clic en el botón amarillo
-$(document).on('click', '.btn-inoperativo', function () {
-    const observation = $(this).data('observation');
-    $('#inoperativoModal .modal-body p').text(observation);
-    $('#inoperativoModal').modal('show');
 });
 
 // Función para obtener el valor de la cookie CSRF
