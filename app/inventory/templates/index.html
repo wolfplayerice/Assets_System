@@ -33,8 +33,15 @@
               </div>
             </div>
 
-            <table id="datatable-assets" class="table">
+            <table id="datatable-assets" class="table responsive">
               <thead>
+                <div class="flex-row d-flex">
+                  <button class='btn btn-md btn-primary me-2' data-toggle="modal" data-target="#register-modal"> <i
+                      class='fa-solid fa-plus'></i>
+                  </button>
+                  <p>Añadir bien</p>
+                </div>
+
                 <tr>
                   <th class="centered" scope="col">#</th>
                   <th class="centered" scope="col">Marca</th>
@@ -43,8 +50,7 @@
                   <th class="centered" scope="col">Serial</th>
                   <th class="centered" scope="col">BBVA</th>
                   <th class="centered" scope="col">Estatus</th>
-                  <th class="centered" scope="col">Opciones <button class='btn btn-sm btn-primary centered'
-                      data-toggle="modal" data-target="#register-modal"> <i class='fa-solid fa-plus'></i></button> </th>
+                  <th class="centered" scope="col">Opciones</th>
                 </tr>
               </thead>
               <tbody id="tablebody_assets">
@@ -108,6 +114,21 @@
               </div>
             </div>
 
+            <!-- Modal para dispositivos inoperativos -->
+            <div class="modal fade" id="inoperativoModal" tabindex="-1" role="dialog" aria-labelledby="inoperativoModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Contenido del modal -->
+                    <p></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
@@ -124,18 +145,23 @@
                 </div>
               </div>
             </div>
+
+            <!-- Incluye jQuery y Bootstrap JS -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            
             <script>
               $(document).ready(function () {
                 initDataTable('datatable-assets', true); // Incluir columna de acciones
               });
             </script>
-
+            
             <script>
               $(document).ready(function () {
                 // Obtén referencias a los campos usando los ids personalizados
                 const $statusField = $('#status_select');  // Campo de status con id personalizado
                 const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
-
+            
                 // Función para mostrar u ocultar el campo de observaciones
                 function toggleObservationsField() {
                   if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
@@ -144,10 +170,10 @@
                     $observationsField.hide();  // Oculta el campo
                   }
                 }
-
+            
                 // Escucha cambios en el campo de status
                 $statusField.on('change', toggleObservationsField);
-
+            
                 // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
                 toggleObservationsField();
               });

@@ -89,7 +89,6 @@ def asset_create(request):
                 return HttpResponseRedirect(reverse('home:inventory'))
             
             except IntegrityError as e:
-                # Captura el error de integridad (por ejemplo, serial_number duplicado)
                 if 'serial_number' in str(e):
                     messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
                     return HttpResponseRedirect(reverse('home:inventory'))
