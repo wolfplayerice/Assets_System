@@ -1,7 +1,7 @@
 let dataTable = {}; // Inicializamos dataTable como un objeto
 let dataTableIsInitialized = false;
 
-function getDataTableConfig(includeActions = true) {
+function getDataTableConfig(includeActions = true, tableId = "datatable-assets") {
     const baseConfig = {
         ajax: {
             url: "http://127.0.0.1:8000/inventory/list_assets/",
@@ -20,17 +20,32 @@ function getDataTableConfig(includeActions = true) {
             { data: 'fk_category' },
             { data: 'serial_number' },
             { data: 'state_asset' },
-            { data: 'status' }
+            { 
+                data: 'status',
+                render: (data, type, row) => {
+                    if (data === 'Inoperativo' && tableId === "datatable-assets-dash") {
+                        return `${data} <button class='btn btn-circle btn-warning btn-inoperativo' data-observation="${row.observation}"><i class='fa fa-question'></i></button>`;
+                    }
+                    return data;
+                }
+            }
         ]
     };
 
     if (includeActions) {
         baseConfig.columns.push({
             data: null,
-            render: (data, type, row) => `
-                <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
-                <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
-            `
+            render: (data, type, row) => {
+                let buttons = '';
+                if (row.status === 'Inoperativo') {
+                    buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
+                }
+                buttons += `
+                    <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="datatable-assets"><i class='fa-solid fa-pencil'></i></button>
+                    <button class='btn btn-sm btn-danger delete-btna centered' data-id="${row.id}" data-table-id="datatable-assets"><i class='fa-solid fa-trash-can'></i></button>
+                `;
+                return buttons;
+            }
         });
 
         baseConfig.columnDefs.push({
@@ -49,7 +64,7 @@ const initDataTable = async (tableId = "datatable-assets", includeActions = true
     }
 
     // Obtener la configuración base
-    const dataTableOptions = getDataTableConfig(includeActions);
+    const dataTableOptions = getDataTableConfig(includeActions, tableId);
 
     // Inicializar DataTable en la tabla específica
     dataTable[tableId] = $(`#${tableId}`).DataTable(dataTableOptions);
@@ -100,7 +115,12 @@ $(document).on('click', '.delete-btna', function () {
         }
     });
 });
-
+// Evento para mostrar el modal al hacer clic en el botón amarillo
+$(document).on('click', '.btn-inoperativo', function () {
+    const observation = $(this).data('observation');
+    $('#inoperativoModal .modal-body p').text(observation);
+    $('#inoperativoModal').modal('show');
+});
 // Función para obtener el valor de la cookie CSRF
 function getCookie(name) {
     let cookieValue = null;
