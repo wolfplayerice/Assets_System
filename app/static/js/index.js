@@ -137,4 +137,4 @@ function getCookie(name) {
 
 window.addEventListener('load', async () => {
     await initDataTable("datatable-assets"); // Pasamos el ID de la tabla
-})
+});
