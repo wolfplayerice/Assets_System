@@ -1,5 +1,4 @@
 {% extends 'home.html' %}
-
 {% block content %}
 
 <div class="row">
@@ -15,11 +14,16 @@
 
 <table id="datatable-brand" class="table">
     <thead>
+        <div class="flex-row d-flex">
+            <button class='btn btn-md btn-primary me-2' data-toggle="modal" data-target="#register-modal"> <i
+                class='fa-solid fa-plus'></i>
+            </button>
+            <p>Añadir marca</p>
+          </div>
         <tr>
             <th class="centered" scope="col">#</th>
             <th class="centered" scope="col">Marca</th>
-            <th class="centered" scope="col">Opciones <button class='btn btn-sm btn-primary centered'
-            data-toggle="modal" data-target="#register-modal"> <i class='fa-solid fa-plus'></i></button> </th>
+            <th class="centered" scope="col">Opciones</th>
         </tr>
     </thead>
     <tbody id="tablebody_brand">
@@ -37,15 +41,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="infoModalLabel">Información</h5>
+                <h5 class="modal-title" id="infoModalLabel">Registro de marca</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <!-- Contenido del modal -->
-                <p>rio chiquito
-                </p>
+                <form action="{% url 'brand:create_brand' %}" method="post">
+                    {% csrf_token %}
+                    {{ brand_form }}
+                    <input type="submit" value="Submit" class="btn btn-primary">
+                  </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -54,5 +61,38 @@
     </div>
 </div>
 
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel">Error.</h5>
+        </div>
+        <div class="modal-body">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-danger">{{ message }}</div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</div>
 
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="successModalLabel">Éxito</h5>
+    </div>
+    <div class="modal-body">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+</div>
 {% endblock %}

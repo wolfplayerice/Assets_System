@@ -9,7 +9,7 @@ const dataTableOptionsbrand = {
     columnDefs: [
         { targets: [2], orderable: false },
         { targets: [2], searchable: false },
-        { targets: [2], className: 'dt-center' }
+        { targets: "_all", className: 'centered' }
     ],
     columns: [
         { data: null, render: (data, type, row, meta) => meta.row }, // Índice

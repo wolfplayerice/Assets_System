@@ -5,7 +5,6 @@ from django.http import HttpResponseRedirect
 from .forms import AssetCreate
 from django.urls import reverse
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.core.paginator import Paginator
 # Create your views here.
