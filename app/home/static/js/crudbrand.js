@@ -1,50 +1,77 @@
-let dataTablebrand;
-let dataTableIsInitializedbrand = false;
+let dataTableBrand;
+let dataTableIsInitializedBrand = false;
 
-const dataTableOptionsbrand = {
+const dataTableOptionsBrand = {
+    ajax: {
+        url: "http://127.0.0.1:8000/brand/list_brand/",
+        dataSrc: 'Brand'
+    },
     columnDefs: [
-
+        { targets: [2], orderable: false, searchable: false, className: 'dt-center' }
+    ],
+    columns: [
+        { data: null, render: (data, type, row, meta) => meta.row + 1 },
+        { data: 'name' },
+        {
+            data: null,
+            render: (data, type, row) => `
+                <button class='btn btn-sm btn-primary btn-edit centered'>
+                    <i class='fa-solid fa-pencil'></i>
+                </button>
+                <button class='btn btn-sm btn-danger delete-btn-brand centered' data-id="${row.id}">
+                    <i class='fa-solid fa-trash-can'></i>
+                </button>
+            `
+        }
+    ],
+    responsive: true,
+    dom: 'lBfrtip',
+    scrollCollapse: true,
+    scroller: true,
+    scrollY: 200,
+    buttons: [
+        {
+            extend: 'excelHtml5',
+            text: '<i class="fas fa-file-excel"></i>',
+            titleAttr: 'Exportar a Excel',
+            className: 'btn btn-success',
+            exportOptions: { columns: [0, 1] }
+        },
+        {
+            extend: 'pdfHtml5',
+            text: '<i class="fas fa-file-pdf"></i>',
+            titleAttr: 'Exportar a PDF',
+            className: 'btn btn-danger',
+            exportOptions: { columns: [0, 1] }
+        },
+        {
+            extend: 'print',
+            text: '<i class="fa fa-print"></i>',
+            titleAttr: 'Imprimir',
+            className: 'btn btn-info',
+            exportOptions: { columns: [0, 1] }
+        }
     ]
 };
 
-const initDataTablebrand = async () => {
-    if (dataTableIsInitializedbrand) {
-        dataTable.destroy();
+const initDataTableBrand = async () => {
+    try {
+        if (dataTableIsInitializedBrand) {
+            dataTableBrand.destroy();
+            dataTableBrand = null; // Liberar referencia
+        }
+
+        dataTableBrand = $("#datatable-brand").DataTable(dataTableOptionsBrand);
+        dataTableIsInitializedBrand = true;
+    } catch (error) {
+        console.error("Error initializing DataTable:", error);
+        Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
     }
-
-    await listBrands();
-
-    dataTablebrand = $("#datatable-brand").DataTable(dataTableOptionsbrand);
-
-    dataTableIsInitializedbrand = true;
 };
 
-const listBrands = async () => {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/brand/list_brand/");
-        const data = await response.json();
+$(document).on('click', '.delete-btn-brand', function () {
+    const brandId = $(this).data('id');
 
-        let content = ``;
-        data.Brand.forEach((brand, index) => {
-            content += `
-                <tr>
-                    <td> ${index}</td>
-                    <td> ${brand.name}</td>
-                    <td>
-                        <button class='btn btn-sm btn-primary'><i class='fa-solid fa-pencil'></i></button>
-                        <button class='btn btn-sm btn-danger'><i class='fa-solid fa-trash-can'></i></button>
-                    </td>
-                </tr>
-            `;
-        });
-        tablebody_brand.innerHTML = content;
-    } catch (ex) {
-    }
-}
-
-$(document).on('click', '.delete-btnbrand', function () {
-    var brandId = $(this).data('id');
-    //alerta personalizada con sweetalert
     Swal.fire({
         title: '¿Estás seguro de eliminar este registro?',
         text: "No podrás revertir esto.",
@@ -58,46 +85,22 @@ $(document).on('click', '.delete-btnbrand', function () {
             $.ajax({
                 url: `http://127.0.0.1:8000/brand/delete_brand/${brandId}/`,
                 type: 'DELETE',
-                headers: {
-                    "X-CSRFToken": getCookie("csrftoken") // Asegúrate de que esta función esté definida
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                success: (response) => {
+                    Swal.fire('Eliminado!', response.message, 'success');
+                    dataTableBrand.ajax.reload();
                 },
-                success: function (response) {
-                    Swal.fire(
-                        'Eliminado!',
-                        response.message,
-                        'success'
-                    );
-                    dataTablebrand.ajax.reload(); // Recargar la tabla después de eliminar
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    Swal.fire(
-                        'Error!',
-                        "Error al eliminar la marca: " + (jqXHR.responseJSON?.error || "Error desconocido"),
-                        'error'
-                    );
+                error: (jqXHR) => {
+                    Swal.fire('Error!', "Error al eliminar la marca: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
                 }
             });
         }
     });
 });
 
-// Función para obtener el valor de la cookie CSRF
 function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Verifica si el cookie comienza con el nombre que buscas
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
+    const cookieValue = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+    return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null;
 }
 
-window.addEventListener('load', async () => {
-    await initDataTablebrand();
-});
+window.addEventListener('load', initDataTableBrand);
