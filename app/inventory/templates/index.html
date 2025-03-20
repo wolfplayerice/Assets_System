@@ -178,18 +178,20 @@
                 toggleObservationsField();
               });
             </script>
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.tags == 'success' %}
+            $('#successModal').modal('show');
+            {% elif message.tags == 'error' %}
             <script>
               $(document).ready(function () {
-                {% if messages %}
-                {% for message in messages %}
-                {% if message.tags == 'success' %}
-                $('#successModal').modal('show');
-                {% elif message.tags == 'error' %}
-                $('#errorModal').modal('show');
-                {% endif %}
-                {% endfor %}
-                {% endif %}
+
+              $('#errorModal').modal('show');
+
               });
             </script>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
 
             {% endblock %}

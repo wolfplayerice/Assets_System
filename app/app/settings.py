@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'inventory2',
+        'NAME': 'inventory',
         'USER': 'root',
         'PASSWORD': '',
         'HOST': '127.0.0.1',
