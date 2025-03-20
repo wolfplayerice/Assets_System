@@ -6,12 +6,16 @@ from .forms import Create_category
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required
 def category(request):
     category_create_form = Create_category()
-    return render(request, 'crudcat.html', { 'cat_form': category_create_form})
+    return render(request, 'crudcat.html',{
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    }, { 'cat_form': category_create_form})
 
 def category_create(request):
     if request.method == "POST":
@@ -42,6 +46,7 @@ def category_create(request):
     
     return render(request, 'crudcat.html', {'cat_form': category_create_form})
 
+@login_required
 def list_category(request):
     all_data = request.GET.get('all', False)
 
@@ -93,7 +98,7 @@ def list_category(request):
 
     return JsonResponse(response_data)
 
-
+@login_required
 def delete_category(request, category_id):
     print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":
