@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth import authenticate, login as auth_login, logout
 from .forms import VerifyUser
 
 def login(request):
@@ -26,13 +26,9 @@ def login(request):
             if User_Verification is not None:
 
                 auth_login(request, User_Verification)
-                return render(request, 'login.html', {
-
-                    'VerifyUser': VerifyUser_Form,
-                    'success': 'Inicio de sesión exitoso.'
-
-                })
-                # return redirect('../home/')
+                request.session['success'] = 'Inicio de sesión exitoso.'
+                return redirect('../home/dashboard')
+            
             
             else:
 
@@ -48,3 +44,7 @@ def login(request):
 
                 'VerifyUser': VerifyUser_Form
             })
+            
+def log_out(request):
+    logout(request)
+    return redirect('login')
