@@ -1,0 +1,59 @@
+.login{
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/fondo_login.jpg') no-repeat center;
+    background-size: cover;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.login-box{
+    margin-top: 60vh;
+}
+
+
+.login-box {
+    width: 400px;
+    margin: 7% auto;
+  }
+  .login-logo img {
+    width: 100px;
+  }
+  .login-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .login-box-msg {
+    font-size: 1.5rem;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+  }
+  .form-group {
+    width: 100%;
+  }
+  .btn-primary {
+    width: 100%;
+  }
+
+
+
+.logo_bva {
+    width: 50px;
+}
+
+.login-logo img {
+    width: 200px;
+}
+
+.login-card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-box-msg {
+    font-size: 20px;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+}

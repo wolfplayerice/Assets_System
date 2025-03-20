@@ -5,17 +5,21 @@ from django.http import HttpResponseRedirect
 from .forms import AssetCreate
 from django.urls import reverse
 from django.contrib import messages
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required
 def inventory(request):
     asset_create_form = AssetCreate()
-    return render(request, 'index.html', { 'form': asset_create_form})
+    return render(request, 'index.html', { 
+        'form': asset_create_form,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        })
 
-
+@login_required
 def list_assets(request):
     all_data = request.GET.get('all', False)
 
@@ -65,6 +69,7 @@ def list_assets(request):
 
     return JsonResponse(response_data)
 
+@login_required
 def asset_create(request):
     if request.method == "POST":
         asset_create_form = AssetCreate(request.POST)
@@ -111,8 +116,13 @@ def asset_create(request):
     else:
         asset_create_form = AssetCreate()
     
-    return render(request, 'index.html', {'form': asset_create_form})
+    return render(request, 'index.html', {
+        'form': asset_create_form,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        })
 
+@login_required
 def delete_asset(request, asset_id):
     print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":

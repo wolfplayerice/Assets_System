@@ -11,7 +11,7 @@
     font-size: 10px;
     line-height: 1.42857;
   }
-  </style>
+</style>
 <div class="row">
   <div class="col-12 col-sm-6 col-md-3">
     <div class="info-box">
@@ -42,7 +42,8 @@
     <!-- /.info-box -->
   </div>
   <!-- /.col -->
-  <div class="modal fade" id="inoperativoModal" tabindex="-1" role="dialog" aria-labelledby="inoperativoModalLabel" aria-hidden="true">
+  <div class="modal fade" id="inoperativoModal" tabindex="-1" role="dialog" aria-labelledby="inoperativoModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -53,7 +54,8 @@
         </div>
         <div class="modal-body">
           <!-- Contenido del modal -->
-          <p>Este dispositivo está marcado como inoperativo. Por favor, revise los detalles y tome las acciones necesarias.</p>
+          <p>Este dispositivo está marcado como inoperativo. Por favor, revise los detalles y tome las acciones
+            necesarias.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -92,26 +94,28 @@
   </div>
   <!-- /.col -->
 </div>
-  <!-- Modal para dispositivos inoperativos -->
-  <div class="modal fade" id="inoperativoModal" tabindex="-1" role="dialog" aria-labelledby="inoperativoModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <!-- Contenido del modal -->
-          <p>Este dispositivo está marcado como inoperativo. Por favor, revise los detalles y tome las acciones necesarias.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        </div>
+<!-- Modal para dispositivos inoperativos -->
+<div class="modal fade" id="inoperativoModal" tabindex="-1" role="dialog" aria-labelledby="inoperativoModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Contenido del modal -->
+        <p>Este dispositivo está marcado como inoperativo. Por favor, revise los detalles y tome las acciones
+          necesarias.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
+</div>
 <div class="row">
   <div class="col-md-12">
     <div class="card custom-card-height">
@@ -137,10 +141,15 @@
               <tbody id="tablebody_assets">
               </tbody>
             </table>
-            
+
             <script>
               $(document).ready(function () {
                 initDataTable('datatable-assets-dash', false); // Excluir columna de acciones
               });
             </script>
+
+            <!-- Alerta de inicio de sesión exitoso. -->
+            {% if success %}
+            <div id="success-message" style="display: none;">{{ success }}</div>
+            {% endif %}
             {% endblock %}

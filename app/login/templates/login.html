@@ -1,127 +1,59 @@
-<!DOCTYPE html>
 {% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Log in</title>
-  <!-- Tell the browser to be responsive to screen width -->
+  <title>Iniciar sesión</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome-free/css/all.min.css' %}">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- icheck bootstrap -->
-  <link rel="stylesheet" href="{% static 'assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
-  <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-  <!-- Incluye tu archivo CSS personalizado -->
-  <link rel="stylesheet" href="{% static 'assets/dist/css/fondo_login.css' %}">
-  
-  <style>
-    .fade-in {
-      opacity: 0;
-      transition: opacity 1s ease-in;
-    }
-    .fade-in.visible {
-      opacity: 1;
-    }
-  </style>
+  <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
-<body class="hold-transition pepe login-page fade-in">
-<!-- ...código existente... -->
-<div class="login-box" style="width: 400px;">
+<body class="login">
+<div class="login-box">
   <div class="login-logo">
-    <img src="{% static 'assets/dist/img/Letras Login.png' %}" alt="" style="width: 250px;">
+    <img src="{% static 'img/logo_bva.png' %}" class="logo_bva">
   </div>
-  <!-- /.login-logo -->
   <div class="card">
     <div class="card-body login-card-body">
       <p class="login-box-msg">Inicia sesión para ingresar</p>
       <form method="POST">
-
         {% csrf_token %}
-
-        {{ VerifyUser }}
-
-        <!-- <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">
-              <i class="fas fa-user"></i>
-            </span>
-          </div>
-          <input type="email" class="form-control" placeholder="Usuario">
-        </div>
-        <div class="input-group mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">
-              <i class="fas fa-lock"></i>
-            </span>
-          </div>
-          <input type="password" class="form-control" placeholder="Contraseña">
-        </div>
-        <div class="row">
-          <div class="col-8">
-            <div class="icheck-primary">
-              <input type="checkbox" id="remember">
-              <label for="remember">
-                Recuerdame
-              </label>
+        <div class="form-group">
+          <label for="id_username">Usuario:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
             </div>
+            {{ VerifyUser.username|add_class:"form-control" }}
           </div>
-          /.col -->
-          <div class="col-4">
-            <button class="btn btn-primary btn-block">Ingresar</button>
+        </div>
+        <div class="form-group">
+          <label for="id_password">Contraseña:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            </div>
+            {{ VerifyUser.password|add_class:"form-control" }}
           </div>
-          <!-- /.col -->
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block">Ingresar</button>
         </div>
       </form>
     </div>
-    <!-- /.login-card-body -->
   </div>
 </div>
-<!-- /.login-box -->
-
-<!-- jQuery -->
-<script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
-<!-- Bootstrap 4 -->
-<script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<!-- AdminLTE App -->
-<script src="{% static 'assets/dist/js/adminlte.min.js' %}"></script>
-
-<script>
-  $(document).ready(function() {
-    $('body').addClass('visible');
-  });
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="{% static 'js/sweetalert2@11.js' %}"></script>
 <script src="{% static 'js/verify_user.js' %}"></script>
-{% if success %}
-  <div id="success-message" style="display: none;">{{ success }}</div>
-{% endif %}
 {% if error %}
   <div id="error-message" style="display: none;">{{ error }}</div>
 {% endif %}
-
-
-
-<!-- {% if error %}
-  <script>
-    $(document).ready(function() {
-      $('body').addClass('visible');
-      Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: '{{ error }}'
-      });
-      
-    });
-  </script>
-{% endif %} -->
-
 </body>
 </html>

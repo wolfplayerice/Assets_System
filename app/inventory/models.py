@@ -41,7 +41,3 @@ class Asset(models.Model):
         db_table= 'Assets'
         ordering = ['id']
 
-class AssetForm(ModelForm):
-    class Meta:
-        model = Asset
-        fields = ["model"]

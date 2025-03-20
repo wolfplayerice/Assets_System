@@ -7,7 +7,7 @@ const dataTableOptionsBrand = {
         dataSrc: 'Brand'
     },
     columnDefs: [
-        { targets: [2], orderable: false, searchable: false, className: 'dt-center' }
+        { targets: [2], orderable: false, searchable: false, className: 'dt-center',targets: "_all" },
     ],
     columns: [
         { data: null, render: (data, type, row, meta) => meta.row + 1 },

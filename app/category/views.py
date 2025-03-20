@@ -2,12 +2,51 @@ from django.shortcuts import render
 from django.http.response import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from .models import Category
+from .forms import Create_category
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required
 def category(request):
-    return render(request, 'crudcat.html')
+    category_create_form = Create_category()
+    return render(request, 'crudcat.html',{
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    }, { 'cat_form': category_create_form})
 
+def category_create(request):
+    if request.method == "POST":
+        category_create_form = Create_category(request.POST)
+        if category_create_form.is_valid():
+            try:
+                categories = Category(
+                    name=category_create_form.cleaned_data['name'],
+                )
+                categories.save()
+                messages.success(request, 'La categoria se ha guardado correctamente.')
+                return HttpResponseRedirect(reverse('home:category'))
+            
+            except Exception as e:
+                # Captura cualquier otro error inesperado
+                messages.error(request, f'Error inesperado: {str(e)}')
+                return HttpResponseRedirect(reverse('home:category'))
+        
+        else:
+            # Si el formulario no es válido, muestra errores de validación
+            for field, errors in category_create_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en el campo {field}: {error}')
+                    return HttpResponseRedirect(reverse('home:category'))
+    
+    else:
+        category_create_form = Create_category()
+    
+    return render(request, 'crudcat.html', {'cat_form': category_create_form})
+
+@login_required
 def list_category(request):
     all_data = request.GET.get('all', False)
 
@@ -59,7 +98,7 @@ def list_category(request):
 
     return JsonResponse(response_data)
 
-
+@login_required
 def delete_category(request, category_id):
     print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":

@@ -103,7 +103,7 @@
             <i class="fas fa-user-circle fa-2x img-circle elevation-2" style="color: white;"></i>
           </div>
           <div class="info">
-            <a href="#" class="d-block user-name">Tutor Torres (Administrador)</a>
+            <a href="#" class="d-block user-name">{{ first_name }} {{ last_name }} (Administrador)</a>
           </div>
         </div>
 
@@ -141,7 +141,7 @@
                   </a>
               </li>
               <li class="nav-item">
-                  <a href="pages/widgets.html" class="nav-link" id="nav-cerrar-sesion">
+                  <a href="{% url 'logout' %}" class="nav-link" id="nav-cerrar-sesion">
                       <i class="nav-icon fas fa-sign-out-alt"></i>
                       <p>Cerrar Sesión</p>
                   </a>
@@ -236,6 +236,8 @@
         <script src="{% static 'js/index.js' %}"></script> <!-- custom js-->
         <script src="{% static 'js/crudbrand.js' %}"></script> <!-- custom js-->
         <script src="{% static 'js/crudcat.js' %}"></script> <!-- custom js-->
+        <script src="{% static 'js/sweetalert2@11.js' %}"></script> <!-- Datatables-->
+        <script src="{% static 'js/verify_user.js' %}"></script> <!-- custom js-->
 
         <script>
           $(function () {

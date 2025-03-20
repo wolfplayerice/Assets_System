@@ -1,5 +1,5 @@
 {% extends 'home.html' %}
-
+{% load widget_tweaks %}
 {% block content %}
 
 <div class="row">
@@ -15,11 +15,16 @@
 
 <table id="datatable-cat" class="table">
     <thead>
+        <div class="flex-row d-flex">
+            <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal"> <i
+                class='fa-solid fa-plus'></i>
+            </button>
+            <p>Añadir Categoria</p>
+          </div>
         <tr>
             <th class="centered" scope="col">#</th>
             <th class="centered" scope="col">Categoria</th>
-            <th class="centered" scope="col">Opciones <button class='btn btn-sm btn-primary centered'
-                    data-toggle="modal" data-target="#register-modal"> <i class='fa-solid fa-plus'></i></button> </th>
+            <th class="centered" scope="col">Opciones</th>
         </tr>
     </thead>
     <tbody id="tablebody_cat">
@@ -44,8 +49,20 @@
             </div>
             <div class="modal-body">
                 <!-- Contenido del modal -->
-                <p>rio chiquito
-                </p>
+                <form action="{% url 'category:create_category' %}" method="post">
+                    {% csrf_token %}
+                    {% for field in cat_form %}
+                      <!-- se usa django-widget_tweaks -->
+                      <div class="form-group form-floating mb-3">
+                        {% if field.field.widget.input_type == 'text' %}
+                        <!-- Campos de tipo select -->
+                        {{ field|add_class:"form-control" }}
+                        {% endif %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      </div>
+                      {% endfor %}
+                    <input type="submit" value="Submit" class="btn btn-primary">
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -54,5 +71,53 @@
     </div>
 </div>
 
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="errorModalLabel">Error.</h5>
+        </div>
+        <div class="modal-body">
+          {% if messages %}
+          {% for message in messages %}
+          <div class="alert alert-danger">{{ message }}</div>
+          {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+aria-hidden="true">
+<div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="successModalLabel">Éxito</h5>
+    </div>
+    <div class="modal-body">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-success">{{ message }}</div>
+      {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    $('#successModal').modal('show');
+    {% elif message.tags == 'error' %}
+    $('#errorModal').modal('show');
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+  });
+</script>
 
 {% endblock %}
