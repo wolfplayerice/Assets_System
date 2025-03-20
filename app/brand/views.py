@@ -4,17 +4,23 @@ from .models import Brand
 from .forms import BrandCreate
 from django.contrib import messages
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
-
+@login_required
 def brand(request):
-    return render(request, 'crudbrand.html')
+    return render(request, 'crudbrand.html', {
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    })
 
+@login_required
 def list_brand(request):
     brands = list(Brand.objects.values())
     data = {'Brand': brands}
     return JsonResponse(data)
 
+@login_required
 def brand_create(request):
     if request.method == "POST":
         brand_create_form = BrandCreate(request.POST)
@@ -42,9 +48,13 @@ def brand_create(request):
     else:
         brand_create_form = BrandCreate()
     
-    return render(request, 'crudbrand.html', {'brand_form': brand_create_form})
+    return render(request, 'crudbrand.html', {
+        'brand_form': brand_create_form,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        })
 
-
+@login_required
 def delete_brand(request, brand_id):
     print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":
