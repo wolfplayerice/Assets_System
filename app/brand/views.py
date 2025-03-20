@@ -3,25 +3,19 @@ from django.http.response import JsonResponse, HttpResponse
 from .models import Brand
 from .forms import Create_brand
 from django.contrib import messages
-<<<<<<< HEAD
 from django.http import HttpResponseRedirect
-=======
-
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
->>>>>>> 714d3226c99937e2d27a0273df02b8244157ddd4
 # Create your views here.
 
 @login_required
 def brand(request):
-<<<<<<< HEAD
     brand_create_form = Create_brand()
-    return render(request, 'crudbrand.html', { 'brand_form': brand_create_form}, { 'first_name': request.user.first_name,
+    return render(request, 'crudbrand.html', { 
+        'first_name': request.user.first_name,
         'last_name': request.user.last_name,
+        'brand_form': brand_create_form
     })
-=======
-
-        
->>>>>>> 714d3226c99937e2d27a0273df02b8244157ddd4
 
 @login_required
 def list_brand(request):
@@ -57,18 +51,13 @@ def brand_create(request):
     else:
         brand_create_form = Create_brand()
     
-<<<<<<< HEAD
-    return render(request, 'crudbrand.html', {'brand_form': brand_create_form})
-
-=======
-    return render(request, 'crudbrand.html', {
+    return render(request, 'crudbrand.html', {'brand_form': brand_create_form}, {
         'brand_form': brand_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         })
 
 @login_required
->>>>>>> 714d3226c99937e2d27a0273df02b8244157ddd4
 def delete_brand(request, brand_id):
     print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":
