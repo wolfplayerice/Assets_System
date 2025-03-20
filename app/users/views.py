@@ -1,32 +1,71 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
+from django.http.response import JsonResponse, HttpResponse
+from django.core.paginator import Paginator
 
 # Create your views here.
 
-class UserListView(ListView):
-    model = User
-    template_name = 'user_list.html'
-    context_object_name = 'users'
+def user(request):
+    return render(request, 'users.html', { 
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    })
 
-# Crear un nuevo usuario
-class UserCreateView(CreateView):
-    model = User
-    form_class = UserCreationForm
-    template_name = 'user_form.html'
-    success_url = reverse_lazy('user_list')
+def list_users(request):
+    all_data = request.GET.get('all', False)
 
-# Editar un usuario existente
-class UserUpdateView(UpdateView):
-    model = User
-    form_class = UserChangeForm
-    template_name = 'user_form.html'
-    success_url = reverse_lazy('user_list')
+    users = User.objects.all()
 
-# Eliminar un usuario
-class UserDeleteView(DeleteView):
-    model = User
-    template_name = 'user_confirm_delete.html'
-    success_url = reverse_lazy('user_list')
+    data = [{
+        'id': user.id,
+        'username': user.username,
+        'name': user.first_name,
+        'last_name': user.last_name,
+        'is_active': user.is_active
+    } for user in users]
+
+    if all_data:
+        response_data = {
+            'users': data,
+        }
+        return JsonResponse(response_data)
+
+    try:
+        draw = int(request.GET.get('draw', 0))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))  # Número de registros por página
+    except (ValueError, TypeError):
+        return JsonResponse({'error': 'Invalid parameters'}, status=400)
+
+    search_value = request.GET.get('search[value]', None)
+
+    if search_value:
+        users = users.filter(username__icontains=search_value)
+
+    total_records = users.count()
+    filtered_records = users.count()
+
+    paginator = Paginator(users, length)
+    page = (start // length) + 1
+
+    try:
+        user_page = paginator.page(page)
+    except Exception:
+        user_page = paginator.page(1)
+
+    data = [{
+        'id': user.id,
+        'username': user.username,
+        'name': user.first_name,
+        'last_name': user.last_name,
+        'is_active': user.is_active
+    } for user in user_page]
+
+    response_data = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': filtered_records,
+        'data': data,
+    }
+
+    return JsonResponse(response_data)

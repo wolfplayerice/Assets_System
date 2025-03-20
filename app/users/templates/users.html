@@ -1,5 +1,4 @@
 {% extends 'home.html' %}
-{% load widget_tweaks %}
 {% block content %}
 
 <div class="row">
@@ -13,7 +12,7 @@
         <div class="row">
           <div class="col-md-12">
 
-            <table id="datatable-users" class="table responsive">
+           <table id="datatable-users" class="table responsive">
               <thead>
                 <tr>
                   <th class="centered" scope="col">#</th>
@@ -29,7 +28,7 @@
 
               </tbody>
             </table>
-
+      
             <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
               aria-hidden="true">
               <div class="modal-dialog" role="document">
@@ -42,23 +41,7 @@
                   </div>
                   <div class="modal-body">
                     <!-- Contenido del modal -->
-                    <form action="{% url 'inventory:asset_create' %}" method="post">
-                      {% csrf_token %}
-                      {% for field in form %}
-                      <!-- se usa django-widget_tweaks -->
-                      <div class="form-group form-floating mb-3">
-                        {% if field.field.widget.input_type == 'select' %}
-                        <!-- Campos de tipo select -->
-                        {{ field|add_class:"form-select" }}
-                        {% else %}
-                        <!-- Campos de tipo input o textarea -->
-                        {{ field|add_class:"form-control" }}
-                        {% endif %}
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                      </div>
-                      {% endfor %}
-                      <input type="submit" value="Submit" class="btn btn-primary">
-                    </form>
+                 
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -102,3 +85,5 @@
                 </div>
               </div>
             </div>
+
+            {% endblock %}
