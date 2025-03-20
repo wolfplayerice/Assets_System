@@ -1,14 +1,16 @@
 from django.shortcuts import render
 from django.http.response import JsonResponse, HttpResponse
 from .models import Brand
-from .forms import BrandCreate
+from .forms import Create_brand
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 # Create your views here.
 
 
 def brand(request):
-    return render(request, 'crudbrand.html')
+    brand_create_form = Create_brand
+    return render(request, 'crudbrand.html', { 'brand_form': brand_create_form})
 
 def list_brand(request):
     brands = list(Brand.objects.values())
@@ -17,7 +19,7 @@ def list_brand(request):
 
 def brand_create(request):
     if request.method == "POST":
-        brand_create_form = BrandCreate(request.POST)
+        brand_create_form = Create_brand(request.POST)
         if brand_create_form.is_valid():
             try:
                 brands = Brand(
@@ -25,25 +27,24 @@ def brand_create(request):
                 )
                 brands.save()
                 messages.success(request, 'La marca se ha guardado correctamente.')
-                return redirect('home:brand')
+                return HttpResponseRedirect(reverse('home:brand'))
             
             except Exception as e:
                 # Captura cualquier otro error inesperado
                 messages.error(request, f'Error inesperado: {str(e)}')
-                return redirect('home:brand')
+                return HttpResponseRedirect(reverse('home:brand'))
         
         else:
             # Si el formulario no es válido, muestra errores de validación
             for field, errors in brand_create_form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
-            return redirect('home:brand')
+                    return HttpResponseRedirect(reverse('home:brand'))
     
     else:
-        brand_create_form = BrandCreate()
+        brand_create_form = Create_brand()
     
     return render(request, 'crudbrand.html', {'brand_form': brand_create_form})
-
 
 def delete_brand(request, brand_id):
     print(f"Received request method: {request.method}")  # Para depuración

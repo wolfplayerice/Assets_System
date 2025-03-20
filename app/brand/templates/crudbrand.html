@@ -1,4 +1,5 @@
 {% extends 'home.html' %}
+{% load widget_tweaks %}
 {% block content %}
 
 <div class="row">
@@ -15,7 +16,7 @@
 <table id="datatable-brand" class="table">
     <thead>
         <div class="flex-row d-flex">
-            <button class='btn btn-md btn-primary me-2' data-toggle="modal" data-target="#register-modal"> <i
+            <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal"> <i
                 class='fa-solid fa-plus'></i>
             </button>
             <p>Añadir marca</p>
@@ -50,7 +51,16 @@
                 <!-- Contenido del modal -->
                 <form action="{% url 'brand:create_brand' %}" method="post">
                     {% csrf_token %}
-                    {{ brand_form }}
+                    {% for field in brand_form %}
+                      <!-- se usa django-widget_tweaks -->
+                      <div class="form-group form-floating mb-3">
+                        {% if field.field.widget.input_type == 'text' %}
+                        <!-- Campos de tipo select -->
+                        {{ field|add_class:"form-control" }}
+                        {% endif %}
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      </div>
+                      {% endfor %}
                     <input type="submit" value="Submit" class="btn btn-primary">
                   </form>
             </div>
@@ -95,4 +105,18 @@ aria-hidden="true">
   </div>
 </div>
 </div>
+
+<script>
+  $(document).ready(function () {
+    {% if messages %}
+    {% for message in messages %}
+    {% if message.tags == 'success' %}
+    $('#successModal').modal('show');
+    {% elif message.tags == 'error' %}
+    $('#errorModal').modal('show');
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+  });
+</script>
 {% endblock %}
