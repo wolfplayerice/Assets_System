@@ -1,4 +1,5 @@
 {% load static %}
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,6 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body class="login">
 <div class="login-box">
@@ -19,14 +22,34 @@
       <p class="login-box-msg">Inicia sesión para ingresar</p>
       <form method="POST">
         {% csrf_token %}
-        {{ VerifyUser }}
-          <div class="col-4">
-            <button class="btn btn-primary btn-block">Ingresar</button>
+        <div class="form-group">
+          <label for="id_username">Usuario:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-user"></i></span>
+            </div>
+            {{ VerifyUser.username|add_class:"form-control" }}
           </div>
+        </div>
+        <div class="form-group">
+          <label for="id_password">Contraseña:</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-lock"></i></span>
+            </div>
+            {{ VerifyUser.password|add_class:"form-control" }}
+          </div>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block">Ingresar</button>
+        </div>
       </form>
     </div>
   </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="{% static 'js/sweetalert2@11.js' %}"></script>
 <script src="{% static 'js/verify_user.js' %}"></script>
 {% if error %}
