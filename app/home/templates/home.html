@@ -27,7 +27,7 @@
     </nav>
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="" class="brand-link d-flex align-items-center">
-        <i class="fas fa-warehouse fa-lg brand-image img-circle elevation-1"></i>
+        <img src="{% static 'img/broba_blanco.png' %}" alt="Inventario Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
         <span class="brand-text font-weight-light ml-2">Inventario_carmbiar_nombre</span>
       </a>
       <div class="sidebar">
@@ -36,7 +36,7 @@
             <i class="fas fa-user-circle fa-2x img-circle elevation-2"></i>
           </div>
           <div class="info">
-            <a href="#" class="d-block user-name">{{ first_name|slice:":1" }}. {{ last_name }}</a>
+            <a href="{% url 'user_info' %}" class="d-block user-name">{{ first_name|slice:":1" }}. {{ last_name }}</a>
           </div>
         </div>
         <nav class="mt-2">
