@@ -19,23 +19,19 @@ window.addEventListener('load', function () {
     }
 });
 
-
-// funciones de la tabla usuarios, las meto aca porque ya esto trata de usuarios y que ladilla hacer otro archivo
-
-let dataTableUser;
-let dataTableIsInitializedUser = false;
-
-const initDataTableUser = async () => {
+let dataTableuser;
+let dataTableIsInitializeduser = false;
+const initDataTableuser = async () => {
     try {
-        if (dataTableIsInitializedUser) {
-            dataTableUser.destroy();
-            dataTableUser = null; // Liberar referencia para la recolección de basura
+        if (dataTableIsInitializeduser) {
+            dataTableuser.destroy();
+            dataTableuser = null; // Liberar referencia para la recolección de basura
         }
 
-        dataTableUser = $("#datatable-users").DataTable({
+        dataTableuser = $("#datatable-users").DataTable({
             serverSide: true,
             ajax: {
-                url: "http://127.0.0.1:8000/users/list_user/",
+                url: "http://127.0.0.1:8000/users/list_users/",
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error fetching data:", textStatus, errorThrown);
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
@@ -46,7 +42,10 @@ const initDataTableUser = async () => {
                     data: null,
                     render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1,
                 },
+                { data: "username" },
                 { data: "name" },
+                { data: "last_name" },
+                { data: "is_active" },
                 {
                     data: null,
                     render: (data, type, row) => `
@@ -78,17 +77,41 @@ const initDataTableUser = async () => {
                     action: (e, dt, button, config) => {
                         $("#loading-indicator").show();
                         $.ajax({
-                            url: 'http://127.0.0.1:8000/users/list_user/?all=true',
+                            url: 'http://127.0.0.1:8000/users/list_users/?all=true',
                             type: 'GET',
                             success: (response) => {
-                                const data = response.User.map(user => [user.id, user.username, user.first_name, user.last_name, user.is_active]);
+                                const data = response.Category.map(category => [category.id, category.name]);
                                 const docDefinition = {
                                     content: [
-                                        { text: 'Lista de Usuarios', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
-                                        { table: { body: [['ID', 'Nombre'], ...data] } },
-                                    ],
-                                    styles: { header: { fontSize: 18, bold: true } },
-                                };
+                                        { text: 'Lista de Categorías', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
+                                        { table: { 
+                                            headerRows: 1,
+                                            widths: ['*', '*'],
+                                            body: [
+                                                [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
+                                                ...data
+                                            ]
+                                        },
+                                        layout: 'lightHorizontalLines' // Estilo de la tabla
+                                    }
+                                ],
+                                styles: {
+                                    header: { 
+                                        fontSize: 18, 
+                                        bold: true,
+                                        color: '#2c3e50' // Color del texto
+                                    },
+                                    tableHeader: {
+                                        bold: true,
+                                        fontSize: 13,
+                                        color: '#34495e' // Color del texto del encabezado de la tabla
+                                    }
+                                },
+                                defaultStyle: {
+                                    fontSize: 12,
+                                    color: '#2c3e50' // Color del texto por defecto
+                                }
+                            };
                                 pdfMake.createPdf(docDefinition).open();
                                 $("#loading-indicator").hide();
                             },
@@ -112,9 +135,56 @@ const initDataTableUser = async () => {
             ],
         });
 
-        dataTableIsInitializedUser = true;
+        dataTableIsInitializeduser = true;
     } catch (error) {
         console.error("Error initializing DataTable:", error);
         Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
     }
 };
+
+$(document).on('click', '.delete-btn', function () {
+    const categoryId = $(this).data('id');
+    Swal.fire({
+        title: '¿Estás seguro de eliminar este registro?',
+        text: "No podrás revertir esto.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `http://127.0.0.1:8000/category/delete_category/${categoryId}/`,
+                type: 'DELETE',
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                success: (response) => {
+                    Swal.fire('Eliminado!', response.message, 'success');
+                    dataTableCategory.ajax.reload();
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    Swal.fire('Error!', "Error al eliminar la categoría: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                },
+            });
+        }
+    });
+});
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+window.addEventListener('load', async () => {
+    await initDataTableuser();
+});
