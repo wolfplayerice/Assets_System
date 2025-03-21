@@ -34,19 +34,16 @@ def brand_create(request):
                 )
                 brands.save()
                 messages.success(request, 'La marca se ha guardado correctamente.')
-                return HttpResponseRedirect(reverse('home:brand'))
             
             except Exception as e:
                 # Captura cualquier otro error inesperado
                 messages.error(request, f'Error inesperado: {str(e)}')
-                return HttpResponseRedirect(reverse('home:brand'))
         
         else:
             # Si el formulario no es válido, muestra errores de validación
             for field, errors in brand_create_form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
-                    return HttpResponseRedirect(reverse('home:brand'))
     
     else:
         brand_create_form = Create_brand()

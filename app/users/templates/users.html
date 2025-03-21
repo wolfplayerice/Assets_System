@@ -1,4 +1,5 @@
 {% extends 'home.html' %}
+{% load widget_tweaks %}
 {% block content %}
 
 <div class="row">
@@ -39,14 +40,28 @@
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">Información</h5>
+                    <h5 class="modal-title" id="infoModalLabel">Registro de Usuarios</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
                   <div class="modal-body">
                     <!-- Contenido del modal -->
-
+                    <form action="{% url 'users:create_user' %}" method="post">
+                      {% csrf_token %}
+                      {% for field in user_form %}
+                      <!-- se usa django-widget_tweaks -->
+                      <div class="form-group form-floating mb-3">
+                        {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'password' or field.field.widget.input_type == 'email'%}
+                        <!-- Campos de tipo select -->
+                        {{ field|add_class:"form-control" }}
+                        {% endif %}
+                        
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      </div>
+                      {% endfor %}
+                      <input type="submit" value="Submit" class="btn btn-primary">
+                    </form>
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -91,4 +106,20 @@
               </div>
             </div>
 
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+          <script>
+          {% if messages %}
+          {% for message in messages %}
+          {% if message.tags == 'success' %}
+          $('#successModal').modal('show');
+          {% elif message.tags == 'error' %}
+            $(document).ready(function () {
+            $('#errorModal').modal('show');
+            });
+          {% endif %}
+          {% endfor %}
+          {% endif %}
+        </script>
             {% endblock %}
