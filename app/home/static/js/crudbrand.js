@@ -2,6 +2,8 @@ let dataTableBrand;
 let dataTableIsInitializedBrand = false;
 
 const dataTableOptionsBrand = {
+    serverSide: true,
+
     ajax: {
         url: "http://127.0.0.1:8000/brand/list_brand/",
         dataSrc: 'Brand'

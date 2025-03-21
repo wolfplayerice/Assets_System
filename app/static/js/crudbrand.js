@@ -1,66 +1,180 @@
-let dataTableBrand;
-let dataTableIsInitializedBrand = false;
-
-const dataTableOptionsBrand = {
-    ajax: {
-        url: "http://127.0.0.1:8000/brand/list_brand/",
-        dataSrc: 'Brand'
-    },
-    columnDefs: [
-        { targets: [2], orderable: false, searchable: false,
-        className: 'dt-center',targets: "_all" },
-    ],
-    columns: [
-        { data: null, render: (data, type, row, meta) => meta.row + 1 },
-        { data: 'name' },
-        {
-            data: null,
-            render: (data, type, row) => `
-                <button class='btn btn-sm btn-primary btn-edit centered'>
-                    <i class='fa-solid fa-pencil'></i>
-                </button>
-                <button class='btn btn-sm btn-danger delete-btn-brand centered' data-id="${row.id}">
-                    <i class='fa-solid fa-trash-can'></i>
-                </button>
-            `
-        }
-    ],
-    responsive: true,
-    dom: 'lBfrtip',
-    buttons: [
-        {
-            extend: 'excelHtml5',
-            text: '<i class="fas fa-file-excel"></i>',
-            titleAttr: 'Exportar a Excel',
-            className: 'btn btn-success',
-            exportOptions: { columns: [0, 1] }
-        },
-        {
-            extend: 'pdfHtml5',
-            text: '<i class="fas fa-file-pdf"></i>',
-            titleAttr: 'Exportar a PDF',
-            className: 'btn btn-danger',
-            exportOptions: { columns: [0, 1] }
-        },
-        {
-            extend: 'print',
-            text: '<i class="fa fa-print"></i>',
-            titleAttr: 'Imprimir',
-            className: 'btn btn-info',
-            exportOptions: { columns: [0, 1] }
-        }
-    ]
-};
-
-const initDataTableBrand = async () => {
+let dataTablebrand;
+let dataTableIsInitializedbrand = false;
+const initDataTablebrand = async () => {
     try {
-        if (dataTableIsInitializedBrand) {
-            dataTableBrand.destroy();
-            dataTableBrand = null; // Liberar referencia
+        if (dataTableIsInitializedbrand) {
+            dataTablebrand.destroy();
+            dataTablebrand = null; // Liberar referencia para la recolección de basura
         }
 
-        dataTableBrand = $("#datatable-brand").DataTable(dataTableOptionsBrand);
-        dataTableIsInitializedBrand = true;
+        dataTablebrand = $("#datatable-brand").DataTable({
+            serverSide: true,
+            ajax: {
+                url: "http://127.0.0.1:8000/brand/list_brand/",
+                error: (jqXHR, textStatus, errorThrown) => {
+                    console.error("Error fetching data:", textStatus, errorThrown);
+                    Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
+                },
+            },
+            columnDefs: [
+                {
+                    targets: [2], orderable: false, searchable: false,
+                    className: 'dt-center', targets: "_all"
+                },
+            ],
+            columns: [
+                {
+                    data: null,
+                    render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1,
+                },
+                { data: "name" },
+                {
+                    data: null,
+                    render: (data, type, row) => `
+                        <button class='btn btn-sm btn-primary edit-btn' data-id='${row.id}'>
+                            <i class='fa-solid fa-pencil'></i>
+                        </button>
+                        <button class='btn btn-sm btn-danger delete-btn-brand' data-id='${row.id}'>
+                            <i class='fa-solid fa-trash-can'></i>
+                        </button>`,
+                },
+            ],
+            responsive: true,
+            dom: "lBfrtip",
+            buttons: [
+                {
+                    extend: "excelHtml5",
+                    text: '<i class="fas fa-file-excel"></i> ',
+                    titleAttr: "Exportar a Excel",
+                    className: "btn btn-success",
+                    exportOptions: {
+                        columns: [0, 1],
+                    },
+                },
+                {
+                    extend: 'pdfHtml5',
+                    text: '<i class="fas fa-file-pdf"></i>',
+                    titleAttr: 'Exportar a PDF',
+                    className: 'btn btn-danger',
+                    action: (e, dt, button, config) => {
+                        $("#loading-indicator").show();
+                        $.ajax({
+                            url: 'http://127.0.0.1:8000/brand/list_brand/?all=true',
+                            type: 'GET',
+                            success: (response) => {
+                                const data = response.brand.map(brand => [brand.id, brand.name]);
+
+                                // Obtener la fecha actual
+                                const today = new Date();
+
+                                // Obtener componentes de la fecha y hora
+                                /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
+                                const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
+                                const year = today.getFullYear(); // Año (4 dígitos)
+                                const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
+                                const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
+                                const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
+
+                                // Formato personalizado: DD-MM-YYYY HH:MM:SS
+                                /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
+                                const formattedDateTime = today.toLocaleString();
+                                const docDefinition = {
+                                    content: [
+                                        // Logos en columnas
+                                        {
+                                            columns: [
+                                                {
+                                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
+                                                    width: 80, // Ancho de la imagen
+                                                    alignment: 'left', // Alineación a la izquierda
+                                                    margin: [0, 0, 0, 10] // Margen de la imagen
+                                                },
+                                                {
+                                                    text: '', // Columna vacía para separar los logos
+                                                    width: '*', // Ocupa el espacio restante
+                                                },
+                                                {
+                                                    image: logo, // Logo derecho (Base64 o URL)
+                                                    width: 80, // Ancho de la imagen
+                                                    alignment: 'right', // Alineación a la derecha
+                                                    margin: [0, 0, 0, 10] // Margen de la imagen
+                                                }
+                                            ],
+                                            columnGap: 10 // Espacio entre columnas (opcional)
+                                        },
+                                        {
+                                            text: 'Lista de Categorías',
+                                            style: 'header',
+                                            alignment: 'center',
+                                            margin: [0, 10, 0, 20]
+                                        },
+                                        {
+                                            table: {
+                                                headerRows: 1,
+                                                widths: ['*', '*'],
+                                                body: [
+                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
+                                                    ...data
+                                                ]
+                                            },
+                                            layout: 'lightHorizontalLines' // Estilo de la tabla
+                                        }
+                                    ],
+                                    styles: {
+                                        header: {
+                                            fontSize: 18,
+                                            bold: true,
+                                            color: '#2c3e50' // Color del texto
+                                        },
+                                        tableHeader: {
+                                            bold: true,
+                                            fontSize: 13,
+                                            color: '#34495e' // Color del texto del encabezado de la tabla
+                                        },
+                                        footer: {
+                                            fontSize: 10,
+                                            alignment: 'center',
+                                            color: '#666666' // Color del texto del pie de página
+                                        }
+                                    },
+                                    defaultStyle: {
+                                        fontSize: 12,
+                                        color: '#2c3e50' // Color del texto por defecto
+                                    },
+                                    footer: (currentPage, pageCount) => {
+                                        return {
+                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                                            style: 'footer',
+                                            margin: [0, 10, 0, 0] // Margen del pie de página
+                                        };
+                                    }
+                                };
+
+                                // Generar y descargar el PDF con un nombre personalizado
+                                pdfMake.createPdf(docDefinition).download(`Lista_de_Categorias_${formattedDateTime}.pdf`);
+                                $("#loading-indicator").hide();
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                console.error('Error fetching all data:', textStatus, errorThrown);
+                                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+                                $("#loading-indicator").hide();
+                            },
+                        });
+                    },
+                },
+                {
+                    extend: "print",
+                    text: '<i class="fa fa-print"></i> ',
+                    titleAttr: "Imprimir",
+                    className: "btn btn-info",
+                    exportOptions: {
+                        columns: [0, 1],
+                    },
+                },
+            ],
+        });
+
+        dataTableIsInitializedbrand = true;
     } catch (error) {
         console.error("Error initializing DataTable:", error);
         Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
@@ -69,7 +183,6 @@ const initDataTableBrand = async () => {
 
 $(document).on('click', '.delete-btn-brand', function () {
     const brandId = $(this).data('id');
-
     Swal.fire({
         title: '¿Estás seguro de eliminar este registro?',
         text: "No podrás revertir esto.",
@@ -86,19 +199,31 @@ $(document).on('click', '.delete-btn-brand', function () {
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
                     Swal.fire('Eliminado!', response.message, 'success');
-                    dataTableBrand.ajax.reload();
+                    dataTablebrand.ajax.reload();
                 },
-                error: (jqXHR) => {
-                    Swal.fire('Error!', "Error al eliminar la marca: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
-                }
+                error: (jqXHR, textStatus, errorThrown) => {
+                    Swal.fire('Error!', "Error al eliminar la categoría: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                },
             });
         }
     });
 });
 
 function getCookie(name) {
-    const cookieValue = document.cookie.split('; ').find(row => row.startsWith(name + '='));
-    return cookieValue ? decodeURIComponent(cookieValue.split('=')[1]) : null;
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
-window.addEventListener('load', initDataTableBrand);
+window.addEventListener('load', async () => {
+    await initDataTablebrand();
+});

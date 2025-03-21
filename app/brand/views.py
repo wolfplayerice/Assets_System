@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
 # Create your views here.
 
 @login_required
@@ -19,9 +21,55 @@ def brand(request):
 
 @login_required
 def list_brand(request):
-    brands = list(Brand.objects.values())
-    data = {'Brand': brands}
-    return JsonResponse(data)
+    all_data = request.GET.get('all', False)
+
+    brand = Brand.objects.all()
+
+    data = [{
+        'name': brands.name,
+        'id': brands.id,
+    } for brands in brand]
+
+    if all_data:
+        response_data = {
+            'Brand': data,
+        }
+        return JsonResponse(response_data)
+    draw = int(request.GET.get('draw', 0))
+    start = int(request.GET.get('start', 0))
+    length = int(request.GET.get('length', 10))  # Número de registros por página
+
+    search_value = request.GET.get('search[value]', None)
+
+    brand = Brand.objects.all()
+
+    if search_value:
+        brand = brand.filter(name__icontains=search_value)
+
+    total_records = brand.count()
+    filtered_records = brand.count()
+
+    paginator = Paginator(brand, length)
+    page = (start // length) + 1
+
+    try:
+        brand_page = paginator.page(page)
+    except Exception:
+        brand_page = paginator.page(1)
+
+    data = [{
+        'name': brand.name,
+        'id': brand.id,
+    } for brand in brand_page]
+
+    response_data = {
+        'draw': draw,
+        'recordsTotal': total_records,
+        'recordsFiltered': filtered_records,
+        'data': data,
+    }
+
+    return JsonResponse(response_data)
 
 @login_required
 def brand_create(request):

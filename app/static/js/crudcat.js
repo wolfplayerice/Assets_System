@@ -84,7 +84,7 @@ const initDataTableCategory = async () => {
                                         {
                                             columns: [
                                                 {
-                                                    image: logo, // Logo izquierdo (Base64 o URL)
+                                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
                                                     width: 80, // Ancho de la imagen
                                                     alignment: 'left', // Alineación a la izquierda
                                                     margin: [0, 0, 0, 10] // Margen de la imagen
@@ -94,7 +94,7 @@ const initDataTableCategory = async () => {
                                                     width: '*', // Ocupa el espacio restante
                                                 },
                                                 {
-                                                    image: gobernacion, // Logo derecho (Base64 o URL)
+                                                    image: logo, // Logo derecho (Base64 o URL)
                                                     width: 80, // Ancho de la imagen
                                                     alignment: 'right', // Alineación a la derecha
                                                     margin: [0, 0, 0, 10] // Margen de la imagen
