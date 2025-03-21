@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def inventory(request):
     asset_create_form = AssetCreate()
-    return render(request, 'index.html', { 
+    return render(request, 'crudassets.html', { 
         'form': asset_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
@@ -26,7 +26,7 @@ def list_assets(request):
     assets = Asset.objects.all()
 
     # Usamos to_dict() para obtener los datos de cada asset
-    data = {'Asset': [asset.to_dict() for asset in assets]}
+    data = [asset.to_dict() for asset in assets]
 
     if all_data:
         response_data = {

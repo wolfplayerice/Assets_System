@@ -2,15 +2,25 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+from .forms import CreateUser
+from django.urls import reverse
+from django.contrib import messages
+from django.db import IntegrityError
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-
+@login_required
 def user(request):
+    user_create_form = CreateUser()
     return render(request, 'users.html', { 
+        'user_form': user_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
     })
 
+@login_required
 def list_users(request):
     all_data = request.GET.get('all', False)
 
@@ -69,3 +79,38 @@ def list_users(request):
     }
 
     return JsonResponse(response_data)
+
+@login_required
+def user_create(request):
+    if request.method == "POST":
+        user_create_form = CreateUser(request.POST)
+        if user_create_form.is_valid():
+            try:
+                user_create_form.save()
+                messages.success(request, 'El usuario se ha guardado correctamente.')
+                return HttpResponseRedirect(reverse('home:users'))
+            
+            except IntegrityError as e:
+                if 'username' in str(e):
+                    messages.error(request, 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.')
+                else:
+                    messages.error(request, 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.')
+            
+            except Exception as e:
+                # Captura cualquier otro error inesperado
+                messages.error(request, f'Error inesperado: {str(e)}')
+        
+        else:
+            # Si el formulario no es válido, muestra errores de validación
+            for field, errors in user_create_form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en el campo {field}: {error}')
+    
+    else:
+        user_create_form = CreateUser()
+    
+    return render(request, 'users.html', {
+        'user_form': user_create_form,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        })

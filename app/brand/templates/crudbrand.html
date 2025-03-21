@@ -106,19 +106,23 @@ aria-hidden="true">
 </div>
 </div>
 
-{% if messages %}
-{% for message in messages %}
-{% if message.tags == 'success' %}
-$('#successModal').modal('show');
-{% elif message.tags == 'error' %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 <script>
-  $(document).ready(function () {
-
-   $('#errorModal').modal('show');
-
-  });
-</script>
-{% endif %}
-{% endfor %}
-{% endif %}
+  {% if messages %}
+  {% for message in messages %}
+  {% if message.tags == 'success' %}
+  $('#successModal').modal('show');
+  {% elif message.tags == 'error' %}
+  
+    $(document).ready(function () {
+  
+     $('#errorModal').modal('show');
+  
+    });
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+  </script>
 {% endblock %}

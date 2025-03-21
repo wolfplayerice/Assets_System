@@ -54,40 +54,56 @@ const initDataTableCategory = async () => {
                 text: '<i class="fas fa-file-pdf"></i>',
                 titleAttr: 'Exportar a PDF',
                 className: 'btn btn-danger',
-                action: function (e, dt, button, config) {
+                action: (e, dt, button, config) => {
                     $("#loading-indicator").show();
                     $.ajax({
                         url: 'http://127.0.0.1:8000/category/list_category/?all=true',
                         type: 'GET',
-                        success: function (response) {
+                        success: (response) => {
                             const data = response.Category.map(category => [category.id, category.name]);
                             const docDefinition = {
                                 content: [
                                     {
-                                        text: 'Lista de Categorías',
-                                        style: 'header',
-                                        alignment: 'center',
-                                        margin: [0, 10, 0, 20],
+                                        image: logo,
+                                        width: 100, // Ancho de la imagen
+                                        alignment: 'center', // Alineación de la imagen
+                                        margin: [0, 0, 0, 10] // Margen de la imagen
                                     },
-                                    {
-                                        table: {
-                                            body: [['ID', 'Nombre'], ...data],
-                                        },
+                                    { text: 'Lista de Categorías', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
+                                    { table: { 
+                                        headerRows: 1,
+                                        widths: ['*', '*'],
+                                        body: [
+                                            [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
+                                            ...data
+                                        ]
                                     },
-                                ],
-                                styles: {
-                                    header: {
-                                        fontSize: 18,
-                                        bold: true,
-                                    },
+                                    layout: 'lightHorizontalLines' // Estilo de la tabla
+                                }
+                            ],
+                            styles: {
+                                header: { 
+                                    fontSize: 18, 
+                                    bold: true,
+                                    color: '#2c3e50' // Color del texto
                                 },
-                            };
-                            pdfMake.createPdf(docDefinition).download('categorias.pdf');
+                                tableHeader: {
+                                    bold: true,
+                                    fontSize: 13,
+                                    color: '#34495e' // Color del texto del encabezado de la tabla
+                                }
+                            },
+                            defaultStyle: {
+                                fontSize: 12,
+                                color: '#2c3e50' // Color del texto por defecto
+                            }
+                        };
+                            pdfMake.createPdf(docDefinition).open();
                             $("#loading-indicator").hide();
                         },
-                        error: function (jqXHR, textStatus, errorThrown) {
+                        error: (jqXHR, textStatus, errorThrown) => {
                             console.error('Error fetching all data:', textStatus, errorThrown);
-                            alert('Error al generar el PDF. ' + textStatus + ' ' + jqXHR.status);
+                            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
                             $("#loading-indicator").hide();
                         },
                     });

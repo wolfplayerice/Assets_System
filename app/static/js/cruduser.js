@@ -1,16 +1,16 @@
-let dataTableCategory;
-let dataTableIsInitializedCategory = false;
-const initDataTableCategory = async () => {
+let dataTableuser;
+let dataTableIsInitializeduser = false;
+const initDataTableuser = async () => {
     try {
-        if (dataTableIsInitializedCategory) {
-            dataTableCategory.destroy();
-            dataTableCategory = null; // Liberar referencia para la recolección de basura
+        if (dataTableIsInitializeduser) {
+            dataTableuser.destroy();
+            dataTableuser = null; // Liberar referencia para la recolección de basura
         }
 
-        dataTableCategory = $("#datatable-cat").DataTable({
+        dataTableuser = $("#datatable-users").DataTable({
             serverSide: true,
             ajax: {
-                url: "http://127.0.0.1:8000/category/list_category/",
+                url: "http://127.0.0.1:8000/users/list_users/",
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error fetching data:", textStatus, errorThrown);
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
@@ -27,7 +27,10 @@ const initDataTableCategory = async () => {
                     data: null,
                     render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1,
                 },
+                { data: "username" },
                 { data: "name" },
+                { data: "last_name" },
+                { data: "is_active" },
                 {
                     data: null,
                     render: (data, type, row) => `
@@ -59,55 +62,13 @@ const initDataTableCategory = async () => {
                     action: (e, dt, button, config) => {
                         $("#loading-indicator").show();
                         $.ajax({
-                            url: 'http://127.0.0.1:8000/category/list_category/?all=true',
+                            url: 'http://127.0.0.1:8000/users/list_users/?all=true',
                             type: 'GET',
                             success: (response) => {
                                 const data = response.Category.map(category => [category.id, category.name]);
-
-                                // Obtener la fecha actual
-                                const today = new Date();
-
-                                // Obtener componentes de la fecha y hora
-                                /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
-                                const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
-                                const year = today.getFullYear(); // Año (4 dígitos)
-                                const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
-                                const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
-                                const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
-
-                                // Formato personalizado: DD-MM-YYYY HH:MM:SS
-                                /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
-                                const formattedDateTime = today.toLocaleString();
                                 const docDefinition = {
                                     content: [
-                                        // Logos en columnas
-                                        {
-                                            columns: [
-                                                {
-                                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
-                                                    width: 80, // Ancho de la imagen
-                                                    alignment: 'left', // Alineación a la izquierda
-                                                    margin: [0, 0, 0, 10] // Margen de la imagen
-                                                },
-                                                {
-                                                    text: '', // Columna vacía para separar los logos
-                                                    width: '*', // Ocupa el espacio restante
-                                                },
-                                                {
-                                                    image: logo, // Logo derecho (Base64 o URL)
-                                                    width: 80, // Ancho de la imagen
-                                                    alignment: 'right', // Alineación a la derecha
-                                                    margin: [0, 0, 0, 10] // Margen de la imagen
-                                                }
-                                            ],
-                                            columnGap: 10 // Espacio entre columnas (opcional)
-                                        },
-                                        {
-                                            text: 'Lista de Categorías',
-                                            style: 'header',
-                                            alignment: 'center',
-                                            margin: [0, 10, 0, 20]
-                                        },
+                                        { text: 'Lista de Categorías', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
                                         {
                                             table: {
                                                 headerRows: 1,
@@ -130,28 +91,14 @@ const initDataTableCategory = async () => {
                                             bold: true,
                                             fontSize: 13,
                                             color: '#34495e' // Color del texto del encabezado de la tabla
-                                        },
-                                        footer: {
-                                            fontSize: 10,
-                                            alignment: 'center',
-                                            color: '#666666' // Color del texto del pie de página
                                         }
                                     },
                                     defaultStyle: {
                                         fontSize: 12,
                                         color: '#2c3e50' // Color del texto por defecto
-                                    },
-                                    footer: (currentPage, pageCount) => {
-                                        return {
-                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                            style: 'footer',
-                                            margin: [0, 10, 0, 0] // Margen del pie de página
-                                        };
                                     }
                                 };
-
-                                // Generar y descargar el PDF con un nombre personalizado
-                                pdfMake.createPdf(docDefinition).download(`Lista_de_Categorias_${formattedDateTime}.pdf`);
+                                pdfMake.createPdf(docDefinition).open();
                                 $("#loading-indicator").hide();
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
@@ -174,7 +121,7 @@ const initDataTableCategory = async () => {
             ],
         });
 
-        dataTableIsInitializedCategory = true;
+        dataTableIsInitializeduser = true;
     } catch (error) {
         console.error("Error initializing DataTable:", error);
         Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
@@ -202,7 +149,7 @@ $(document).on('click', '.delete-btn', function () {
                     dataTableCategory.ajax.reload();
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
-                    Swal.fire('Error!', "Error al eliminar la categoría: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                    Swal.fire('Error!', "Error al eliminar e: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
                 },
             });
         }
@@ -225,5 +172,5 @@ function getCookie(name) {
 }
 
 window.addEventListener('load', async () => {
-    await initDataTableCategory();
+    await initDataTableuser();
 });
