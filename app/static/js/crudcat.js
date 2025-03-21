@@ -16,6 +16,10 @@ const initDataTableCategory = async () => {
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
                 },
             },
+            columnDefs: [
+                { targets: [2], orderable: false, searchable: false,
+                className: 'dt-center',targets: "_all" },
+            ],
             columns: [
                 {
                     data: null,

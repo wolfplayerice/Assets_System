@@ -10,6 +10,7 @@ window.addEventListener('load', function () {
         });
     }
 
+
     if (errorMessage) {
         Swal.fire({
             icon: 'error',
@@ -18,6 +19,8 @@ window.addEventListener('load', function () {
         });
     }
 });
+
+
 
 let dataTableuser;
 let dataTableIsInitializeduser = false;
@@ -37,6 +40,12 @@ const initDataTableuser = async () => {
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
                 },
             },
+            columnDefs: [
+                {
+                    targets: [2], orderable: false, searchable: false,
+                    className: 'dt-center', targets: "_all"
+                },
+            ],
             columns: [
                 {
                     data: null,
@@ -84,34 +93,35 @@ const initDataTableuser = async () => {
                                 const docDefinition = {
                                     content: [
                                         { text: 'Lista de Categorías', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
-                                        { table: { 
-                                            headerRows: 1,
-                                            widths: ['*', '*'],
-                                            body: [
-                                                [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
-                                                ...data
-                                            ]
+                                        {
+                                            table: {
+                                                headerRows: 1,
+                                                widths: ['*', '*'],
+                                                body: [
+                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
+                                                    ...data
+                                                ]
+                                            },
+                                            layout: 'lightHorizontalLines' // Estilo de la tabla
+                                        }
+                                    ],
+                                    styles: {
+                                        header: {
+                                            fontSize: 18,
+                                            bold: true,
+                                            color: '#2c3e50' // Color del texto
                                         },
-                                        layout: 'lightHorizontalLines' // Estilo de la tabla
-                                    }
-                                ],
-                                styles: {
-                                    header: { 
-                                        fontSize: 18, 
-                                        bold: true,
-                                        color: '#2c3e50' // Color del texto
+                                        tableHeader: {
+                                            bold: true,
+                                            fontSize: 13,
+                                            color: '#34495e' // Color del texto del encabezado de la tabla
+                                        }
                                     },
-                                    tableHeader: {
-                                        bold: true,
-                                        fontSize: 13,
-                                        color: '#34495e' // Color del texto del encabezado de la tabla
+                                    defaultStyle: {
+                                        fontSize: 12,
+                                        color: '#2c3e50' // Color del texto por defecto
                                     }
-                                },
-                                defaultStyle: {
-                                    fontSize: 12,
-                                    color: '#2c3e50' // Color del texto por defecto
-                                }
-                            };
+                                };
                                 pdfMake.createPdf(docDefinition).open();
                                 $("#loading-indicator").hide();
                             },
