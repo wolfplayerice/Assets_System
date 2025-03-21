@@ -21,7 +21,7 @@ def list_users(request):
         'username': user.username,
         'name': user.first_name,
         'last_name': user.last_name,
-        'is_active': user.is_active
+        'is_active': user.is_active,
     } for user in users]
 
     if all_data:
