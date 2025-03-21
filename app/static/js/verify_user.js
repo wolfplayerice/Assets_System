@@ -147,8 +147,7 @@ const initDataTableuser = async () => {
 
         dataTableIsInitializeduser = true;
     } catch (error) {
-        console.error("Error initializing DataTable:", error);
-        Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
+
     }
 };
 
