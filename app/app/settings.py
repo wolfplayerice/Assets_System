@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'login',
     'brand',
     'widget_tweaks',
-    'users'
+    'users',
+    'user_info'
 ]
 
 MIDDLEWARE = [

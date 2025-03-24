@@ -57,3 +57,9 @@
     font-family: 'Arial', sans-serif;
     font-weight: bold;
 }
+.input-group .form-control {
+  border-radius: 0.25rem;
+}
+.input-group .input-group-text {
+  border-radius: 0.25rem;
+}
