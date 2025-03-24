@@ -1,5 +1,7 @@
 let dataTableuser;
 let dataTableIsInitializeduser = false;
+
+var listUsersUrl = document.getElementById('data-container').getAttribute('data-list-users-url');
 const initDataTableuser = async () => {
     try {
         if (dataTableIsInitializeduser) {
@@ -10,7 +12,7 @@ const initDataTableuser = async () => {
         dataTableuser = $("#datatable-users").DataTable({
             serverSide: true,
             ajax: {
-                url: "http://127.0.0.1:8000/users/list_users/",
+                url: listUsersUrl,
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error fetching data:", textStatus, errorThrown);
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');

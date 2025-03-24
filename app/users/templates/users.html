@@ -12,14 +12,14 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-
+            <div id="data-container" data-list-users-url="{% url 'users:users_list' %}">
             <table id="datatable-users" class="table">
               <thead>
                   <div class="flex-row d-flex">
                       <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal"> <i
                           class='fa-solid fa-plus'></i>
                       </button>
-                      <p>Añadir Categoria</p>
+                      <p>Añadir Usuario</p>
                     </div>
                   <tr>
                       <th class="centered" scope="col">#</th>

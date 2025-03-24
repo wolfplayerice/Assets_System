@@ -16,7 +16,8 @@ def brand(request):
     return render(request, 'crudbrand.html', { 
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        'brand_form': brand_create_form
+        'brand_form': brand_create_form,
+        'list_brands_url': reverse('brand:list_brand'),
     })
 
 @login_required

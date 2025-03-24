@@ -1,5 +1,7 @@
 let dataTablebrand;
 let dataTableIsInitializedbrand = false;
+
+var listBrandsUrl = document.getElementById('data-container').getAttribute('data-list-brands-url');
 const initDataTablebrand = async () => {
     try {
         if (dataTableIsInitializedbrand) {
@@ -10,7 +12,7 @@ const initDataTablebrand = async () => {
         dataTablebrand = $("#datatable-brand").DataTable({
             serverSide: true,
             ajax: {
-                url: "http://127.0.0.1:8000/brand/list_brand/",
+                url: listBrandsUrl,
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error fetching data:", textStatus, errorThrown);
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');

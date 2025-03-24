@@ -1,5 +1,7 @@
 let dataTableCategory;
 let dataTableIsInitializedCategory = false;
+
+var listCategoryUrl = document.getElementById('data-container').getAttribute('data-list-category-url');
 const initDataTableCategory = async () => {
     try {
         if (dataTableIsInitializedCategory) {
@@ -10,7 +12,7 @@ const initDataTableCategory = async () => {
         dataTableCategory = $("#datatable-cat").DataTable({
             serverSide: true,
             ajax: {
-                url: "http://127.0.0.1:8000/category/list_category/",
+                url: listCategoryUrl,
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error fetching data:", textStatus, errorThrown);
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');

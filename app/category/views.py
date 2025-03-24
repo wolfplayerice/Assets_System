@@ -15,7 +15,9 @@ def category(request):
     return render(request, 'crudcat.html',{
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        'cat_form': category_create_form})
+        'cat_form': category_create_form,
+        'list_category_url': reverse('category:list_category'),
+        })
 
 @login_required
 def category_create(request):

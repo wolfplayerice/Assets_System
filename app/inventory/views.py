@@ -13,10 +13,12 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def inventory(request):
     asset_create_form = AssetCreate()
+
     return render(request, 'crudassets.html', { 
         'form': asset_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
+        'list_assets_url': reverse('inventory:list_assets'),
         })
 
 @login_required

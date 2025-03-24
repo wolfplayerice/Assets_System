@@ -18,6 +18,7 @@ def user(request):
         'user_form': user_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
+        'list_users_url': reverse('users:users_list'),
     })
 
 @login_required

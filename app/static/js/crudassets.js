@@ -1,9 +1,11 @@
 let dataTable = {}; // Inicializamos dataTable como un objeto
 
+var listAssetsUrl = document.getElementById('data-container').getAttribute('data-list-assets-url');
+
 function getDataTableConfig(includeActions = true, tableId = "datatable-assets") {
     const baseConfig = {
         ajax: {
-            url: "http://127.0.0.1:8000/inventory/list_assets/",
+            url: listAssetsUrl,
             dataSrc: 'data'
         },
         columnDefs: [
