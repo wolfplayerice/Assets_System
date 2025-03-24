@@ -258,6 +258,35 @@ $(document).on('click', '.btn-inoperativo', function () {
     $('#inoperativoModal').modal('show');
 });
 
+$(document).on('click', '.btn-edit', function () {
+    const assetId = $(this).data('id');
+    const brand = $(this).data('brand');
+    const model = $(this).data('model');
+    const category = $(this).data('category');
+    const serial = $(this).data('serial');
+    const state = $(this).data('state');
+    const status = $(this).data('status');
+    const observation = $(this).data('observation');
+
+    $('#edit-id').val(assetId);
+    $('#edit-brand').val(brand);
+    $('#edit-model').val(model);
+    $('#edit-category').val(category);
+    $('#edit-serial').val(serial);
+    $('#edit-state').val(state);
+    $('#edit-status').val(status);
+    $('#edit-observation').val(observation);
+
+    // Establecer la acción del formulario dinámicamente
+    $('#edit-form').attr('action', `/inventory/asset_edit/${assetId}/`);
+
+    $('#editModal').modal('show');
+});
+
+$(document).on('click', '#save-changes', function () {
+    $('#edit-form').submit();
+});
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
