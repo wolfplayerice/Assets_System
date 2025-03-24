@@ -201,7 +201,7 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
     return baseConfig;
 }
 
-const initDataTable = async (tableId = "datatable-assets", includeActions = true) => {
+const initDataTableAssets = async (tableId = "datatable-assets", includeActions = true) => {
     try {
         if (dataTable[tableId]) {
             dataTable[tableId].destroy();
@@ -274,5 +274,5 @@ function getCookie(name) {
 }
 
 window.addEventListener('load', async () => {
-    await initDataTable("datatable-assets");
+    await initDataTableAssets("datatable-assets");
 });

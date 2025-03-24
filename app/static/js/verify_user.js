@@ -19,17 +19,5 @@ window.addEventListener('load', function () {
         });
     }
 });
-document.getElementById('toggle-password').addEventListener('click', function () {
-    var passwordField = document.getElementById('id_password');
-    var passwordFieldType = passwordField.getAttribute('type');
-    if (passwordFieldType === 'password') {
-        passwordField.setAttribute('type', 'text');
-        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-    } else {
-        passwordField.setAttribute('type', 'password');
-        this.innerHTML = '<i class="fas fa-eye"></i>';
-    }
-});
-
 
 

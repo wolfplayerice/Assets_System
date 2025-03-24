@@ -1,0 +1,39 @@
+{% extends 'home.html' %}
+{% load widget_tweaks %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+      <div class="card custom-card-height">
+        <div class="card-header">
+          <h5 class="card-title">Auditorias</h5>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+
+<div id="data-container" data-list-audit-url="{% url 'audit:logs_list' %}">  
+<table id="datatable-audit" class="table">
+    <thead>
+        <tr>
+            <th class="centered" scope="col">Usuario</th>
+            <th class="centered" scope="col">Acción</th>
+            <th class="centered" scope="col">Descripción</th>
+            <th class="centered" scope="col">Fecha</th>
+        </tr>
+    </thead>
+    <tbody id="tablebody_audit">
+
+    </tbody>
+</table>
+
+
+
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>  
+
+{% endblock %}
