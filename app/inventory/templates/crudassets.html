@@ -34,173 +34,199 @@
             </div>
 
             <div id="data-container" data-list-assets-url="{% url 'inventory:list_assets' %}">
-            <table id="datatable-assets" class="table responsive">
+              <table id="datatable-assets" class="table responsive">
 
-              <thead>
-                <div class="flex-row d-flex">
-                  <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal"> <i
-                      class='fa-solid fa-plus'></i>
-                  </button>
-                  <p>Añadir bien</p>
-                </div>
-
-                <tr>
-                  <th class="centered" scope="col">#</th>
-                  <th class="centered" scope="col">Marca</th>
-                  <th class="centered" scope="col">Modelo</th>
-                  <th class="centered" scope="col">Categoria</th>
-                  <th class="centered" scope="col">Serial</th>
-                  <th class="centered" scope="col">BBVA</th>
-                  <th class="centered" scope="col">Estatus</th>
-                  <th class="centered" scope="col">Opciones</th>
-                </tr>
-              </thead>
-              <tbody id="tablebody_assets">
-
-              </tbody>
-            </table>
-
-            <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">Registro de bienes</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
+                <thead>
+                  <div class="flex-row d-flex">
+                    <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
+                      <i class='fa-solid fa-plus'></i>
                     </button>
+                    <p>Añadir bien</p>
                   </div>
-                  <div class="modal-body">
-                    <!-- Contenido del modal -->
-                    <form action="{% url 'inventory:asset_create' %}" method="post">
-                      {% csrf_token %}
-                      {% for field in form %}
-                      <!-- se usa django-widget_tweaks -->
-                      <div class="form-group form-floating mb-3">
-                        {% if field.field.widget.input_type == 'select' %}
-                        <!-- Campos de tipo select -->
-                        {{ field|add_class:"form-select" }}
-                        {% else %}
-                        <!-- Campos de tipo input o textarea -->
-                        {{ field|add_class:"form-control" }}
-                        {% endif %}
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                      </div>
+
+                  <tr>
+                    <th class="centered" scope="col">#</th>
+                    <th class="centered" scope="col">Marca</th>
+                    <th class="centered" scope="col">Modelo</th>
+                    <th class="centered" scope="col">Categoria</th>
+                    <th class="centered" scope="col">Serial</th>
+                    <th class="centered" scope="col">BBVA</th>
+                    <th class="centered" scope="col">Estatus</th>
+                    <th class="centered" scope="col">Opciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablebody_assets">
+
+                </tbody>
+              </table>
+
+              <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="infoModalLabel">Registro de bienes</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Contenido del modal -->
+                      <form action="{% url 'inventory:asset_create' %}" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <!-- se usa django-widget_tweaks -->
+                        <div class="form-group form-floating mb-3">
+                          {% if field.field.widget.input_type == 'select' %}
+                          <!-- Campos de tipo select -->
+                          {{ field|add_class:"form-select" }}
+                          {% else %}
+                          <!-- Campos de tipo input o textarea -->
+                          {{ field|add_class:"form-control" }}
+                          {% endif %}
+                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% endfor %}
+                        <input type="submit" value="Submit" class="btn btn-primary">
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal para mostrar el mensaje -->
+              <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="successModalLabel">Éxito</h5>
+                    </div>
+                    <div class="modal-body">
+                      {% if messages %}
+                      {% for message in messages %}
+                      <div class="alert alert-success">{{ message }}</div>
                       {% endfor %}
-                      <input type="submit" value="Submit" class="btn btn-primary">
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal para dispositivos inoperativos -->
+              <!-- Modal -->
+              <div class="modal fade" id="inoperativoModal" tabindex="-1" aria-labelledby="inoperativoModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <!-- Encabezado del modal -->
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <!-- Cuerpo del modal -->
+                    <div class="modal-body">
+                      <p>Aquí va el contenido del modal.</p>
+                    </div>
+                    <!-- Pie del modal (opcional) -->
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Modal para editar -->
+
+              <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="editModalLabel">Editar</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="edit-form" action="{% url 'inventory:asset_edit' 0 %}" method="post">
+                        {% csrf_token %}
+                        {{ edit_form }}
+                        <input type="hidden" id="edit-id" name="id">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
+                    </div>
                     </form>
                   </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+              </div>
+
+              <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="errorModalLabel">Error.</h5>
+                    </div>
+                    <div class="modal-body">
+                      {% if messages %}
+                      {% for message in messages %}
+                      <div class="alert alert-danger">{{ message }}</div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Modal para mostrar el mensaje -->
-            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Éxito</h5>
-                  </div>
-                  <div class="modal-body">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
+              <!-- Incluye jQuery y Bootstrap JS -->
+              <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+              <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-            <!-- Modal para dispositivos inoperativos -->
-<!-- Modal -->
-<div class="modal fade" id="inoperativoModal" tabindex="-1" aria-labelledby="inoperativoModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <!-- Encabezado del modal -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <!-- Cuerpo del modal -->
-      <div class="modal-body">
-        <p>Aquí va el contenido del modal.</p>
-      </div>
-      <!-- Pie del modal (opcional) -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
+              <script>
+                $(document).ready(function () {
+                  initDataTable('datatable-assets', true); // Incluir columna de acciones
+                });
+              </script>
 
-            <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error.</h5>
-                  </div>
-                  <div class="modal-body">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
+              <script>
+                $(document).ready(function () {
+                  // Obtén referencias a los campos usando los ids personalizados
+                  const $statusField = $('#status_select');  // Campo de status con id personalizado
+                  const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
 
-            <!-- Incluye jQuery y Bootstrap JS -->
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-            
-            <script>
-              $(document).ready(function () {
-                initDataTable('datatable-assets', true); // Incluir columna de acciones
-              });
-            </script>
-            
-            <script>
-              $(document).ready(function () {
-                // Obtén referencias a los campos usando los ids personalizados
-                const $statusField = $('#status_select');  // Campo de status con id personalizado
-                const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
-            
-                // Función para mostrar u ocultar el campo de observaciones
-                function toggleObservationsField() {
-                  if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
-                    $observationsField.show();  // Muestra el campo
-                  } else {  // Si se selecciona "Operativo"
-                    $observationsField.hide();  // Oculta el campo
+                  // Función para mostrar u ocultar el campo de observaciones
+                  function toggleObservationsField() {
+                    if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
+                      $observationsField.show();  // Muestra el campo
+                    } else {  // Si se selecciona "Operativo"
+                      $observationsField.hide();  // Oculta el campo
+                    }
                   }
-                }
-            
-                // Escucha cambios en el campo de status
-                $statusField.on('change', toggleObservationsField);
-            
-                // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
-                toggleObservationsField();
-              });
-            </script>
-            <script>
-            {% if messages %}
-            {% for message in messages %}
-            {% if message.tags == 'success' %}
-            $('#successModal').modal('show');
-            {% elif message.tags == 'error' %}
 
-              $(document).ready(function () {
+                  // Escucha cambios en el campo de status
+                  $statusField.on('change', toggleObservationsField);
 
-              $('#errorModal').modal('show');
+                  // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
+                  toggleObservationsField();
+                });
+              </script>
+              <script>
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                $('#successModal').modal('show');
+                {% elif message.tags == 'error' %}
 
-              });
-            {% endif %}
-            {% endfor %}
-            {% endif %}
-          </script>
-            {% endblock %}
+                $(document).ready(function () {
+
+                  $('#errorModal').modal('show');
+
+                });
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+              </script>
+              {% endblock %}
