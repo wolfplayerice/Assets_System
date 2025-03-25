@@ -63,15 +63,26 @@ def list_assets(request):
 
     search_value = request.GET.get('search[value]', '').strip()
     if search_value:
-        assets = assets.filter(
+        # Convertir "Operativo" e "Inoperativo" en valores booleanos
+        status_value = None
+        if search_value.lower() == "operativo":
+            status_value = True
+        elif search_value.lower() == "inoperativo":
+            status_value = False
+
+        query = (
             Q(model__icontains=search_value) |
             Q(serial_number__icontains=search_value) |
             Q(state_asset__icontains=search_value) |
-            Q(status__icontains=search_value) |
             Q(observation__icontains=search_value) |
-            Q(fk_category__name__icontains=search_value) |  # Buscar por nombre de categoría
-            Q(fk_brand__name__icontains=search_value)  # Buscar por nombre de marca
+            Q(fk_category__name__icontains=search_value) |
+            Q(fk_brand__name__icontains=search_value)
         )
+
+        if status_value is not None:
+            query |= Q(status=status_value)  # Agrega la búsqueda en "status"
+
+        assets = assets.filter(query)
 
     total_records = assets.count()
     filtered_records = assets.count()
