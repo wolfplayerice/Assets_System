@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
+from audit.models import AuditLog 
+from django.db.models import Q
 
 @login_required
 def inventory(request):
@@ -59,9 +61,29 @@ def list_assets(request):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
 
-    search_value = request.GET.get('search[value]', '')
+    search_value = request.GET.get('search[value]', '').strip().lower()
     if search_value:
-        assets = assets.filter(name__icontains=search_value)
+            # Mapeo de términos de búsqueda a valores booleanos
+            status_mapping = {
+                'operativo': True,
+                'inoperativo': False
+            }
+            
+            # Verificar si la búsqueda coincide con algún estado
+            status_filter = None
+            for term, bool_value in status_mapping.items():
+                if term.startswith(search_value):
+                    status_filter = bool_value
+                    break
+
+            assets = assets.filter(
+            Q(model__icontains=search_value) |
+            Q(serial_number__icontains=search_value) |
+            Q(state_asset__icontains=search_value) |
+            Q(fk_brand__name__icontains=search_value) |
+            Q(fk_category__name__icontains=search_value) |
+            (Q(status=status_filter) if status_filter is not None else Q())
+        )
 
     total_records = assets.count()
     filtered_records = assets.count()
@@ -105,6 +127,13 @@ def asset_create(request):
                     fk_brand=asset_create_form.cleaned_data['fk_brand'],
                 )
                 assets.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='create',
+                    model_name='Asset',
+                    object_id=assets.id,
+                    description=f"Activo creado: {assets.fk_brand.name} {assets.model} {assets.serial_number}"
+                )
                 messages.success(request, 'El activo se ha guardado correctamente.')
                 return HttpResponseRedirect(reverse('home:inventory'))
             
@@ -144,6 +173,13 @@ def delete_asset(request, asset_id):
         try:
             asset = Asset.objects.get(pk=asset_id)
             asset.delete()
+            AuditLog.objects.create(
+                    user=request.user,
+                    action='delete',
+                    model_name='Asset',
+                    object_id=asset_id,
+                    description=f"Activo eliminado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
+                )
             return JsonResponse({"message": "Categoría eliminada correctamente."})
         except Asset.DoesNotExist:
             return JsonResponse({"error": "Categoría no encontrada."}, status=404)
