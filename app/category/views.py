@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from audit.models import AuditLog 
 # Create your views here.
 
 @login_required
@@ -25,29 +27,24 @@ def category_create(request):
         category_create_form = Create_category(request.POST)
         if category_create_form.is_valid():
             try:
-                categories = Category(
+                category = Category(
                     name=category_create_form.cleaned_data['name'],
+                    modified_by=request.user
                 )
-                categories.save()
-                messages.success(request, 'La categoria se ha guardado correctamente.')
+                category.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='create',
+                    model_name='Category',
+                    object_id=category.id,
+                    description=f"Categoría creada: {category.name}"
+                )
+                messages.success(request, 'La categoría se ha guardado correctamente.')
                 return HttpResponseRedirect(reverse('home:category'))
-            
             except Exception as e:
-                # Captura cualquier otro error inesperado
                 messages.error(request, f'Error inesperado: {str(e)}')
                 return HttpResponseRedirect(reverse('home:category'))
-        
-        else:
-            # Si el formulario no es válido, muestra errores de validación
-            for field, errors in category_create_form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
-                    return HttpResponseRedirect(reverse('home:category'))
-    
-    else:
-        category_create_form = Create_category()
-    
-    return render(request, 'crudcat.html', {'cat_form': category_create_form})
+    return render(request, 'crudcat.html', {'cat_form': Create_category()})
 
 @login_required
 def list_category(request):
@@ -103,15 +100,20 @@ def list_category(request):
 
 @login_required
 def delete_category(request, category_id):
-    print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":
-        try:
-            category = Category.objects.get(pk=category_id)
-            category.delete()
-            return JsonResponse({"message": "Categoría eliminada correctamente."})
-        except Category.DoesNotExist:
-            return JsonResponse({"error": "Categoría no encontrada."}, status=404)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-    else:
-        return HttpResponse(status=405)  # Método no permitido
+        category = get_object_or_404(Category, pk=category_id)
+        category.delete()
+        AuditLog.objects.create(
+            user=request.user,
+            action='delete',
+            model_name='Category',
+            object_id=category_id,
+            description=f"Categoría eliminada: {category.name}"
+        )
+        return JsonResponse({"message": "Categoría eliminada correctamente."})
+    return HttpResponse(status=405)
+
+@login_required
+def audit_log_view(request):
+    logs = AuditLog.objects.filter(model_name='Category').order_by('-timestamp')
+    return render(request, 'audit/audit_log.html', {'logs': logs})

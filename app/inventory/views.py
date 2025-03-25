@@ -1,26 +1,27 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http.response import JsonResponse, HttpResponse
 from .models import Asset
 from brand.models import Brand
 from category.models import Category
 from django.http import HttpResponseRedirect
-from .forms import AssetCreate
+from .forms import AssetCreate, AssetEdit
 from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
-# Create your views here.
 
 @login_required
 def inventory(request):
     asset_create_form = AssetCreate()
+    asset_edit_form = AssetEdit()
     categories = Category.objects.all()
     brands = Brand.objects.all()
     return render(request, 'crudassets.html', { 
         'categories': categories,
         'brands': brands,
         'form': asset_create_form,
+        'edit_form': asset_edit_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'list_assets_url': reverse('inventory:list_assets'),
@@ -150,3 +151,26 @@ def delete_asset(request, asset_id):
             return JsonResponse({"error": str(e)}, status=500)
     else:
         return HttpResponse(status=405)  # Método no permitido
+
+@login_required
+def asset_edit(request, asset_id):
+    asset = get_object_or_404(Asset, pk=asset_id)
+    if request.method == "POST":
+        form = AssetEdit(request.POST, instance=asset)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, 'El activo se ha actualizado correctamente.')
+            except Exception as e:
+                messages.error(request, f'Error inesperado: {str(e)}')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en el campo {field}: {error}')
+        return HttpResponseRedirect(reverse('inventory:inventory'))
+    else:
+        form = AssetEdit(instance=asset)
+    return render(request, 'crudassets.html', {
+        'edit_form': form,
+        'asset_id': asset_id,
+    })

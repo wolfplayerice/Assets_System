@@ -79,7 +79,18 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
                     buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
                 }
                 buttons += `
-                    <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="${tableId}"><i class='fa-solid fa-pencil'></i></button>
+                    <button class='btn btn-sm btn-primary btn-edit centered' 
+                        data-id="${row.id}" 
+                        data-brand="${row.fk_brand}" 
+                        data-model="${row.model}" 
+                        data-category="${row.fk_category}" 
+                        data-serial="${row.serial_number}" 
+                        data-state="${row.state_asset}" 
+                        data-status="${row.status}" 
+                        data-observation="${row.observation}"
+                        data-table-id="${tableId}">
+                        <i class='fa-solid fa-pencil'></i>
+                    </button>
                     <button class='btn btn-sm btn-danger delete-asset-btn centered' data-id="${row.id}" data-table-id="${tableId}"><i class='fa-solid fa-trash-can'></i></button>
                 `;
                 return buttons;
@@ -96,7 +107,7 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
     return baseConfig;
 }
 
-const initDataTable = async (tableId = "datatable-assets", includeActions = true) => {
+const initDataTableAssets = async (tableId = "datatable-assets", includeActions = true) => {
     try {
         if (dataTable[tableId]) {
             dataTable[tableId].destroy();
@@ -311,6 +322,35 @@ $(document).on('click', '.btn-inoperativo', function () {
     $('#inoperativoModal').modal('show');
 });
 
+$(document).on('click', '.btn-edit', function () {
+    const assetId = $(this).data('id');
+    const brand = $(this).data('brand');
+    const model = $(this).data('model');
+    const category = $(this).data('category');
+    const serial = $(this).data('serial');
+    const state = $(this).data('state');
+    const status = $(this).data('status');
+    const observation = $(this).data('observation');
+
+    $('#edit-id').val(assetId);
+    $('#edit-brand').val(brand);
+    $('#edit-model').val(model);
+    $('#edit-category').val(category);
+    $('#edit-serial').val(serial);
+    $('#edit-state').val(state);
+    $('#edit-status').val(status);
+    $('#edit-observation').val(observation);
+
+    // Establecer la acción del formulario dinámicamente
+    $('#edit-form').attr('action', `/inventory/asset_edit/${assetId}/`);
+
+    $('#editModal').modal('show');
+});
+
+$(document).on('click', '#save-changes', function () {
+    $('#edit-form').submit();
+});
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -327,5 +367,5 @@ function getCookie(name) {
 }
 
 window.addEventListener('load', async () => {
-    await initDataTable("datatable-assets");
+    await initDataTableAssets("datatable-assets");
 });

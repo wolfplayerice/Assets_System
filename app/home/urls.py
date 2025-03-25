@@ -5,6 +5,7 @@ from category import views as category_views
 from brand import views as brand_views
 from users import views as users_views
 from user_info import views as user_info_views
+from audit import views as audit_views
 
 app_name= 'home'
 urlpatterns = [
@@ -14,6 +15,7 @@ urlpatterns = [
     path("category/", category_views.category, name="category"),
     path("brand/", brand_views.brand, name="brand"),
     path("users/", users_views.user, name="users"),
-    path("user_info/", user_info_views.user_info, name="user_info")
+    path("user_info/", user_info_views.user_info, name="user_info"),
+    path("audit/", audit_views.audit_log_view, name="audit")
 
 ]

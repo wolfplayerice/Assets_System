@@ -139,6 +139,30 @@
                 </div>
               </div>
 
+              <!-- Modal para editar -->
+
+              <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="editModalLabel">Editar</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="edit-form" action="{% url 'inventory:asset_edit' 0 %}" method="post">
+                        {% csrf_token %}
+                        {{ edit_form }}
+                        <input type="hidden" id="edit-id" name="id">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
+                    </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
               <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -156,6 +180,7 @@
                   </div>
                 </div>
               </div>
+
               <!-- Modal para opciones de PDF -->
               <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel"
                 aria-hidden="true">
