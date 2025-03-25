@@ -8,6 +8,7 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
             url: listAssetsUrl,
             dataSrc: 'data'
         },
+        serverSide: true,
         columnDefs: [
             { targets: "_all", className: 'centered' }
         ],
@@ -51,116 +52,10 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
                 text: '<i class="fas fa-file-pdf"></i>',
                 titleAttr: 'Exportar a PDF',
                 className: 'btn btn-danger',
-                action: (e, dt, button, config) => {
-                    $("#loading-indicator").show();
-                    $.ajax({
-                        url: 'http://127.0.0.1:8000/inventory/list_assets/?all=true',
-                        type: 'GET',
-                        success: (response) => {
-                            const data = response.Asset.map(asset => [asset.id ,asset.fk_brand, asset.model, 
-                                asset.fk_category, asset.serial_number, asset.state_asset, asset.observation, asset.status
-                            ]);
-
-                            // Obtener la fecha actual
-                            const today = new Date();
-
-                            // Obtener componentes de la fecha y hora
-                            /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
-                            const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
-                            const year = today.getFullYear(); // Año (4 dígitos)
-                            const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
-                            const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
-                            const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
-
-                            // Formato personalizado: DD-MM-YYYY HH:MM:SS
-                            /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
-                            const formattedDateTime = today.toLocaleString();
-                            const docDefinition = {
-                                content: [
-                                    // Logos en columnas
-                                    {
-                                        columns: [
-                                            {
-                                                image: gobernacion, // Logo izquierdo (Base64 o URL)
-                                                width: 80, // Ancho de la imagen
-                                                alignment: 'left', // Alineación a la izquierda
-                                                margin: [0, 0, 0, 10] // Margen de la imagen
-                                            },
-                                            {
-                                                text: '', // Columna vacía para separar los logos
-                                                width: '*', // Ocupa el espacio restante
-                                            },
-                                            {
-                                                image: logo, // Logo derecho (Base64 o URL)
-                                                width: 80, // Ancho de la imagen
-                                                alignment: 'right', // Alineación a la derecha
-                                                margin: [0, 0, 0, 10] // Margen de la imagen
-                                            }
-                                        ],
-                                        columnGap: 10 // Espacio entre columnas (opcional)
-                                    },
-                                    {
-                                        text: 'Lista de Categorías',
-                                        style: 'header',
-                                        alignment: 'center',
-                                        margin: [0, 10, 0, 20]
-                                    },
-                                    {
-                                        table: {
-                                            headerRows: 1,
-                                            body: [
-                                                [{ text: 'ID', style: 'tableHeader' },{ text: 'Marca', style: 'tableHeader' }, 
-                                                { text: 'Modelo', style: 'tableHeader' },{ text: 'Categoria', style: 'tableHeader' },
-                                                { text: 'Serial', style: 'tableHeader' },{ text: 'BBVA', style: 'tableHeader' },
-                                                { text: 'Estatus', style: 'tableHeader' },{ text: 'Observación', style: 'tableHeader' },
-                                                ],
-                                                ...data
-                                            ]
-                                        },
-                                        layout: 'lightHorizontalLines' // Estilo de la tabla
-                                    }
-                                ],
-                                styles: {
-                                    header: {
-                                        fontSize: 18,
-                                        bold: true,
-                                        color: '#2c3e50' // Color del texto
-                                    },
-                                    tableHeader: {
-                                        bold: true,
-                                        fontSize: 13,
-                                        color: '#34495e' // Color del texto del encabezado de la tabla
-                                    },
-                                    footer: {
-                                        fontSize: 10,
-                                        alignment: 'center',
-                                        color: '#666666' // Color del texto del pie de página
-                                    }
-                                },
-                                defaultStyle: {
-                                    fontSize: 12,
-                                    color: '#2c3e50' // Color del texto por defecto
-                                },
-                                footer: (currentPage, pageCount) => {
-                                    return {
-                                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                        style: 'footer',
-                                        margin: [0, 10, 0, 0] // Margen del pie de página
-                                    };
-                                }
-                            };
-
-                            // Generar y descargar el PDF con un nombre personalizado
-                            pdfMake.createPdf(docDefinition).download(`Lista_de_bienes_${formattedDateTime}.pdf`);
-                            $("#loading-indicator").hide();
-                        },
-                        error: (jqXHR, textStatus, errorThrown) => {
-                            console.error('Error fetching all data:', textStatus, errorThrown);
-                            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-                            $("#loading-indicator").hide();
-                        },
-                    });
-                },
+                action: function (e, dt, button, config) {
+                    // Abrir el modal de opciones de PDF
+                    $('#pdfOptionsModal').modal('show');
+                }
             },
             {
                 extend: "print",
@@ -184,7 +79,18 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
                     buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
                 }
                 buttons += `
-                    <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="${tableId}"><i class='fa-solid fa-pencil'></i></button>
+                    <button class='btn btn-sm btn-primary btn-edit centered' 
+                        data-id="${row.id}" 
+                        data-brand="${row.fk_brand}" 
+                        data-model="${row.model}" 
+                        data-category="${row.fk_category}" 
+                        data-serial="${row.serial_number}" 
+                        data-state="${row.state_asset}" 
+                        data-status="${row.status}" 
+                        data-observation="${row.observation}"
+                        data-table-id="${tableId}">
+                        <i class='fa-solid fa-pencil'></i>
+                    </button>
                     <button class='btn btn-sm btn-danger delete-asset-btn centered' data-id="${row.id}" data-table-id="${tableId}"><i class='fa-solid fa-trash-can'></i></button>
                 `;
                 return buttons;
@@ -249,6 +155,164 @@ $(document).on('click', '.delete-asset-btn', function () {
                 }
             });
         }
+    });
+});
+
+$(document).ready(function () {
+    $('#pdfOptionsModal').on('shown.bs.modal', function () {
+        $('.js-example-basic-multiple').select2({
+            width: '100%',
+            dropdownParent: $('#pdfOptionsModal'), // ¡IMPORTANTE para modales!
+            placeholder: "Seleccione categorías",
+            closeOnSelect: false,
+            theme: 'default' // Usa el tema por defecto (sin Bootstrap 5)
+
+        });
+        $('.brand').select2({
+            width: '100%',
+            dropdownParent: $('#pdfOptionsModal'), // ¡IMPORTANTE para modales!
+            placeholder: "Seleccione marcas",
+            closeOnSelect: false,
+            theme: 'default' // Usa el tema por defecto (sin Bootstrap 5)
+
+        });
+    });
+
+    // Limpiar al cerrar el modal (opcional)
+    $('#pdfOptionsModal').on('hidden.bs.modal', function () {
+        $('.js-example-basic-multiple').val(null).trigger('change');
+    });
+    // Manejar el clic en el botón "Generar PDF" del modal
+    $('#generatePdfButton').on('click', function () {
+        // Obtener las opciones seleccionadas
+        const statusFilter = $('select[name="statusFilter"]').val();
+        const categories = $('.js-example-basic-multiple').val() || [];
+        const brand = $('.brand').val() || [];
+
+        // Cerrar el modal
+        $('#pdfOptionsModal').modal('hide');
+
+        // Mostrar el indicador de carga
+        $("#loading-indicator").show();
+
+        // Realizar la solicitud AJAX con las opciones de filtrado
+        $.ajax({
+            url: 'http://127.0.0.1:8000/inventory/list_assets/',
+            type: 'GET',
+            data: {
+                status: statusFilter,
+                'categories[]': categories, // Cambia 'category' por 'categories[]'
+                'brand[]': brand,
+                all: true  // Para obtener todos los datos filtrados
+            },
+            success: function (response) {
+                // Procesar los datos filtrados
+                const data = response.Asset.map(asset => [
+                    asset.id,
+                    asset.fk_brand,
+                    asset.model,
+                    asset.fk_category,
+                    asset.serial_number,
+                    asset.state_asset,
+                    asset.status,
+                    asset.observation,
+                ]);
+
+                // Generar el PDF con los datos filtrados
+                const today = new Date();
+                const formattedDateTime = today.toLocaleString();
+
+                const docDefinition = {
+                    content: [
+                        // Logos en columnas
+                        {
+                            columns: [
+                                {
+                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
+                                    width: 80,
+                                    alignment: 'left',
+                                    margin: [0, 0, 0, 10]
+                                },
+                                {
+                                    text: '',
+                                    width: '*',
+                                },
+                                {
+                                    image: logo, // Logo derecho (Base64 o URL)
+                                    width: 80,
+                                    alignment: 'right',
+                                    margin: [0, 0, 0, 10]
+                                }
+                            ],
+                            columnGap: 10
+                        },
+                        {
+                            text: 'Lista de Bienes',
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [0, 10, 0, 20]
+                        },
+                        {
+                            table: {
+                                widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
+                                headerRows: 1,
+                                body: [
+                                    [
+                                        { text: 'ID', style: 'tableHeader' },
+                                        { text: 'Marca', style: 'tableHeader' },
+                                        { text: 'Modelo', style: 'tableHeader' },
+                                        { text: 'Categoría', style: 'tableHeader' },
+                                        { text: 'Serial', style: 'tableHeader' },
+                                        { text: 'Estado', style: 'tableHeader' },
+                                        { text: 'Estatus', style: 'tableHeader' },
+                                        { text: 'Observación', style: 'tableHeader' }
+                                    ],
+                                    ...data
+                                ]
+                            },
+                            layout: 'lightHorizontalLines'
+                        }
+                    ],
+                    styles: {
+                        header: {
+                            fontSize: 18,
+                            bold: true,
+                            color: '#2c3e50'
+                        },
+                        tableHeader: {
+                            bold: true,
+                            fontSize: 13,
+                            color: '#34495e'
+                        },
+                        footer: {
+                            fontSize: 10,
+                            alignment: 'center',
+                            color: '#666666'
+                        }
+                    },
+                    defaultStyle: {
+                        fontSize: 12,
+                        color: '#2c3e50'
+                    },
+                    footer: (currentPage, pageCount) => {
+                        return {
+                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                            style: 'footer',
+                            margin: [0, 10, 0, 0]
+                        };
+                    }
+                };
+
+                // Generar y descargar el PDF
+                pdfMake.createPdf(docDefinition).download(`Lista_de_bienes_${formattedDateTime}.pdf`);
+                $("#loading-indicator").hide();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching filtered data:', textStatus, errorThrown);
+                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+                $("#loading-indicator").hide();
+            }
+        });
     });
 });
 
