@@ -184,7 +184,18 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
                     buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
                 }
                 buttons += `
-                    <button class='btn btn-sm btn-primary btn-edit centered' data-table-id="${tableId}"><i class='fa-solid fa-pencil'></i></button>
+                    <button class='btn btn-sm btn-primary btn-edit centered' 
+                        data-id="${row.id}" 
+                        data-brand="${row.fk_brand}" 
+                        data-model="${row.model}" 
+                        data-category="${row.fk_category}" 
+                        data-serial="${row.serial_number}" 
+                        data-state="${row.state_asset}" 
+                        data-status="${row.status}" 
+                        data-observation="${row.observation}"
+                        data-table-id="${tableId}">
+                        <i class='fa-solid fa-pencil'></i>
+                    </button>
                     <button class='btn btn-sm btn-danger delete-asset-btn centered' data-id="${row.id}" data-table-id="${tableId}"><i class='fa-solid fa-trash-can'></i></button>
                 `;
                 return buttons;
