@@ -1,75 +1,87 @@
 from django.shortcuts import render
 from django.http.response import JsonResponse, HttpResponse
 from .models import Asset
+from brand.models import Brand
+from category.models import Category
 from django.http import HttpResponseRedirect
 from .forms import AssetCreate
 from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 @login_required
 def inventory(request):
     asset_create_form = AssetCreate()
-
+    categories = Category.objects.all()
+    brands = Brand.objects.all()
     return render(request, 'crudassets.html', { 
+        'categories': categories,
+        'brands': brands,
         'form': asset_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'list_assets_url': reverse('inventory:list_assets'),
         })
 
+
 @login_required
 def list_assets(request):
+    status_filter = request.GET.get('status', 'all')
+    categories = request.GET.getlist('categories[]', [])
+    brand = request.GET.getlist('brand[]', [])
     all_data = request.GET.get('all', False)
 
     assets = Asset.objects.all()
 
-    # Usamos to_dict() para obtener los datos de cada asset
-    data = [asset.to_dict() for asset in assets]
+    if status_filter != 'all':
+        assets = assets.filter(status=status_filter)
+
+    if categories and 'all' not in categories:
+        assets = assets.filter(fk_category_id__in=categories)
+
+    if brand and 'all' not in brand:
+        assets = assets.filter(fk_brand_id__in=brand)
 
     if all_data:
-        response_data = {
-            'Asset': data,
-        }
-        return JsonResponse(response_data)
+        data = [asset.to_dict() for asset in assets]
+        return JsonResponse({'Asset': data})
+
 
     try:
         draw = int(request.GET.get('draw', 0))
         start = int(request.GET.get('start', 0))
-        length = int(request.GET.get('length', 10))  # Número de registros por página
+        length = int(request.GET.get('length', 10))
     except (ValueError, TypeError):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
-    search_value = request.GET.get('search[value]', None)
 
+    search_value = request.GET.get('search[value]', '')
     if search_value:
         assets = assets.filter(name__icontains=search_value)
 
     total_records = assets.count()
     filtered_records = assets.count()
 
+
     paginator = Paginator(assets, length)
-    page = (start // length) + 1
+    page_number = (start // length) + 1
 
     try:
-        assets_page = paginator.page(page)
-    except Exception:
-        assets_page = paginator.page(1)
+        page_obj = paginator.page(page_number)
+    except EmptyPage:
+        page_obj = paginator.page(1)
 
-    # Usamos to_dict() para obtener los datos de cada asset en la página
-    data = [asset.to_dict() for asset in assets_page]
+    data = [asset.to_dict() for asset in page_obj]
 
-    response_data = {
+    return JsonResponse({
         'draw': draw,
         'recordsTotal': total_records,
         'recordsFiltered': filtered_records,
         'data': data,
-    }
-
-    return JsonResponse(response_data)
+    })
 
 @login_required
 def asset_create(request):

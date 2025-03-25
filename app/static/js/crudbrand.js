@@ -64,48 +64,22 @@ const initDataTablebrand = async () => {
                             url: 'http://127.0.0.1:8000/brand/list_brand/?all=true',
                             type: 'GET',
                             success: (response) => {
-                                const data = response.brand.map(brand => [brand.id, brand.name]);
-
-                                // Obtener la fecha actual
+                                const data = response.Brand.map(brand => [brand.id, brand.name]);
                                 const today = new Date();
-
-                                // Obtener componentes de la fecha y hora
-                                /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
-                                const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
-                                const year = today.getFullYear(); // Año (4 dígitos)
-                                const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
-                                const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
-                                const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
-
-                                // Formato personalizado: DD-MM-YYYY HH:MM:SS
-                                /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
                                 const formattedDateTime = today.toLocaleString();
+
                                 const docDefinition = {
                                     content: [
-                                        // Logos en columnas
                                         {
                                             columns: [
-                                                {
-                                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
-                                                    width: 80, // Ancho de la imagen
-                                                    alignment: 'left', // Alineación a la izquierda
-                                                    margin: [0, 0, 0, 10] // Margen de la imagen
-                                                },
-                                                {
-                                                    text: '', // Columna vacía para separar los logos
-                                                    width: '*', // Ocupa el espacio restante
-                                                },
-                                                {
-                                                    image: logo, // Logo derecho (Base64 o URL)
-                                                    width: 80, // Ancho de la imagen
-                                                    alignment: 'right', // Alineación a la derecha
-                                                    margin: [0, 0, 0, 10] // Margen de la imagen
-                                                }
+                                                { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
+                                                { text: '', width: '*' },
+                                                { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
                                             ],
-                                            columnGap: 10 // Espacio entre columnas (opcional)
+                                            columnGap: 10
                                         },
                                         {
-                                            text: 'Lista de Categorías',
+                                            text: 'Lista de Marcas',
                                             style: 'header',
                                             alignment: 'center',
                                             margin: [0, 10, 0, 20]
@@ -113,46 +87,68 @@ const initDataTablebrand = async () => {
                                         {
                                             table: {
                                                 headerRows: 1,
-                                                widths: ['*', '*'],
+                                                widths: ['auto', '*'],
                                                 body: [
-                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
-                                                    ...data
+                                                    [
+                                                        { text: 'ID', style: 'tableHeader' },
+                                                        { text: 'Nombre', style: 'tableHeader', alignment: 'left' }
+                                                    ],
+                                                    ...data.map(row => [
+                                                        { text: row[0], style: 'tableCell' },
+                                                        { text: row[1], style: 'longTextCell' }
+                                                    ])
                                                 ]
                                             },
-                                            layout: 'lightHorizontalLines' // Estilo de la tabla
+                                            layout: {
+                                                hLineWidth: (i, node) => (i === 0 || i === node.table.body.length) ? 1 : 0.5,
+                                                vLineWidth: () => 0.5,
+                                                hLineColor: () => '#cccccc',
+                                                vLineColor: () => '#cccccc',
+                                                paddingTop: () => 5,
+                                                paddingBottom: () => 5
+                                            }
                                         }
                                     ],
                                     styles: {
                                         header: {
                                             fontSize: 18,
                                             bold: true,
-                                            color: '#2c3e50' // Color del texto
+                                            color: '#2c3e50'
                                         },
                                         tableHeader: {
                                             bold: true,
                                             fontSize: 13,
-                                            color: '#34495e' // Color del texto del encabezado de la tabla
+                                            color: '#34495e'
+                                        },
+                                        tableCell: {
+                                            fontSize: 11,
+                                            color: '#333333',
+                                            margin: [0, 5, 0, 5]
+                                        },
+                                        longTextCell: {
+                                            fontSize: 11,
+                                            color: '#333333',
+                                            margin: [0, 5, 0, 5],
+                                            alignment: 'left',
+                                            lineHeight: 1.2
                                         },
                                         footer: {
                                             fontSize: 10,
                                             alignment: 'center',
-                                            color: '#666666' // Color del texto del pie de página
+                                            color: '#666666'
                                         }
                                     },
                                     defaultStyle: {
                                         fontSize: 12,
-                                        color: '#2c3e50' // Color del texto por defecto
+                                        color: '#2c3e50'
                                     },
-                                    footer: (currentPage, pageCount) => {
-                                        return {
-                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                            style: 'footer',
-                                            margin: [0, 10, 0, 0] // Margen del pie de página
-                                        };
-                                    }
+                                    footer: (currentPage, pageCount) => ({
+                                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                                        style: 'footer',
+                                        margin: [0, 10, 0, 0]
+                                    })
                                 };
 
-                                // Generar y descargar el PDF con un nombre personalizado
                                 pdfMake.createPdf(docDefinition).download(`Lista_de_Categorias_${formattedDateTime}.pdf`);
                                 $("#loading-indicator").hide();
                             },
@@ -162,8 +158,7 @@ const initDataTablebrand = async () => {
                                 $("#loading-indicator").hide();
                             },
                         });
-                    },
-                },
+                    }},
                 {
                     extend: "print",
                     text: '<i class="fa fa-print"></i> ',

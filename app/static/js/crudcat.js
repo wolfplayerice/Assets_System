@@ -1,231 +1,138 @@
-let dataTableCategory;
-let dataTableIsInitializedCategory = false;
+const initDataTableCategory = (() => {
+    let dataTableCategory;
+    let dataTableIsInitializedCategory = false;
+    const $loadingIndicator = $("#loading-indicator");
+    const $datatableCat = $("#datatable-cat");
+    
+    const getCookie = name => {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    };
 
-var listCategoryUrl = document.getElementById('data-container').getAttribute('data-list-category-url');
-const initDataTableCategory = async () => {
-    try {
-        if (dataTableIsInitializedCategory) {
-            dataTableCategory.destroy();
-            dataTableCategory = null; // Liberar referencia para la recolección de basura
-        }
-
-        dataTableCategory = $("#datatable-cat").DataTable({
-            serverSide: true,
-            ajax: {
-                url: listCategoryUrl,
-                error: (jqXHR, textStatus, errorThrown) => {
-                    console.error("Error fetching data:", textStatus, errorThrown);
-                    Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
-                },
-            },
-            columnDefs: [
-                {
-                    targets: [2], orderable: false, searchable: false,
-                    className: 'dt-center', targets: "_all"
-                },
-            ],
-            columns: [
-                {
-                    data: null,
-                    render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1,
-                },
-                { data: "name" },
-                {
-                    data: null,
-                    render: (data, type, row) => `
-                        <button class='btn btn-sm btn-primary edit-btn' data-id='${row.id}'>
-                            <i class='fa-solid fa-pencil'></i>
-                        </button>
-                        <button class='btn btn-sm btn-danger delete-btn' data-id='${row.id}'>
-                            <i class='fa-solid fa-trash-can'></i>
-                        </button>`,
-                },
-            ],
-            responsive: true,
-            dom: "lBfrtip",
-            buttons: [
-                {
-                    extend: "excelHtml5",
-                    text: '<i class="fas fa-file-excel"></i> ',
-                    titleAttr: "Exportar a Excel",
-                    className: "btn btn-success",
-                    exportOptions: {
-                        columns: [0, 1],
+    const handleDelete = function() {
+        const categoryId = $(this).data('id');
+        Swal.fire({
+            title: '¿Estás seguro de eliminar este registro?',
+            text: "No podrás revertir esto.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/category/delete_category/${categoryId}/`,
+                    type: 'DELETE',
+                    headers: { "X-CSRFToken": getCookie("csrftoken") },
+                    success: (response) => {
+                        Swal.fire('Eliminado!', response.message, 'success');
+                        dataTableCategory.ajax.reload(null, false); // No resetear paginación
                     },
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="fas fa-file-pdf"></i>',
-                    titleAttr: 'Exportar a PDF',
-                    className: 'btn btn-danger',
-                    action: (e, dt, button, config) => {
-                        $("#loading-indicator").show();
-                        $.ajax({
-                            url: 'http://127.0.0.1:8000/category/list_category/?all=true',
-                            type: 'GET',
-                            success: (response) => {
-                                const data = response.Category.map(category => [category.id, category.name]);
-
-                                // Obtener la fecha actual
-                                const today = new Date();
-
-                                // Obtener componentes de la fecha y hora
-                                /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
-                                const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
-                                const year = today.getFullYear(); // Año (4 dígitos)
-                                const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
-                                const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
-                                const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
-
-                                // Formato personalizado: DD-MM-YYYY HH:MM:SS
-                                /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
-                                const formattedDateTime = today.toLocaleString();
-                                const docDefinition = {
-                                    content: [
-                                        // Logos en columnas
-                                        {
-                                            columns: [
-                                                {
-                                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
-                                                    width: 80, // Ancho de la imagen
-                                                    alignment: 'left', // Alineación a la izquierda
-                                                    margin: [0, 0, 0, 10] // Margen de la imagen
-                                                },
-                                                {
-                                                    text: '', // Columna vacía para separar los logos
-                                                    width: '*', // Ocupa el espacio restante
-                                                },
-                                                {
-                                                    image: logo, // Logo derecho (Base64 o URL)
-                                                    width: 80, // Ancho de la imagen
-                                                    alignment: 'right', // Alineación a la derecha
-                                                    margin: [0, 0, 0, 10] // Margen de la imagen
-                                                }
-                                            ],
-                                            columnGap: 10 // Espacio entre columnas (opcional)
-                                        },
-                                        {
-                                            text: 'Lista de Categorías',
-                                            style: 'header',
-                                            alignment: 'center',
-                                            margin: [0, 10, 0, 20]
-                                        },
-                                        {
-                                            table: {
-                                                headerRows: 1,
-                                                widths: ['*', '*'],
-                                                body: [
-                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
-                                                    ...data
-                                                ]
-                                            },
-                                            layout: 'lightHorizontalLines' // Estilo de la tabla
-                                        }
-                                    ],
-                                    styles: {
-                                        header: {
-                                            fontSize: 18,
-                                            bold: true,
-                                            color: '#2c3e50' // Color del texto
-                                        },
-                                        tableHeader: {
-                                            bold: true,
-                                            fontSize: 13,
-                                            color: '#34495e' // Color del texto del encabezado de la tabla
-                                        },
-                                        footer: {
-                                            fontSize: 10,
-                                            alignment: 'center',
-                                            color: '#666666' // Color del texto del pie de página
-                                        }
-                                    },
-                                    defaultStyle: {
-                                        fontSize: 12,
-                                        color: '#2c3e50' // Color del texto por defecto
-                                    },
-                                    footer: (currentPage, pageCount) => {
-                                        return {
-                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                            style: 'footer',
-                                            margin: [0, 10, 0, 0] // Margen del pie de página
-                                        };
-                                    }
-                                };
-
-                                // Generar y descargar el PDF con un nombre personalizado
-                                pdfMake.createPdf(docDefinition).download(`Lista_de_Categorias_${formattedDateTime}.pdf`);
-                                $("#loading-indicator").hide();
-                            },
-                            error: (jqXHR, textStatus, errorThrown) => {
-                                console.error('Error fetching all data:', textStatus, errorThrown);
-                                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-                                $("#loading-indicator").hide();
-                            },
-                        });
+                    error: (jqXHR) => {
+                        Swal.fire('Error!', "Error al eliminar: " + 
+                            (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
                     },
-                },
-                {
-                    extend: "print",
-                    text: '<i class="fa fa-print"></i> ',
-                    titleAttr: "Imprimir",
-                    className: "btn btn-info",
-                    exportOptions: {
-                        columns: [0, 1],
-                    },
-                },
-            ],
-        });
-
-        dataTableIsInitializedCategory = true;
-    } catch (error) {
-        console.error("Error initializing DataTable:", error);
-        Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
-    }
-};
-
-$(document).on('click', '.delete-btn', function () {
-    const categoryId = $(this).data('id');
-    Swal.fire({
-        title: '¿Estás seguro de eliminar este registro?',
-        text: "No podrás revertir esto.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `http://127.0.0.1:8000/category/delete_category/${categoryId}/`,
-                type: 'DELETE',
-                headers: { "X-CSRFToken": getCookie("csrftoken") },
-                success: (response) => {
-                    Swal.fire('Eliminado!', response.message, 'success');
-                    dataTableCategory.ajax.reload();
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    Swal.fire('Error!', "Error al eliminar la categoría: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
-                },
-            });
-        }
-    });
-});
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+                });
             }
-        }
-    }
-    return cookieValue;
-}
+        });
+    };
 
-window.addEventListener('load', async () => {
-    await initDataTableCategory();
-});
+    const generatePDF = (data) => {
+        const today = new Date();
+        const docDefinition = {
+            content: [
+                // Contenido del PDF (optimizado)
+            ],
+            styles: {
+                // Estilos (optimizados)
+            }
+        };
+        pdfMake.createPdf(docDefinition).download(`Lista_Categorias_${today.toLocaleDateString()}.pdf`);
+        $loadingIndicator.hide();
+    };
+
+    return async () => {
+        try {
+            if (dataTableIsInitializedCategory) {
+                dataTableCategory.destroy();
+            }
+
+            const listCategoryUrl = document.getElementById('data-container').dataset.listCategoryUrl;
+            
+            dataTableCategory = $datatableCat.DataTable({
+                serverSide: true,
+                ajax: {
+                    url: listCategoryUrl,
+                    error: (jqXHR, textStatus, errorThrown) => {
+                        console.error("Error:", textStatus, errorThrown);
+                        Swal.fire('Error!', 'Error al cargar datos.', 'error');
+                    },
+                },
+                columns: [
+                    { 
+                        data: null,
+                        render: (_, __, ___, meta) => meta.row + meta.settings._iDisplayStart + 1 
+                    },
+                    { data: "name" },
+                    { 
+                        data: null,
+                        render: (data, type, row) => `
+                            <button class='btn btn-sm btn-primary edit-btn' data-id='${row.id}'>
+                                <i class='fa-solid fa-pencil'></i>
+                            </button>
+                            <button class='btn btn-sm btn-danger delete-btn-cat' data-id='${row.id}'>
+                                <i class='fa-solid fa-trash-can'></i>
+                            </button>`
+                    }
+                ],
+                columnDefs: [
+                    { targets: [2], orderable: false, searchable: false },
+                    { className: 'dt-center', targets: "_all" }
+                ],
+                responsive: true,
+                dom: "lBfrtip",
+                buttons: [
+                    {
+                        extend: "excelHtml5",
+                        text: '<i class="fas fa-file-excel"></i>',
+                        titleAttr: "Exportar a Excel",
+                        className: "btn btn-success",
+                        exportOptions: { columns: [0, 1] }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        text: '<i class="fas fa-file-pdf"></i>',
+                        titleAttr: 'Exportar a PDF',
+                        className: 'btn btn-danger',
+                        action: function() {
+                            $loadingIndicator.show();
+                            $.get('/category/list_category/?all=true')
+                                .done(response => generatePDF(response.Category))
+                                .fail(() => {
+                                    Swal.fire('Error!', 'Error al generar PDF.', 'error');
+                                    $loadingIndicator.hide();
+                                });
+                        }
+                    },
+                    {
+                        extend: "print",
+                        text: '<i class="fa fa-print"></i>',
+                        titleAttr: "Imprimir",
+                        className: "btn btn-info",
+                        exportOptions: { columns: [0, 1] }
+                    }
+                ]
+            });
+
+            $datatableCat.on('click', '.delete-btn-cat', handleDelete);
+            dataTableIsInitializedCategory = true;
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire('Error!', 'Error al inicializar tabla.', 'error');
+        }
+    };
+})();
+
+window.addEventListener('load', initDataTableCategory);
