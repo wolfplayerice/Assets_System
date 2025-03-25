@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 @login_required
 def inventory(request):
@@ -59,9 +60,29 @@ def list_assets(request):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
 
-    search_value = request.GET.get('search[value]', '')
+    search_value = request.GET.get('search[value]', '').strip().lower()
     if search_value:
-        assets = assets.filter(name__icontains=search_value)
+            # Mapeo de términos de búsqueda a valores booleanos
+            status_mapping = {
+                'operativo': True,
+                'inoperativo': False
+            }
+            
+            # Verificar si la búsqueda coincide con algún estado
+            status_filter = None
+            for term, bool_value in status_mapping.items():
+                if term.startswith(search_value):
+                    status_filter = bool_value
+                    break
+
+            assets = assets.filter(
+            Q(model__icontains=search_value) |
+            Q(serial_number__icontains=search_value) |
+            Q(state_asset__icontains=search_value) |
+            Q(fk_brand__name__icontains=search_value) |
+            Q(fk_category__name__icontains=search_value) |
+            (Q(status=status_filter) if status_filter is not None else Q())
+        )
 
     total_records = assets.count()
     filtered_records = assets.count()
