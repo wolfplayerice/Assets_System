@@ -224,11 +224,10 @@ $(document).ready(function () {
 
                 const docDefinition = {
                     content: [
-                        // Logos en columnas
                         {
                             columns: [
                                 {
-                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
+                                    image: gobernacion,
                                     width: 80,
                                     alignment: 'left',
                                     margin: [0, 0, 0, 10]
@@ -238,7 +237,7 @@ $(document).ready(function () {
                                     width: '*',
                                 },
                                 {
-                                    image: logo, // Logo derecho (Base64 o URL)
+                                    image: logo,
                                     width: 80,
                                     alignment: 'right',
                                     margin: [0, 0, 0, 10]

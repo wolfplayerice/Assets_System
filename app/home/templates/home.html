@@ -122,14 +122,15 @@
   <script src="{% static 'js/DataTables/datatables.min.js' %}"></script>
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-  <script src="{% static 'js/crudassets.js' %}"></script>
-  <script src="{% static 'js/crudbrand.js' %}"></script>
-  <script src="{% static 'js/crudcat.js' %}"></script>
-  <script src="{% static 'js/verify_user.js' %}"></script>
-  <script src="{% static 'js/base64.js' %}"></script>
-  <script src="{% static 'js/cruduser.js' %}"></script>
-  <script src="{% static 'js/audit.js' %}"></script>
+  <script src="{% static 'js/crudbrand.js' %}" defer></script>
+  <script src="{% static 'js/crudcat.js' %}" defer></script>
+  <script src="{% static 'js/verify_user.js' %}" defer></script>
+  <script src="{% static 'js/base64.js' %}" defer></script>
+  <script src="{% static 'js/cruduser.js' %}" defer></script>
 
+  {% block extra_js %}
+
+  {% endblock %}
 
   <script>
     document.addEventListener('DOMContentLoaded', function () {

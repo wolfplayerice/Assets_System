@@ -1,7 +1,7 @@
 {% extends 'home.html' %}
 {% load widget_tweaks %}
 {% block content %}
-
+{% load static %}
 <div class="row">
   <div class="col-md-12">
     <div class="card custom-card-height">
@@ -230,12 +230,9 @@
               <!-- Incluye jQuery y Bootstrap JS -->
               <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
               <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-              <script>
-                $(document).ready(function () {
-                  initDataTable('datatable-assets', true); // Incluir columna de acciones
-                });
-              </script>
+              {% block extra_js %}
+              <script src="{% static 'js/crudassets.js' %}"></script>
+              {% endblock %}
 
               <script>
                 $(document).ready(function () {
