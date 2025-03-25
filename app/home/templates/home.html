@@ -29,6 +29,11 @@
         <li class="nav-item">
           <a class="nav-link" id="collapse-menu-button" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
         </li>
+        <li class="nav-item">
+          <button id="dark-mode-toggle" class="btn btn-sm btn-dark">
+              <i class="fas fa-moon"></i>
+          </button>
+      </li>
       </ul>
     </nav>
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
@@ -154,6 +159,42 @@
           link.classList.remove('active');
         }
       });
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const darkModeToggle = document.getElementById("dark-mode-toggle");
+        const body = document.body;
+        const html = document.documentElement;
+        const dataTables = document.querySelectorAll(".dataTable"); // Selecciona todas las tablas con DataTables
+
+        function applyDarkMode(enabled) {
+            if (enabled) {
+                body.classList.add("dark-mode");
+                html.classList.add("dark");
+                html.setAttribute("data-bs-theme", "dark");
+                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                dataTables.forEach(table => table.classList.add("table-dark")); // Aplica estilo oscuro a DataTables
+                localStorage.setItem("dark-mode", "enabled");
+            } else {
+                body.classList.remove("dark-mode");
+                html.classList.remove("dark");
+                html.setAttribute("data-bs-theme", "light");
+                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                dataTables.forEach(table => table.classList.remove("table-dark")); // Quita el estilo oscuro de DataTables
+                localStorage.setItem("dark-mode", "disabled");
+            }
+        }
+
+        // Cargar modo guardado en localStorage
+        const darkModeEnabled = localStorage.getItem("dark-mode") === "enabled";
+        applyDarkMode(darkModeEnabled);
+
+        // Evento de cambio de modo
+        darkModeToggle.addEventListener("click", function () {
+            applyDarkMode(!body.classList.contains("dark-mode"));
+        });
     });
   </script>
 
