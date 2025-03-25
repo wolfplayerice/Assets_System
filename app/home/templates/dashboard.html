@@ -1,6 +1,8 @@
 {% extends 'home.html' %}
 
 {% block content %}
+{% load static %}
+
 <style>
   .btn-circle {
     width: 20px;
@@ -149,4 +151,8 @@
             {% if success %}
             <div id="success-message" style="display: none;">{{ success }}</div>
             {% endif %}
+            {% endblock %}
+
+            {% block extra_js %}
+            <script src="{% static 'js/crudassets.js' %}"></script>
             {% endblock %}

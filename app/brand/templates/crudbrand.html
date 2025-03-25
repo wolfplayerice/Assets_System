@@ -1,6 +1,7 @@
 {% extends 'home.html' %}
 {% load widget_tweaks %}
 {% block content %}
+{% load static %}
 
 <div class="row">
     <div class="col-md-12">
@@ -126,4 +127,8 @@ aria-hidden="true">
   {% endfor %}
   {% endif %}
   </script>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/crudbrand.js' %}"></script>
 {% endblock %}

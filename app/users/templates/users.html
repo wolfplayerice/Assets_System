@@ -1,6 +1,7 @@
 {% extends 'home.html' %}
 {% load widget_tweaks %}
 {% block content %}
+{% load static %}
 
 <div class="row">
   <div class="col-md-12">
@@ -106,9 +107,6 @@
               </div>
             </div>
 
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
           <script>
           {% if messages %}
           {% for message in messages %}
@@ -122,4 +120,8 @@
           {% endfor %}
           {% endif %}
         </script>
+            {% endblock %}
+
+            {% block extra_js %}
+            <script src="{% static 'js/cruduser.js' %}"></script>
             {% endblock %}
