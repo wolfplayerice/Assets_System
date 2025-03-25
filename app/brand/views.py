@@ -120,7 +120,7 @@ def delete_brand(request, brand_id):
             brand.delete()
             AuditLog.objects.create(
                     user=request.user,
-                    action='create',
+                    action='delete',
                     model_name='Brand',
                     object_id=brand_id,
                     description=f"Marca eliminada: {brand.name}"

@@ -2,6 +2,7 @@ from django.db import models
 from django.forms import ModelForm
 from brand.models import Brand
 from category.models import Category
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -18,6 +19,10 @@ class Asset(models.Model):
     state_asset = models.CharField(max_length=255, null=False, verbose_name='Bien del estado')
     status = models.BooleanField(default=True, null=False, choices=ACTIVE_CHOICES)
     observation = models.TextField(blank=True)
+    modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    
 
     #Llaves foraneas
     fk_category = models.ForeignKey(Category, on_delete=models.CASCADE)
