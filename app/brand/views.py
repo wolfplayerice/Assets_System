@@ -7,6 +7,8 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from audit.models import AuditLog 
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -78,42 +80,54 @@ def brand_create(request):
         brand_create_form = Create_brand(request.POST)
         if brand_create_form.is_valid():
             try:
-                brands = Brand(
+                brand = Brand(
                     name=brand_create_form.cleaned_data['name'],
+                    modified_by=request.user
                 )
-                brands.save()
+                brand.save()
+                # Registrar en el log de auditoría
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='create',
+                    model_name='Brand',
+                    object_id=brand.id,  # Ahora es la instancia correcta
+                    description=f"Marca creada: {brand.name}"
+                )
                 messages.success(request, 'La marca se ha guardado correctamente.')
-            
+                return HttpResponseRedirect(reverse('home:brand'))
             except Exception as e:
-                # Captura cualquier otro error inesperado
                 messages.error(request, f'Error inesperado: {str(e)}')
-        
         else:
-            # Si el formulario no es válido, muestra errores de validación
+            # Mostrar errores de validación
             for field, errors in brand_create_form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
     
     else:
         brand_create_form = Create_brand()
-    
-    return render(request, 'crudbrand.html', {'brand_form': brand_create_form}, {
+
+    return render(request, 'crudbrand.html', {
         'brand_form': brand_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        })
+    })
 
 @login_required
 def delete_brand(request, brand_id):
-    print(f"Received request method: {request.method}")  # Para depuración
     if request.method == "DELETE":
+        brand = get_object_or_404(Brand, pk=brand_id)
         try:
-            brand = Brand.objects.get(pk=brand_id)
             brand.delete()
-            return JsonResponse({"message": "Categoría eliminada correctamente."})
-        except Brand.DoesNotExist:
-            return JsonResponse({"error": "Categoría no encontrada."}, status=404)
+            # Registrar en el log de auditoría
+            AuditLog.objects.create(
+                user=request.user,
+                action='delete',
+                model_name='Brand',
+                object_id=brand_id,
+                description=f"Marca eliminada: {brand.name}"
+            )
+            return JsonResponse({"message": "Marca eliminada correctamente."})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
-    else:
-        return HttpResponse(status=405)  # Método no permitido
+    
+    return HttpResponse(status=405)     

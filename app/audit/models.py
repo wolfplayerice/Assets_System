@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 
 class AuditLog(models.Model):
     ACTION_CHOICES = [
-        ('Create', 'Creación'),
-        ('Update', 'Edición'),
-        ('Delete', 'Eliminación'),
+        ('create', 'Creación'),
+        ('update', 'Edición'),
+        ('delete', 'Eliminación'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

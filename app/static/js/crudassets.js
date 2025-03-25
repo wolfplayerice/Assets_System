@@ -197,7 +197,7 @@ $(document).ready(function () {
 
         // Realizar la solicitud AJAX con las opciones de filtrado
         $.ajax({
-            url: 'http://127.0.0.1:8000/inventory/list_assets/',
+            url: listAssetsUrl,
             type: 'GET',
             data: {
                 status: statusFilter,
