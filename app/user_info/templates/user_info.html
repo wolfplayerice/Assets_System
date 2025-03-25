@@ -2,6 +2,7 @@
 {% load widget_tweaks %}
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
 .login-box {
@@ -66,25 +67,43 @@
             <!-- Campo de nombre de usuario -->
             <div class="form-group">
                 {{ EditUserInfo.username.label_tag }}
-                {{ EditUserInfo.username }}
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    </div>
+                    {{ EditUserInfo.username }}
+                </div>
             </div>
         
             <!-- Campo de nombre -->
             <div class="form-group">
                 {{ EditUserInfo.first_name.label_tag }}
-                {{ EditUserInfo.first_name }}
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                    </div>
+                    {{ EditUserInfo.first_name }}
+                </div>
             </div>
         
             <!-- Campo de apellido -->
             <div class="form-group">
                 {{ EditUserInfo.last_name.label_tag }}
-                {{ EditUserInfo.last_name }}
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-user-friends"></i></span>
+                    </div>
+                    {{ EditUserInfo.last_name }}
+                </div>
             </div>
         
             <!-- Campo de contraseña -->
             <div class="form-group">
                 {{ EditUserInfo.password.label_tag }}
                 <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
                     {{ EditUserInfo.password }}
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" id="toggle-password">
@@ -98,6 +117,9 @@
             <div class="form-group">
                 {{ EditUserInfo.password2.label_tag }}
                 <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
                     {{ EditUserInfo.password2 }}
                     <div class="input-group-append">
                         <button type="button" class="btn btn-outline-secondary" id="toggle-password2">
