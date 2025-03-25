@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
+from audit.models import AuditLog 
 
 @login_required
 def inventory(request):
@@ -103,8 +104,16 @@ def asset_create(request):
                     observation=asset_create_form.cleaned_data['observation'],
                     fk_category=asset_create_form.cleaned_data['fk_category'],
                     fk_brand=asset_create_form.cleaned_data['fk_brand'],
+                    modified_by=request.user
                 )
                 assets.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='create',
+                    model_name='Asset',
+                    object_id=assets.id,
+                    description = f"Activo guardado: {assets.fk_brand.name} {assets.model} {assets.serial_number}"
+                )
                 messages.success(request, 'El activo se ha guardado correctamente.')
                 return HttpResponseRedirect(reverse('home:inventory'))
             
@@ -144,6 +153,13 @@ def delete_asset(request, asset_id):
         try:
             asset = Asset.objects.get(pk=asset_id)
             asset.delete()
+            AuditLog.objects.create(
+            user=request.user,
+            action='delete',
+            model_name='Asset',
+            object_id=asset_id,
+            description = f"Activo borrado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
+        )
             return JsonResponse({"message": "Categoría eliminada correctamente."})
         except Asset.DoesNotExist:
             return JsonResponse({"error": "Categoría no encontrada."}, status=404)
@@ -160,6 +176,13 @@ def asset_edit(request, asset_id):
         if form.is_valid():
             try:
                 form.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='update',
+                    model_name='Asset',
+                    object_id=asset_id,
+                    description = f"Activo editado: {form.fk_brand.name} {form.model} {form.serial_number}"
+                    )
                 messages.success(request, 'El activo se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
