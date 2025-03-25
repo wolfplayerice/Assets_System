@@ -9,7 +9,7 @@ def log_create_update(sender, instance, created, **kwargs):
         return
 
     user = getattr(instance, 'modified_by', None)
-    action = 'create' if created else 'update'
+    action = 'Create' if created else 'Update'
 
     AuditLog.objects.create(
         user=user,
@@ -28,7 +28,7 @@ def log_delete(sender, instance, **kwargs):
 
     AuditLog.objects.create(
         user=user,
-        action='delete',
+        action='Delete',
         model_name=sender.__name__,
         object_id=instance.pk,
         description=f"Eliminación de {sender.__name__} (ID: {instance.pk})"
