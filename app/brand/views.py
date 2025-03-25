@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-
+from audit.models import AuditLog 
 # Create your views here.
 
 @login_required
@@ -82,7 +82,15 @@ def brand_create(request):
                     name=brand_create_form.cleaned_data['name'],
                 )
                 brands.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='create',
+                    model_name='Brand',
+                    object_id=brands.id,
+                    description=f"Marca creada: {brands.name}"
+                )
                 messages.success(request, 'La marca se ha guardado correctamente.')
+                return HttpResponseRedirect(reverse('home:brand'))
             
             except Exception as e:
                 # Captura cualquier otro error inesperado
@@ -110,6 +118,13 @@ def delete_brand(request, brand_id):
         try:
             brand = Brand.objects.get(pk=brand_id)
             brand.delete()
+            AuditLog.objects.create(
+                    user=request.user,
+                    action='create',
+                    model_name='Brand',
+                    object_id=brand_id,
+                    description=f"Marca eliminada: {brand.name}"
+                )
             return JsonResponse({"message": "Categoría eliminada correctamente."})
         except Brand.DoesNotExist:
             return JsonResponse({"error": "Categoría no encontrada."}, status=404)
