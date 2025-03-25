@@ -11,6 +11,7 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
 from audit.models import AuditLog 
+from django.db.models import Q
 
 @login_required
 def inventory(request):
@@ -49,7 +50,7 @@ def list_assets(request):
 
     if all_data:
         data = [asset.to_dict() for asset in assets]
-        return JsonResponse({'Asset': data})
+        return JsonResponse({'data': data})
 
 
     try:
@@ -60,9 +61,17 @@ def list_assets(request):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
 
-    search_value = request.GET.get('search[value]', '')
+    search_value = request.GET.get('search[value]', '').strip()
     if search_value:
-        assets = assets.filter(name__icontains=search_value)
+        assets = assets.filter(
+            Q(model__icontains=search_value) |
+            Q(serial_number__icontains=search_value) |
+            Q(state_asset__icontains=search_value) |
+            Q(status__icontains=search_value) |
+            Q(observation__icontains=search_value) |
+            Q(fk_category__name__icontains=search_value) |  # Buscar por nombre de categoría
+            Q(fk_brand__name__icontains=search_value)  # Buscar por nombre de marca
+        )
 
     total_records = assets.count()
     filtered_records = assets.count()
