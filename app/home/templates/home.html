@@ -82,12 +82,14 @@
                 <p>Auditoria</p>
               </a>
             </li>
+            {% if request.user.is_staff %}
             <li class="nav-item">
               <a href="{% url 'home:users' %}" class="nav-link" id="nav-usuarios">
                 <i class="nav-icon fas fa-users"></i>
                 <p>Usuarios</p>
               </a>
             </li>
+          {% endif %}
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link" id="nav-cerrar-sesion">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
