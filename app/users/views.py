@@ -8,10 +8,14 @@ from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.shortcuts import redirect
 
-# Create your views here.
+def is_staff_user(user):
+    return user.is_staff  # Solo permite acceso a staff
+
 @login_required
+@user_passes_test(is_staff_user, login_url='home:dashboard')
 def user(request):
     user_create_form = CreateUser()
     return render(request, 'users.html', { 
@@ -22,10 +26,11 @@ def user(request):
     })
 
 @login_required
+@user_passes_test(is_staff_user, login_url='home:dashboard')
 def list_users(request):
     all_data = request.GET.get('all', False)
 
-    users = User.objects.all()
+    users = User.objects.filter(is_staff=False)
 
     data = [{
         'id': user.id,
