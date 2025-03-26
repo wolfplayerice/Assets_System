@@ -32,11 +32,18 @@ const initDataTableuser = async () => {
                 { data: "username" },
                 { data: "name" },
                 { data: "last_name" },
+                { data: "email" },
                 { data: "is_active" },
                 {
                     data: null,
                     render: (data, type, row) => `
-                        <button class='btn btn-sm btn-primary edit-btn' data-id='${row.id}'>
+                        <button class='btn btn-sm btn-primary edit-user-btn' 
+                            data-id='${row.id}'
+                            data-username='${row.username}'
+                            data-name='${row.name}'
+                            data-last_name='${row.last_name}'
+                            data-email='${row.email}'
+                            >
                             <i class='fa-solid fa-pencil'></i>
                         </button>
                         <button class='btn btn-sm btn-danger delete-btn' data-id='${row.id}'>
@@ -156,6 +163,29 @@ $(document).on('click', '.delete-btn', function () {
             });
         }
     });
+});
+
+$(document).on('click', '.edit-user-btn', function () {
+    const userId = $(this).data('id');
+    const username = $(this).data('username');
+    const name = $(this).data('name');
+    const last_name = $(this).data('last_name');
+    const email = $(this).data('email');
+
+    $('#edit-user-id').val(userId);
+    $('#edit-user-username').val(username);
+    $('#edit-user-name').val(name);
+    $('#edit-user-last_name').val(last_name);
+    $('#edit-user-email').val(email);
+
+    // Establecer la acción del formulario dinámicamente
+    $('#edit-user-form').attr('action', `/users/user_edit/${userId}/`);
+
+    $('#editUserModal').modal('show');
+});
+
+$(document).on('click', '#save-changes', function () {
+    $('#edit-user-form').submit();
 });
 
 function getCookie(name) {
