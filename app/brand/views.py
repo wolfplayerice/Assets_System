@@ -85,6 +85,7 @@ def brand_create(request):
                 AuditLog.objects.create(
                     user=request.user,
                     action='create',
+                    username=request.user.username,
                     model_name='Brand',
                     object_id=brands.id,
                     description=f"Marca creada: {brands.name}"
@@ -121,6 +122,7 @@ def delete_brand(request, brand_id):
             AuditLog.objects.create(
                     user=request.user,
                     action='delete',
+                    username=request.user.username,  
                     model_name='Brand',
                     object_id=brand_id,
                     description=f"Marca eliminada: {brand.name}"

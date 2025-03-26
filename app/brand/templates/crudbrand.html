@@ -115,7 +115,9 @@ aria-hidden="true">
   {% if messages %}
   {% for message in messages %}
   {% if message.tags == 'success' %}
+  $(document).ready(function () {
   $('#successModal').modal('show');
+});
   {% elif message.tags == 'error' %}
   
     $(document).ready(function () {

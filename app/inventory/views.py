@@ -130,6 +130,7 @@ def asset_create(request):
                 AuditLog.objects.create(
                     user=request.user,
                     action='create',
+                    username=request.user.username,  
                     model_name='Asset',
                     object_id=assets.id,
                     description=f"Activo creado: {assets.fk_brand.name} {assets.model} {assets.serial_number}"
@@ -176,6 +177,7 @@ def delete_asset(request, asset_id):
             AuditLog.objects.create(
                     user=request.user,
                     action='delete',
+                    username=request.user.username,  
                     model_name='Asset',
                     object_id=asset_id,
                     description=f"Activo eliminado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"

@@ -24,7 +24,7 @@ def logs_list(request):
         logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset' ]).order_by('-timestamp')
         data = [
             {
-                "user": log.user.username if log.user else "Anónimo",
+                "user": log.username,
                 "action": action_translation.get(log.action.lower(), log.action),
                 "description": log.description,
                 "timestamp": log.timestamp.strftime('%Y-%m-%d %H:%M:%S')

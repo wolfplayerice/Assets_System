@@ -35,6 +35,7 @@ def category_create(request):
                 AuditLog.objects.create(
                     user=request.user,
                     action='create',
+                    username=request.user.username, 
                     model_name='Category',
                     object_id=category.id,
                     description=f"Categoría creada: {category.name}"
@@ -106,6 +107,7 @@ def delete_category(request, category_id):
         AuditLog.objects.create(
             user=request.user,
             action='delete',
+            username=request.user.username,  
             model_name='Category',
             object_id=category_id,
             description=f"Categoría eliminada: {category.name}"
