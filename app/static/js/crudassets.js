@@ -18,7 +18,12 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
         columns: [
             {
                 data: null,
-                render: (data, type, row, meta) => meta.row + 1 // Índice comienza desde 1
+                render: function(data, type, row, meta) {
+                    if (type === 'display') {
+                        return meta.settings._iDisplayStart + meta.row + 1;
+                    }
+                    return meta.row + 1;
+                }
             },
             { data: 'fk_brand' },
             { data: 'model' },
@@ -82,11 +87,14 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
                     <button class='btn btn-sm btn-primary btn-edit centered' 
                         data-id="${row.id}" 
                         data-brand="${row.fk_brand}" 
+                        data-brand-id="${row.fk_brand_id}" 
                         data-model="${row.model}" 
                         data-category="${row.fk_category}" 
+                        data-category-id="${row.fk_category_id}"
                         data-serial="${row.serial_number}" 
                         data-state="${row.state_asset}" 
                         data-status="${row.status}" 
+                        data-status-id="${row.status_id}"
                         data-observation="${row.observation}"
                         data-table-id="${tableId}">
                         <i class='fa-solid fa-pencil'></i>
@@ -324,32 +332,39 @@ $(document).on('click', '.btn-inoperativo', function () {
 
 $(document).on('click', '.btn-edit', function () {
     const assetId = $(this).data('id');
-    const brand = $(this).data('brand');
-    const model = $(this).data('model');
-    const category = $(this).data('category');
-    const serial = $(this).data('serial');
-    const state = $(this).data('state');
-    const status = $(this).data('status');
-    const observation = $(this).data('observation');
+    
+    const assetData = {
+        fk_brand: $(this).data('brand-id'),
+        model: $(this).data('model'),
+        fk_category: $(this).data('category-id'),
+        serial_number: $(this).data('serial'),
+        state_asset: $(this).data('state'), 
+        status: $(this).data('status-id'),
+        observation: $(this).data('observation') || ''
+    };
 
-    $('#edit-id').val(assetId);
-    $('#edit-brand').val(brand);
-    $('#edit-model').val(model);
-    $('#edit-category').val(category);
-    $('#edit-serial').val(serial);
-    $('#edit-state').val(state);
-    $('#edit-status').val(status);
-    $('#edit-observation').val(observation);
+    let stateAssetValue;
+    if (assetData.state_asset && assetData.state_asset.includes('-')) {
+        stateAssetValue = assetData.state_asset.split('-')[1];
+    } else {
+        stateAssetValue = assetData.state_asset;
+    }
+    
+    // Llenar campos del formulario
+    $('[name="fk_brand"], #id_fk_brand').val(assetData.fk_brand).trigger('change');
+    $('[name="model"], #id_model').val(assetData.model);
+    $('[name="fk_category"], #id_fk_category').val(assetData.fk_category).trigger('change');
+    $('[name="serial_number"], #id_serial_number').val(assetData.serial_number);
+    $('[name="state_asset"], #id_state_asset').val(stateAssetValue || '');
+    $('[name="observation"], #id_observation').val(assetData.observation);
+    
+    const statusValue = assetData.status ? 'True' : 'False';
+    $('[name="status"], #id_status').val(statusValue).trigger('change');
 
-    // Establecer la acción del formulario dinámicamente
     $('#edit-form').attr('action', `/inventory/asset_edit/${assetId}/`);
-
     $('#editModal').modal('show');
 });
 
-$(document).on('click', '#save-changes', function () {
-    $('#edit-form').submit();
-});
 
 function getCookie(name) {
     let cookieValue = null;

@@ -193,21 +193,46 @@ def delete_asset(request, asset_id):
 @login_required
 def asset_edit(request, asset_id):
     asset = get_object_or_404(Asset, pk=asset_id)
+    
     if request.method == "POST":
         form = AssetEdit(request.POST, instance=asset)
         if form.is_valid():
             try:
-                form.save()
+
+                prefix = form.cleaned_data.get('prefix', 'BE-').rstrip('-')
+                number = form.cleaned_data.get('state_asset', '').strip()
+                
+
+                if not number:
+                    messages.error(request, 'El número del activo no puede estar vacío')
+                    return render(request, 'crudassets.html', {
+                        'edit_form': form,
+                        'asset_id': asset_id,
+                    })
+                asset.state_asset = f"{prefix}-{number}"
+                
+                asset.save()
+                
                 messages.success(request, 'El activo se ha actualizado correctamente.')
+                return HttpResponseRedirect(reverse('inventory:inventory'))
+                
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
-        return HttpResponseRedirect(reverse('inventory:inventory'))
     else:
-        form = AssetEdit(instance=asset)
+
+        initial_data = {}
+        if asset.state_asset:
+            parts = asset.state_asset.split('-', 1)
+            initial_data = {
+                'prefix': parts[0] + '-' if len(parts) > 1 else 'BE-',
+                'state_asset': parts[1] if len(parts) > 1 else parts[0]
+            }
+        form = AssetEdit(instance=asset, initial=initial_data)
+    
     return render(request, 'crudassets.html', {
         'edit_form': form,
         'asset_id': asset_id,

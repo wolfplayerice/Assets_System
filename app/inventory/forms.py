@@ -12,15 +12,58 @@ class AssetCreate(forms.Form):
     observation = forms.CharField(widget=forms.Textarea(attrs={'id': 'id_observation'}), label="Observaciones", required=False)
 
 class AssetEdit(forms.ModelForm):
+    status = forms.ChoiceField(
+        choices=[
+            ('True', 'Operativo'),
+            ('False', 'Inoperativo')
+        ],
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'name': 'status'
+        })
+    )
+    
+    prefix = forms.ChoiceField(
+        choices=[('BBVA-', 'BBVA'), ('BE-', 'BE')],
+        widget=forms.Select(attrs={
+            'class': 'form-control',
+            'id': 'id_prefix'
+        }),
+        label="Prefijo"
+    )
+
     class Meta:
         model = Asset
         fields = ['fk_brand', 'model', 'fk_category', 'serial_number', 'state_asset', 'status', 'observation']
         widgets = {
-            # 'fk_brand': forms.TextInput(attrs={'class': 'form-control', 'id': 'edit-brand'}),
-            'model': forms.TextInput(attrs={'class': 'form-control', 'id': 'edit-model'}),
-            # 'fk_category': forms.TextInput(attrs={'class': 'form-control', 'id': 'edit-category'}),
-            'serial_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'edit-serial'}),
-            'state_asset': forms.TextInput(attrs={'class': 'form-control', 'id': 'edit-state'}),
-            # 'status': forms.TextInput(attrs={'class': 'form-control', 'id': 'edit-status'}),
-            'observation': forms.Textarea(attrs={'class': 'form-control', 'id': 'edit-observation'}),
+            'fk_brand': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_fk_brand'
+            }),
+            'model': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'id_model'
+            }),
+            'fk_category': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_fk_category'
+            }),
+            'serial_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'id_serial_number'
+            }),
+            'state_asset': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'id_state_asset',
+                'placeholder': 'Solo números'
+            }),
+            'status': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'id_status'
+            }),
+            'observation': forms.Textarea(attrs={
+                'class': 'form-control',
+                'id': 'id_observation',
+                'rows': 3
+            }),
         }

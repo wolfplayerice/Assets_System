@@ -4,9 +4,6 @@ from brand.models import Brand
 from category.models import Category
 from django.contrib.auth.models import User
 
-
-# Create your models here.
-
 ACTIVE_CHOICES = [
     (True, 'Operativo'),
     (False, 'Inoperativo')
@@ -35,11 +32,11 @@ class Asset(models.Model):
             "serial_number": self.serial_number,
             "state_asset": self.state_asset,
             "status": "Operativo" if self.status else "Inoperativo",
-            "status_id": self.status,  # Valor booleano real
-            "fk_category": self.fk_category.name,  # Nombre para mostrar
-            "fk_category_id": self.fk_category.id,  # ID para el select
-            "fk_brand": self.fk_brand.name,  # Nombre para mostrar
-            "fk_brand_id": self.fk_brand.id,  # ID para el select
+            "status_id": self.status,
+            "fk_category": self.fk_category.name,
+            "fk_category_id": self.fk_category.id,
+            "fk_brand": self.fk_brand.name,
+            "fk_brand_id": self.fk_brand.id,
             "observation": self.observation      
         }
 

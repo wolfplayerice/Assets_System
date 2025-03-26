@@ -140,26 +140,35 @@
                 </div>
               </div>
 
-              <!-- Modal para editar -->
-
-              <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+              <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="editModalLabel">Editar</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                      <h5 class="modal-title">Editar Bien</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
                     </div>
                     <div class="modal-body">
-                      <form id="edit-form" action="{% url 'inventory:asset_edit' 0 %}" method="post">
+                      <form id="edit-form" method="post">
                         {% csrf_token %}
-                        {{ edit_form }}
-                        <input type="hidden" id="edit-id" name="id">
+                        {% for field in form %}
+                        <div class="form-group form-floating mb-3">
+                          {% if field.field.widget.input_type == 'select' %}
+                          {{ field|add_class:"form-select" }}
+                          {% else %}
+                          {{ field|add_class:"form-control" }}
+                          {% endif %}
+                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% endfor %}
+                        <input type="hidden" name="asset_id" value="{{ asset_id }}">
+                      </form>
                     </div>
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                      <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                      <button type="submit" form="edit-form" class="btn btn-primary">Guardar</button>
                     </div>
-                    </form>
                   </div>
                 </div>
               </div>
