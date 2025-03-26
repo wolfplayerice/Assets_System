@@ -1,15 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
-from .forms import CreateUser
+from .forms import CreateUser, EditUser
 from django.urls import reverse
 from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.shortcuts import redirect
 
 def is_staff_user(user):
     return user.is_staff  # Solo permite acceso a staff
@@ -18,8 +17,10 @@ def is_staff_user(user):
 @user_passes_test(is_staff_user, login_url='home:dashboard')
 def user(request):
     user_create_form = CreateUser()
+    edit_user_form = EditUser()
     return render(request, 'users.html', { 
         'user_form': user_create_form,
+        'edit_user_form': edit_user_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'list_users_url': reverse('users:users_list'),
@@ -37,6 +38,7 @@ def list_users(request):
         'username': user.username,
         'name': user.first_name,
         'last_name': user.last_name,
+        'email': user.email,
         'is_active': user.is_active,
     } for user in users]
 
@@ -74,6 +76,7 @@ def list_users(request):
         'username': user.username,
         'name': user.first_name,
         'last_name': user.last_name,
+        'email': user.email,
         'is_active': user.is_active
     } for user in user_page]
 
@@ -120,3 +123,28 @@ def user_create(request):
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         })
+
+@login_required
+def user_edit(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    if request.method == "POST":
+        form = EditUser(request.POST, instance=user)
+        if form.is_valid():
+            try:
+                form.save()  # Guarda los cambios, incluyendo la contraseña encriptada
+                messages.success(request, 'El usuario se ha actualizado correctamente.')
+            except Exception as e:
+                messages.error(request, f'Error inesperado: {str(e)}')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en el campo {field}: {error}')
+        return HttpResponseRedirect(reverse('users:users'))
+    else:
+        form = EditUser(instance=user)
+
+    return render(request, 'users/edit_user.html', {
+        'form': form,
+        'user_id': user_id
+    })
