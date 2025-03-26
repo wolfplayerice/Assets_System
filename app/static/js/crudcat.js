@@ -79,7 +79,9 @@ const initDataTableCategory = (() => {
                     { 
                         data: null,
                         render: (data, type, row) => `
-                            <button class='btn btn-sm btn-primary edit-btn' data-id='${row.id}'>
+                            <button class='btn btn-sm btn-primary edit-cat-btn' 
+                            data-id='${row.id}'
+                            data-name='${row.name}'>
                                 <i class='fa-solid fa-pencil'></i>
                             </button>
                             <button class='btn btn-sm btn-danger delete-btn-cat' data-id='${row.id}'>
@@ -134,5 +136,22 @@ const initDataTableCategory = (() => {
         }
     };
 })();
+
+$(document).on('click', '.edit-cat-btn', function () {
+    const catId = $(this).data('id');
+    const catName = $(this).data('name');
+
+    $('#edit-cat-id').val(catId);
+    $('#edit-cat-name').val(catName);
+
+    // Establecer la acción del formulario dinámicamente
+    $('#edit-cat-form').attr('action', `/category/category_edit/${catId}/`);
+
+    $('#editCatModal').modal('show');
+});
+
+$(document).on('click', '#save-changes', function () {
+    $('#edit-cat-form').submit();
+});
 
 window.addEventListener('load', initDataTableCategory);

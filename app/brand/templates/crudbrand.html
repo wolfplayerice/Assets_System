@@ -4,56 +4,56 @@
 {% load static %}
 
 <div class="row">
-    <div class="col-md-12">
-      <div class="card custom-card-height">
-        <div class="card-header">
-          <h5 class="card-title">Tabla de las marcas</h5>
-        </div>
-        <!-- /.card-header -->
-        <div class="card-body">
-          <div class="row">
-            <div class="col-md-12">
+  <div class="col-md-12">
+    <div class="card custom-card-height">
+      <div class="card-header">
+        <h5 class="card-title">Tabla de las marcas</h5>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-12">
 
-<div id="data-container" data-list-brands-url="{% url 'brand:list_brand' %}">              
-<table id="datatable-brand" class="table">
-    <thead>
-        <div class="flex-row d-flex">
-            <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal"> <i
-                class='fa-solid fa-plus'></i>
-            </button>
-            <p>Añadir marca</p>
-          </div>
-        <tr>
-            <th class="centered" scope="col">#</th>
-            <th class="centered" scope="col">Marca</th>
-            <th class="centered" scope="col">Opciones</th>
-        </tr>
-    </thead>
-    <tbody id="tablebody_brand">
+            <div id="data-container" data-list-brands-url="{% url 'brand:list_brand' %}">
+              <table id="datatable-brand" class="table">
+                <thead>
+                  <div class="flex-row d-flex">
+                    <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
+                      <i class='fa-solid fa-plus'></i>
+                    </button>
+                    <p>Añadir marca</p>
+                  </div>
+                  <tr>
+                    <th class="centered" scope="col">#</th>
+                    <th class="centered" scope="col">Marca</th>
+                    <th class="centered" scope="col">Opciones</th>
+                  </tr>
+                </thead>
+                <tbody id="tablebody_brand">
 
-    </tbody>
-</table>
-
-
+                </tbody>
+              </table>
 
 
-</div>
 
-<div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="infoModalLabel">Registro de marca</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+
             </div>
-            <div class="modal-body">
-                <!-- Contenido del modal -->
-                <form action="{% url 'brand:create_brand' %}" method="post">
-                    {% csrf_token %}
-                    {% for field in brand_form %}
+
+            <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">Registro de marca</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Contenido del modal -->
+                    <form action="{% url 'brand:create_brand' %}" method="post">
+                      {% csrf_token %}
+                      {% for field in brand_form %}
                       <!-- se usa django-widget_tweaks -->
                       <div class="form-group form-floating mb-3">
                         {% if field.field.widget.input_type == 'text' %}
@@ -63,72 +63,98 @@
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                       </div>
                       {% endfor %}
-                    <input type="submit" value="Submit" class="btn btn-primary">
+                      <input type="submit" value="Submit" class="btn btn-primary">
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal para editar -->
+            <div class="modal fade" id="editBraModal" tabindex="-1" aria-labelledby="editBraModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="editBraModalLabel">Editar Marcas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                  </div>
+                  <div class="modal-body">
+                    <form id="edit-bra-form" action="{% url 'brand:brand_edit' 0 %}" method="post">
+                      {% csrf_token %}
+                      {{ edit_bra_form }}
+                      <input type="hidden" id="edit-bra-id" name="id">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
+                  </div>
                   </form>
+                </div>
+              </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+
+            <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="errorModalLabel">Error.</h5>
+                  </div>
+                  <div class="modal-body">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="errorModalLabel">Error.</h5>
-        </div>
-        <div class="modal-body">
-          {% if messages %}
-          {% for message in messages %}
-          <div class="alert alert-danger">{{ message }}</div>
-          {% endfor %}
-          {% endif %}
-        </div>
-      </div>
-    </div>
-</div>
+            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Éxito</h5>
+                  </div>
+                  <div class="modal-body">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
 
-<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
-aria-hidden="true">
-<div class="modal-dialog">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title" id="successModalLabel">Éxito</h5>
-    </div>
-    <div class="modal-body">
-      {% if messages %}
-      {% for message in messages %}
-      <div class="alert alert-success">{{ message }}</div>
-      {% endfor %}
-      {% endif %}
-    </div>
-  </div>
-</div>
-</div>
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+            <script>
+              {% if messages %}
+              {% for message in messages %}
+              {% if message.tags == 'success' %}
+              $('#successModal').modal('show');
+              {% elif message.tags == 'error' %}
 
-<script>
-  {% if messages %}
-  {% for message in messages %}
-  {% if message.tags == 'success' %}
-  $('#successModal').modal('show');
-  {% elif message.tags == 'error' %}
-  
-    $(document).ready(function () {
-  
-     $('#errorModal').modal('show');
-  
-    });
-  {% endif %}
-  {% endfor %}
-  {% endif %}
-  </script>
-{% endblock %}
+              $(document).ready(function () {
 
-{% block extra_js %}
-<script src="{% static 'js/crudbrand.js' %}"></script>
-{% endblock %}
+                $('#errorModal').modal('show');
+
+              });
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+            </script>
+            {% endblock %}
+
+            {% block extra_js %}
+            <script src="{% static 'js/crudbrand.js' %}"></script>
+
+            
+            {% endblock %}

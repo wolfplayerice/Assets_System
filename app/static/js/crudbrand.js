@@ -33,9 +33,11 @@ const initDataTablebrand = async () => {
                 {
                     data: null,
                     render: (data, type, row) => `
-                        <button class='btn btn-sm btn-primary edit-btn' data-id='${row.id}'>
-                            <i class='fa-solid fa-pencil'></i>
-                        </button>
+                            <button class='btn btn-sm btn-primary edit-bra-btn' 
+                            data-id='${row.id}'
+                            data-name='${row.name}'>
+                                <i class='fa-solid fa-pencil'></i>
+                            </button>
                         <button class='btn btn-sm btn-danger delete-btn-brand' data-id='${row.id}'>
                             <i class='fa-solid fa-trash-can'></i>
                         </button>`,
@@ -158,7 +160,8 @@ const initDataTablebrand = async () => {
                                 $("#loading-indicator").hide();
                             },
                         });
-                    }},
+                    }
+                },
                 {
                     extend: "print",
                     text: '<i class="fa fa-print"></i> ',
@@ -223,4 +226,21 @@ function getCookie(name) {
 
 window.addEventListener('load', async () => {
     await initDataTablebrand();
+});
+
+$(document).on('click', '.edit-bra-btn', function () {
+    const brandId = $(this).data('id');
+    const brandName = $(this).data('name');
+
+    $('#edit-bra-id').val(brandId);
+    $('#edit-bra-name').val(brandName);
+
+    // Establecer la acción del formulario dinámicamente
+    $('#edit-bra-form').attr('action', `/brand/brand_edit/${brandId}/`);
+
+    $('#editBraModal').modal('show');
+});
+
+$(document).on('click', '#save-changes', function () {
+    $('#edit-bra-form').submit();
 });

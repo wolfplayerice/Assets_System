@@ -152,7 +152,7 @@
         const userId = "{{ request.user.id }}"; // Obtén el ID del usuario autenticado desde el contexto de Django
 
         // Cambia dinámicamente el atributo 'action' del formulario
-        document.getElementById('edit-form').setAttribute('action', `/inventory/asset_edit/${userId}/`);
+        document.getElementById('edit-form').setAttribute('action', `/user_info/user_edit/${userId}/`);
 
         // Si necesitas realizar otras acciones, como rellenar campos, puedes hacerlo aquí
         fetch(`/user_info/get_user_data/${userId}/`, {
@@ -196,19 +196,6 @@
     });
 </script>
 
-<script>
-    // Mostrar mensajes de éxito o error usando SweetAlert2
-    {% if messages %}
-        {% for message in messages %}
-            Swal.fire({
-                icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% endif %}",
-                title: "{% if message.tags == 'success' %}¡Éxito!{% elif message.tags == 'error' %}¡Error!{% endif %}",
-                text: "{{ message }}",
-                confirmButtonText: "Aceptar"
-            });
-        {% endfor %}
-    {% endif %}
-</script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const form = document.getElementById('edit-form');
@@ -262,6 +249,50 @@
             passwordField2.setAttribute('type', type);
             passwordIcon2.classList.toggle('fa-eye');
             passwordIcon2.classList.toggle('fa-eye-slash');
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('edit-form');
+        const passwordField = document.getElementById('edit_password');
+        const confirmPasswordField = document.getElementById('edit_password2');
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); // Evita el envío inmediato del formulario
+
+            // Verifica si las contraseñas coinciden
+            if (passwordField.value !== confirmPasswordField.value) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return; // Detiene el proceso de envío
+            }
+
+            // Si las contraseñas coinciden, muestra el mensaje de confirmación
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Deseas guardar los cambios realizados?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        '¡Guardado!',
+                        'La información del usuario se ha actualizado correctamente.',
+                        'success'
+                    ).then(() => {
+                        form.submit(); // Envía el formulario después de la confirmación
+                    });
+                }
+            });
         });
     });
 </script>
