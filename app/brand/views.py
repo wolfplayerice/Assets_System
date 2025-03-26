@@ -1,7 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http.response import JsonResponse, HttpResponse
 from .models import Brand
-from .forms import Create_brand
+from .forms import Create_brand,Edit_brand
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -13,10 +13,12 @@ from audit.models import AuditLog
 @login_required
 def brand(request):
     brand_create_form = Create_brand()
+    edit_brand_form = Edit_brand()
     return render(request, 'crudbrand.html', { 
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'brand_form': brand_create_form,
+        'edit_bra_form': edit_brand_form,
         'list_brands_url': reverse('brand:list_brand'),
     })
 
@@ -134,3 +136,31 @@ def delete_brand(request, brand_id):
             return JsonResponse({"error": str(e)}, status=500)
     else:
         return HttpResponse(status=405)  # Método no permitido
+    
+    from django.shortcuts import get_object_or_404
+
+@login_required
+def brand_edit(request, bra_id):
+    # Obtiene la marca por su ID
+    brand = get_object_or_404(Brand, pk=bra_id)
+    
+    if request.method == "POST":  # Si el método es POST, se intenta actualizar
+        form = Edit_brand(request.POST, instance=brand)  # Se asocia el formulario con la instancia de la marca
+        if form.is_valid():  # Valida los datos del formulario
+            try:
+                form.save()  # Guarda los cambios en la base de datos
+                messages.success(request, 'La marca se ha actualizado correctamente.')
+            except Exception as e:
+                messages.error(request, f'Error inesperado: {str(e)}')
+        else:  # Si hay errores en el formulario, se muestran los mensajes de error
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en el campo {field}: {error}')
+        return HttpResponseRedirect(reverse('brand:brand'))  # Redirige a la página de marcas
+    else:  # Si el método no es POST, se muestra el formulario con los datos actuales de la marca
+        form = Edit_brand(instance=brand)
+    
+    return render(request, 'crudbrand.html', {
+        'edit_brand_form': form,
+        'bra_id': bra_id,
+    })

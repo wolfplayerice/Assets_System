@@ -1,23 +1,24 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http.response import JsonResponse, HttpResponse
 from django.core.paginator import Paginator
 from .models import Category
-from .forms import Create_category
+from .forms import Create_category, Edit_category
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
 from audit.models import AuditLog 
 # Create your views here.
 
 @login_required
 def category(request):
     category_create_form = Create_category()
+    edit_cat_form = Edit_category()
     return render(request, 'crudcat.html',{
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
         'cat_form': category_create_form,
+        'edit_cat_form' : edit_cat_form,
         'list_category_url': reverse('category:list_category'),
         })
 
@@ -119,3 +120,26 @@ def delete_category(request, category_id):
 def audit_log_view(request):
     logs = AuditLog.objects.filter(model_name='Category').order_by('-timestamp')
     return render(request, 'audit/audit_log.html', {'logs': logs})
+
+@login_required
+def category_edit(request, cat_id):
+    category = get_object_or_404(Category, pk=cat_id)
+    if request.method == "POST":
+        form = Edit_category(request.POST, instance=category)
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, 'La categoría se ha actualizado correctamente.')
+            except Exception as e:
+                messages.error(request, f'Error inesperado: {str(e)}')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'Error en el campo {field}: {error}')
+        return HttpResponseRedirect(reverse('category:category'))
+    else:
+        form = Edit_category(instance=category)
+    return render(request, 'crudcat.html', {
+        'edit_cat_form': form,
+        'cat_id': cat_id,
+    })
