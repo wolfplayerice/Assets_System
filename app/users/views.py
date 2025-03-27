@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.csrf import csrf_exempt
 
 def is_staff_user(user):
     return user.is_staff  # Solo permite acceso a staff
@@ -148,3 +149,27 @@ def user_edit(request, user_id):
         'form': form,
         'user_id': user_id
     })
+    
+@login_required
+@csrf_exempt
+def disable_user(request, user_id):
+    if request.method == "POST":
+        user = get_object_or_404(User, pk=user_id)
+        if not user.is_staff:  # Asegúrate de que no sea un administrador
+            user.is_active = False
+            user.save()
+            return JsonResponse({'message': 'El usuario ha sido deshabilitado correctamente.'})
+        return JsonResponse({'error': 'No puedes deshabilitar a un administrador.'}, status=400)
+    return JsonResponse({'error': 'Método no permitido.'}, status=405)
+
+@login_required
+@csrf_exempt
+def enable_user(request, user_id):
+    if request.method == "POST":
+        user = get_object_or_404(User, pk=user_id)
+        if not user.is_staff:  # Asegúrate de que no sea un administrador
+            user.is_active = True
+            user.save()
+            return JsonResponse({'message': 'El usuario ha sido habilitado correctamente.'})
+        return JsonResponse({'error': 'No puedes habilitar a un administrador.'}, status=400)
+    return JsonResponse({'error': 'Método no permitido.'}, status=405)

@@ -46,9 +46,12 @@ const initDataTableuser = async () => {
                             >
                             <i class='fa-solid fa-pencil'></i>
                         </button>
-                        <button class='btn btn-sm btn-danger delete-btn' data-id='${row.id}'>
-                            <i class='fa-solid fa-trash-can'></i>
-                        </button>`,
+                        ${!row.is_staff ? `
+                            <button class='btn btn-sm ${row.is_active ? 'btn-secondary disable-user-btn' : 'btn-success enable-user-btn'}' 
+                                data-id='${row.id}'>
+                                <i class='fa-solid ${row.is_active ? 'fa-user-slash' : 'fa-user'}'></i>
+                            </button>` : ''}
+                    `,
                 },
             ],
             responsive: true,
@@ -137,28 +140,56 @@ const initDataTableuser = async () => {
     }
 };
 
-$(document).on('click', '.delete-btn', function () {
-    const categoryId = $(this).data('id');
+$(document).on('click', '.disable-user-btn', function () {
+    const userId = $(this).data('id');
     Swal.fire({
-        title: '¿Estás seguro de eliminar este registro?',
-        text: "No podrás revertir esto.",
+        title: '¿Estás seguro de deshabilitar este usuario?',
+        text: "El usuario no podrá iniciar sesión.",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar!'
+        confirmButtonText: 'Sí, deshabilitar!'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `http://127.0.0.1:8000/category/delete_category/${categoryId}/`,
-                type: 'DELETE',
+                url: `/users/disable_user/${userId}/`,
+                type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
-                    Swal.fire('Eliminado!', response.message, 'success');
-                    dataTableCategory.ajax.reload();
+                    Swal.fire('Deshabilitado!', response.message, 'success');
+                    dataTableuser.ajax.reload();
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
-                    Swal.fire('Error!', "Error al eliminar e: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                    Swal.fire('Error!', "Error al deshabilitar: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                },
+            });
+        }
+    });
+});
+
+$(document).on('click', '.enable-user-btn', function () {
+    const userId = $(this).data('id');
+    Swal.fire({
+        title: '¿Estás seguro de habilitar este usuario?',
+        text: "El usuario podrá iniciar sesión nuevamente.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, habilitar!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/users/enable_user/${userId}/`,
+                type: 'POST',
+                headers: { "X-CSRFToken": getCookie("csrftoken") },
+                success: (response) => {
+                    Swal.fire('Habilitado!', response.message, 'success');
+                    dataTableuser.ajax.reload();
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    Swal.fire('Error!', "Error al habilitar: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
                 },
             });
         }

@@ -61,8 +61,31 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="{% static 'js/sweetalert2@11.js' %}"></script>
 <script src="{% static 'js/verify_user.js' %}"></script>
-{% if error %}
-  <div id="error-message" style="display: none;">{{ error }}</div>
+
+{% if error_disabled %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Usuario deshabilitado',
+            text: '{{ error_disabled }}',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+</script>
+{% endif %}
+
+{% if error_invalid %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        Swal.fire({
+            icon: 'error',
+            title: 'Datos incorrectos',
+            text: '{{ error_invalid }}',
+            confirmButtonText: 'Aceptar'
+        });
+    });
+</script>
 {% endif %}
 
 <!-- Funcion para que el ojo posea funcionalidad V.Parra -->
