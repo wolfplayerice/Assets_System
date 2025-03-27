@@ -212,7 +212,14 @@ def asset_edit(request, asset_id):
                 asset.state_asset = f"{prefix}-{number}"
                 
                 asset.save()
-                
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='update',
+                    username=request.user.username, 
+                    model_name='Asset',
+                    object_id=asset_id,
+                    description=f"Activo editado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
+                )
                 messages.success(request, 'El activo se ha actualizado correctamente.')
                 return HttpResponseRedirect(reverse('inventory:inventory'))
                 
