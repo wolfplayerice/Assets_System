@@ -40,7 +40,7 @@ def list_users(request):
         'name': user.first_name,
         'last_name': user.last_name,
         'email': user.email,
-        'is_active': "Activo" if user.is_active else "Inactivo"
+        'is_active': user.is_active,
     } for user in users]
 
     if all_data:
@@ -78,7 +78,7 @@ def list_users(request):
         'name': user.first_name,
         'last_name': user.last_name,
         'email': user.email,
-        'is_active': "Activo" if user.is_active else "Inactivo"
+        'is_active': user.is_active
     } for user in user_page]
 
     response_data = {
