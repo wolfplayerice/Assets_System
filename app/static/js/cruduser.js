@@ -24,6 +24,16 @@ const initDataTableuser = async () => {
                     className: 'dt-center', targets: "_all"
                 },
             ],
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "zeroRecords": "No se encontraron resultados",
+                "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "infoFiltered": "(filtrado de un total de MAX registros)",
+                "sSearch": "Buscar:",
+                "sProcessing": "Procesando...",
+                "emptyTable": "No hay datos disponibles en la tabla",
+            },
             columns: [
                 {
                     data: null,
@@ -209,7 +219,6 @@ $(document).on('click', '.edit-user-btn', function () {
     $('#edit-user-last_name').val(last_name);
     $('#edit-user-email').val(email);
 
-    // Establecer la acción del formulario dinámicamente
     $('#edit-user-form').attr('action', `/users/user_edit/${userId}/`);
 
     $('#editUserModal').modal('show');
