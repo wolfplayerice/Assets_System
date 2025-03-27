@@ -78,7 +78,7 @@ def list_users(request):
         'name': user.first_name,
         'last_name': user.last_name,
         'email': user.email,
-        'is_active': user.is_active
+        'is_active': user.is_active,
     } for user in user_page]
 
     response_data = {
@@ -158,7 +158,10 @@ def disable_user(request, user_id):
         if not user.is_staff:  # Asegúrate de que no sea un administrador
             user.is_active = False
             user.save()
-            return JsonResponse({'message': 'El usuario ha sido deshabilitado correctamente.'})
+            return JsonResponse({
+                'message': 'El usuario ha sido deshabilitado correctamente.',
+                'is_active': "Inactivo"
+            })
         return JsonResponse({'error': 'No puedes deshabilitar a un administrador.'}, status=400)
     return JsonResponse({'error': 'Método no permitido.'}, status=405)
 
@@ -170,6 +173,9 @@ def enable_user(request, user_id):
         if not user.is_staff:  # Asegúrate de que no sea un administrador
             user.is_active = True
             user.save()
-            return JsonResponse({'message': 'El usuario ha sido habilitado correctamente.'})
+            return JsonResponse({
+                'message': 'El usuario ha sido habilitado correctamente.',
+                'is_active': "Activo"
+            })
         return JsonResponse({'error': 'No puedes habilitar a un administrador.'}, status=400)
     return JsonResponse({'error': 'Método no permitido.'}, status=405)

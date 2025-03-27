@@ -43,7 +43,12 @@ const initDataTableuser = async () => {
                 { data: "name" },
                 { data: "last_name" },
                 { data: "email" },
-                { data: "is_active" },
+                { 
+                    data: "is_active",
+                    render: function (data, type, row) {
+                        return data ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
+                    }
+                },
                 {
                     data: null,
                     render: (data, type, row) => `
