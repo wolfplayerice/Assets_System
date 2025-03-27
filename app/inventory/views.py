@@ -198,32 +198,66 @@ def asset_edit(request, asset_id):
         form = AssetEdit(request.POST, instance=asset)
         if form.is_valid():
             try:
-
                 prefix = form.cleaned_data.get('prefix', 'BE-').rstrip('-')
                 number = form.cleaned_data.get('state_asset', '').strip()
                 
-
                 if not number:
                     messages.error(request, 'El número del activo no puede estar vacío')
-                    return render(request, 'crudassets.html', {
-                        'edit_form': form,
-                        'asset_id': asset_id,
-                    })
-                asset.state_asset = f"{prefix}-{number}"
+                    return HttpResponseRedirect(reverse('home:inventory'))
                 
+                # Verificar si el número de serie ya existe en otro activo
+                serial = form.cleaned_data.get('serial_number', '').strip()
+                if serial:
+                    existing_asset = Asset.objects.filter(serial_number=serial).exclude(pk=asset_id).first()
+                    if existing_asset:
+                        messages.error(request, f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}')
+                        return HttpResponseRedirect(reverse('home:inventory'))
+                
+                # Construir el state_asset completo
+                full_st = f"{prefix}-{number}"
+                
+                # Actualizar el activo
+                asset.model = form.cleaned_data['model']
+                asset.serial_number = serial
+                asset.state_asset = full_st
+                asset.status = form.cleaned_data['status']
+                asset.observation = form.cleaned_data['observation']
+                asset.fk_category = form.cleaned_data['fk_category']
+                asset.fk_brand = form.cleaned_data['fk_brand']
                 asset.save()
                 
-                messages.success(request, 'El activo se ha actualizado correctamente.')
-                return HttpResponseRedirect(reverse('inventory:inventory'))
+                # Registrar en el log de auditoría
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='update',
+                    username=request.user.username,
+                    model_name='Asset',
+                    object_id=asset.id,
+                    description=f"Activo actualizado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
+                )
                 
+                messages.success(request, 'El activo se ha actualizado correctamente.')
+                return HttpResponseRedirect(reverse('home:inventory'))
+            
+            except IntegrityError as e:
+                if 'serial_number' in str(e):
+                    messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
+                else:
+                    messages.error(request, 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.')
+                return HttpResponseRedirect(reverse('home:inventory'))
+            
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
+                return HttpResponseRedirect(reverse('home:inventory'))
+        
         else:
+            # Si el formulario no es válido, muestra errores de validación
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
+                return HttpResponseRedirect(reverse('home:inventory'))
+    
     else:
-
         initial_data = {}
         if asset.state_asset:
             parts = asset.state_asset.split('-', 1)
