@@ -89,7 +89,7 @@ const initDataTableuser = async () => {
                     action: (e, dt, button, config) => {
                         $("#loading-indicator").show();
                         $.ajax({
-                            url: 'http://127.0.0.1:8000/users/list_users/?all=true',
+                            url: listUsersUrl,
                             type: 'GET',
                             success: (response) => {
                                 const data = response.Category.map(category => [category.id, category.name]);
