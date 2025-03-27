@@ -117,18 +117,21 @@ def delete_category(request, category_id):
     return HttpResponse(status=405)
 
 @login_required
-def audit_log_view(request):
-    logs = AuditLog.objects.filter(model_name='Category').order_by('-timestamp')
-    return render(request, 'audit/audit_log.html', {'logs': logs})
-
-@login_required
 def category_edit(request, cat_id):
     category = get_object_or_404(Category, pk=cat_id)
     if request.method == "POST":
         form = Edit_category(request.POST, instance=category)
         if form.is_valid():
             try:
-                form.save()
+                updated_category = form.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='update',
+                    username=request.user.username, 
+                    model_name='Category',
+                    object_id=cat_id,
+                    description=f"Categoría editada: {updated_category.name}"
+                )
                 messages.success(request, 'La categoría se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')

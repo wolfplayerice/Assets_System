@@ -137,7 +137,6 @@ def delete_brand(request, brand_id):
     else:
         return HttpResponse(status=405)  # Método no permitido
     
-    from django.shortcuts import get_object_or_404
 
 @login_required
 def brand_edit(request, bra_id):
@@ -148,7 +147,17 @@ def brand_edit(request, bra_id):
         form = Edit_brand(request.POST, instance=brand)  # Se asocia el formulario con la instancia de la marca
         if form.is_valid():  # Valida los datos del formulario
             try:
-                form.save()  # Guarda los cambios en la base de datos
+                updated_brand = form.save()  # Guarda los cambios y devuelve la instancia actualizada
+                
+                # Guardamos en el log la edición con el nombre correcto
+                AuditLog.objects.create(
+                    user=request.user,
+                    action='update',
+                    username=request.user.username, 
+                    model_name='Brand',
+                    object_id=bra_id,
+                    description=f"Marca editada: {updated_brand.name}"  # Aquí obtenemos el nombre correctamente
+                )
                 messages.success(request, 'La marca se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
