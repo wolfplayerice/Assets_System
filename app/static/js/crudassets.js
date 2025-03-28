@@ -338,6 +338,44 @@ $(document).on('click', '.btn-edit', function () {
     $('#editModal').modal('show');
 });
 
+$(document).on('submit', '#edit-form', function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const url = form.attr('action');
+    const data = form.serialize();
+
+    $.post(url, data, function (response) {
+        if (response.status === 'success') {
+            Swal.fire('Éxito', response.message, 'success').then(() => {
+                location.reload(); // Recargar la página para actualizar la tabla
+            });
+        } else {
+            Swal.fire('Error', response.message, 'error');
+        }
+    }).fail(function () {
+        Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
+    });
+});
+
+$(document).on('submit', '#register-modal form', function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const url = form.attr('action');
+    const data = form.serialize();
+
+    $.post(url, data, function (response) {
+        if (response.status === 'success') {
+            Swal.fire('Éxito', response.message, 'success').then(() => {
+                location.reload(); // Recargar la página para actualizar la tabla
+            });
+        } else {
+            Swal.fire('Error', response.message, 'error');
+        }
+    }).fail(function () {
+        Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
+    });
+});
+
 
 function getCookie(name) {
     let cookieValue = null;
