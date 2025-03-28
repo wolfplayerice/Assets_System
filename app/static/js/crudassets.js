@@ -28,7 +28,7 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
         columns: [
             {
                 data: null,
-                render: function(data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     if (type === 'display') {
                         return meta.settings._iDisplayStart + meta.row + 1;
                     }
@@ -177,160 +177,141 @@ $(document).on('click', '.delete-asset-btn', function () {
 });
 
 $(document).ready(function () {
-    $('#pdfOptionsModal').on('shown.bs.modal', function () {
+    const pdfOptionsModal = $('#pdfOptionsModal');
+    const loadingIndicator = $("#loading-indicator");
+    const generatePdfButton = $('#generatePdfButton');
+
+    function initializeSelect2() {
+        const selectOptions = {
+            width: '100%',
+            dropdownParent: pdfOptionsModal,
+            placeholder: "Seleccione",
+            closeOnSelect: false,
+            theme: 'default'
+        };
+
         $('.js-example-basic-multiple').select2({
-            width: '100%',
-            dropdownParent: $('#pdfOptionsModal'), // ¡IMPORTANTE para modales!
-            placeholder: "Seleccione categorías",
-            closeOnSelect: false,
-            theme: 'default' // Usa el tema por defecto (sin Bootstrap 5)
-
+            ...selectOptions,
+            placeholder: "Seleccione categorías"
         });
+
         $('.brand').select2({
-            width: '100%',
-            dropdownParent: $('#pdfOptionsModal'), // ¡IMPORTANTE para modales!
-            placeholder: "Seleccione marcas",
-            closeOnSelect: false,
-            theme: 'default' // Usa el tema por defecto (sin Bootstrap 5)
-
+            ...selectOptions,
+            placeholder: "Seleccione marcas"
         });
-    });
+    }
 
-    // Limpiar al cerrar el modal (opcional)
-    $('#pdfOptionsModal').on('hidden.bs.modal', function () {
+    function clearSelects() {
         $('.js-example-basic-multiple').val(null).trigger('change');
-    });
-    // Manejar el clic en el botón "Generar PDF" del modal
-    $('#generatePdfButton').on('click', function () {
-        // Obtener las opciones seleccionadas
+    }
+
+    function generatePdf(data) {
+        const today = new Date();
+        const formattedDateTime = today.toLocaleString();
+
+        const docDefinition = {
+            pageSize: 'A4',
+            pageOrientation: 'landscape',
+            pageMargins: [40, 40, 40, 40],
+            content: [
+                {
+                    columns: [
+                        { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
+                        { text: '', width: '*' },
+                        { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
+                    ],
+                    columnGap: 10
+                },
+                {
+                    text: 'Lista de Bienes',
+                    style: 'header',
+                    alignment: 'center',
+                    margin: [0, 10, 0, 20]
+                },
+                {
+                    table: {
+                        widths: ['5%', '10%', '10%', '10%', '15%', '15%', '10%', '25%'],
+                        headerRows: 1,
+                        body: [
+                            [
+                                { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Marca', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Modelo', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Categoría', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Serial', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Estado', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Estatus', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Observación', style: 'tableHeader', alignment: 'center' }
+                            ],
+                            ...data.map(row => row.map(cell => ({
+                                text: cell,
+                                alignment: 'justify',
+                                noWrap: false,
+                            })))
+                        ]
+                    },
+                    layout: 'lightHorizontalLines'
+                }
+            ],
+            styles: {
+                header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+            },
+            defaultStyle: { fontSize: 12, color: '#2c3e50' },
+            footer: (currentPage, pageCount) => ({
+                text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                style: 'footer',
+                margin: [0, 10, 0, 0]
+            })
+        };
+        pdfMake.createPdf(docDefinition).download(`Lista_de_bienes_${formattedDateTime}.pdf`);
+    }
+
+    async function fetchData() {
         const statusFilter = $('select[name="statusFilter"]').val();
         const categories = $('.js-example-basic-multiple').val() || [];
         const brand = $('.brand').val() || [];
 
-        // Cerrar el modal
-        $('#pdfOptionsModal').modal('hide');
+        loadingIndicator.show();
 
-        // Mostrar el indicador de carga
-        $("#loading-indicator").show();
+        try {
+            const response = await $.ajax({
+                url: 'http://127.0.0.1:8000/inventory/list_assets/',
+                type: 'GET',
+                data: {
+                    status: statusFilter,
+                    'categories[]': categories,
+                    'brand[]': brand,
+                    all: true
+                }
+            });
 
-        // Realizar la solicitud AJAX con las opciones de filtrado
-        $.ajax({
-            url: 'http://127.0.0.1:8000/inventory/list_assets/',
-            type: 'GET',
-            data: {
-                status: statusFilter,
-                'categories[]': categories, // Cambia 'category' por 'categories[]'
-                'brand[]': brand,
-                all: true  // Para obtener todos los datos filtrados
-            },
-            success: function (response) {
-                // Procesar los datos filtrados
-                const data = response.Asset.map(asset => [
-                    asset.id,
-                    asset.fk_brand,
-                    asset.model,
-                    asset.fk_category,
-                    asset.serial_number,
-                    asset.state_asset,
-                    asset.status,
-                    asset.observation,
-                ]);
+            const data = response.Asset.map(asset => [
+                asset.id,
+                asset.fk_brand,
+                asset.model,
+                asset.fk_category,
+                asset.serial_number,
+                asset.state_asset,
+                asset.status,
+                asset.observation,
+            ]);
 
-                // Generar el PDF con los datos filtrados
-                const today = new Date();
-                const formattedDateTime = today.toLocaleString();
+            generatePdf(data);
+        } catch (error) {
+            console.error('Error fetching filtered data:', error);
+            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+        } finally {
+            loadingIndicator.hide();
+        }
+    }
 
-                const docDefinition = {
-                    content: [
-                        // Logos en columnas
-                        {
-                            columns: [
-                                {
-                                    image: gobernacion, // Logo izquierdo (Base64 o URL)
-                                    width: 80,
-                                    alignment: 'left',
-                                    margin: [0, 0, 0, 10]
-                                },
-                                {
-                                    text: '',
-                                    width: '*',
-                                },
-                                {
-                                    image: logo, // Logo derecho (Base64 o URL)
-                                    width: 80,
-                                    alignment: 'right',
-                                    margin: [0, 0, 0, 10]
-                                }
-                            ],
-                            columnGap: 10
-                        },
-                        {
-                            text: 'Lista de Bienes',
-                            style: 'header',
-                            alignment: 'center',
-                            margin: [0, 10, 0, 20]
-                        },
-                        {
-                            table: {
-                                widths: ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', '*'],
-                                headerRows: 1,
-                                body: [
-                                    [
-                                        { text: 'ID', style: 'tableHeader' },
-                                        { text: 'Marca', style: 'tableHeader' },
-                                        { text: 'Modelo', style: 'tableHeader' },
-                                        { text: 'Categoría', style: 'tableHeader' },
-                                        { text: 'Serial', style: 'tableHeader' },
-                                        { text: 'Estado', style: 'tableHeader' },
-                                        { text: 'Estatus', style: 'tableHeader' },
-                                        { text: 'Observación', style: 'tableHeader' }
-                                    ],
-                                    ...data
-                                ]
-                            },
-                            layout: 'lightHorizontalLines'
-                        }
-                    ],
-                    styles: {
-                        header: {
-                            fontSize: 18,
-                            bold: true,
-                            color: '#2c3e50'
-                        },
-                        tableHeader: {
-                            bold: true,
-                            fontSize: 13,
-                            color: '#34495e'
-                        },
-                        footer: {
-                            fontSize: 10,
-                            alignment: 'center',
-                            color: '#666666'
-                        }
-                    },
-                    defaultStyle: {
-                        fontSize: 12,
-                        color: '#2c3e50'
-                    },
-                    footer: (currentPage, pageCount) => {
-                        return {
-                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                            style: 'footer',
-                            margin: [0, 10, 0, 0]
-                        };
-                    }
-                };
-
-                // Generar y descargar el PDF
-                pdfMake.createPdf(docDefinition).download(`Lista_de_bienes_${formattedDateTime}.pdf`);
-                $("#loading-indicator").hide();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching filtered data:', textStatus, errorThrown);
-                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-                $("#loading-indicator").hide();
-            }
-        });
+    pdfOptionsModal.on('shown.bs.modal', initializeSelect2);
+    pdfOptionsModal.on('hidden.bs.modal', clearSelects);
+    generatePdfButton.on('click', function () {
+        fetchData();
+        pdfOptionsModal.modal('hide');
     });
 });
 
@@ -342,13 +323,13 @@ $(document).on('click', '.btn-inoperativo', function () {
 
 $(document).on('click', '.btn-edit', function () {
     const assetId = $(this).data('id');
-    
+
     const assetData = {
         fk_brand: $(this).data('brand-id'),
         model: $(this).data('model'),
         fk_category: $(this).data('category-id'),
         serial_number: $(this).data('serial'),
-        state_asset: $(this).data('state'), 
+        state_asset: $(this).data('state'),
         status: $(this).data('status-id'),
         observation: $(this).data('observation') || ''
     };
@@ -359,7 +340,7 @@ $(document).on('click', '.btn-edit', function () {
     } else {
         stateAssetValue = assetData.state_asset;
     }
-    
+
     // Llenar campos del formulario
     $('[name="fk_brand"], #id_fk_brand').val(assetData.fk_brand).trigger('change');
     $('[name="model"], #id_model').val(assetData.model);
@@ -367,7 +348,7 @@ $(document).on('click', '.btn-edit', function () {
     $('[name="serial_number"], #id_serial_number').val(assetData.serial_number);
     $('[name="state_asset"], #id_state_asset').val(stateAssetValue || '');
     $('[name="observation"], #id_observation').val(assetData.observation);
-    
+
     const statusValue = assetData.status ? 'True' : 'False';
     $('[name="status"], #id_status').val(statusValue).trigger('change');
 

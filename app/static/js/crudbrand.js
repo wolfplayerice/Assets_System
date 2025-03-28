@@ -52,19 +52,10 @@ const initDataTablebrand = async () => {
                 "sSearch": "Buscar:",
                 "sProcessing": "Procesando...",
                 "emptyTable": "No hay datos disponibles en la tabla"
-                },
+            },
             responsive: true,
             dom: "lBfrtip",
             buttons: [
-                {
-                    extend: "excelHtml5",
-                    text: '<i class="fas fa-file-excel"></i> ',
-                    titleAttr: "Exportar a Excel",
-                    className: "btn btn-success",
-                    exportOptions: {
-                        columns: [0, 1],
-                    },
-                },
                 {
                     extend: 'pdfHtml5',
                     text: '<i class="fas fa-file-pdf"></i>',
@@ -73,7 +64,7 @@ const initDataTablebrand = async () => {
                     action: (e, dt, button, config) => {
                         $("#loading-indicator").show();
                         $.ajax({
-                            url: 'http://127.0.0.1:8000/brand/list_brand/?all=true',
+                            url: '/brand/list_brand/?all=true',
                             type: 'GET',
                             success: (response) => {
                                 const data = response.Brand.map(brand => [brand.id, brand.name]);
@@ -91,7 +82,7 @@ const initDataTablebrand = async () => {
                                             columnGap: 10
                                         },
                                         {
-                                            text: 'Lista de Marcas',
+                                            text: 'Lista de Categorias',
                                             style: 'header',
                                             alignment: 'center',
                                             margin: [0, 10, 0, 20]
@@ -102,53 +93,23 @@ const initDataTablebrand = async () => {
                                                 widths: ['auto', '*'],
                                                 body: [
                                                     [
-                                                        { text: 'ID', style: 'tableHeader' },
-                                                        { text: 'Nombre', style: 'tableHeader', alignment: 'left' }
+                                                        { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                                        { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
                                                     ],
-                                                    ...data.map(row => [
-                                                        { text: row[0], style: 'tableCell' },
-                                                        { text: row[1], style: 'longTextCell' }
-                                                    ])
+                                                    ...data.map(row => row.map(cell => ({
+                                                        text: cell,
+                                                        alignment: 'center',
+                                                        noWrap: false,
+                                                    })))
                                                 ]
                                             },
-                                            layout: {
-                                                hLineWidth: (i, node) => (i === 0 || i === node.table.body.length) ? 1 : 0.5,
-                                                vLineWidth: () => 0.5,
-                                                hLineColor: () => '#cccccc',
-                                                vLineColor: () => '#cccccc',
-                                                paddingTop: () => 5,
-                                                paddingBottom: () => 5
-                                            }
+                                            layout: 'lightHorizontalLines'
                                         }
                                     ],
                                     styles: {
-                                        header: {
-                                            fontSize: 18,
-                                            bold: true,
-                                            color: '#2c3e50'
-                                        },
-                                        tableHeader: {
-                                            bold: true,
-                                            fontSize: 13,
-                                            color: '#34495e'
-                                        },
-                                        tableCell: {
-                                            fontSize: 11,
-                                            color: '#333333',
-                                            margin: [0, 5, 0, 5]
-                                        },
-                                        longTextCell: {
-                                            fontSize: 11,
-                                            color: '#333333',
-                                            margin: [0, 5, 0, 5],
-                                            alignment: 'left',
-                                            lineHeight: 1.2
-                                        },
-                                        footer: {
-                                            fontSize: 10,
-                                            alignment: 'center',
-                                            color: '#666666'
-                                        }
+                                        header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                                        tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                                        footer: { fontSize: 10, alignment: 'center', color: '#666666' }
                                     },
                                     defaultStyle: {
                                         fontSize: 12,
@@ -167,7 +128,6 @@ const initDataTablebrand = async () => {
                             error: (jqXHR, textStatus, errorThrown) => {
                                 console.error('Error fetching all data:', textStatus, errorThrown);
                                 Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-                                $("#loading-indicator").hide();
                             },
                         });
                     }
