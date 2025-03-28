@@ -88,11 +88,11 @@
                           <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         </div>
                         {% endfor %}
-                        <input type="submit" value="Submit" class="btn btn-primary">
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                          <input type="submit" value="Añadir" class="btn btn-primary">
+                        </div>
                       </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                   </div>
                 </div>
@@ -264,8 +264,8 @@
                 {% for message in messages %}
                 {% if message.tags == 'success' %}
                 $(document).ready(function () {
-                $('#successModal').modal('show');
-              });
+                  $('#successModal').modal('show');
+                });
                 {% elif message.tags == 'error' %}
 
                 $(document).ready(function () {
