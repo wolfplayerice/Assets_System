@@ -244,74 +244,114 @@
     });
 </script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('edit-form');
-    const passwordField = document.getElementById('edit_password');
-    const confirmPasswordField = document.getElementById('edit_password2');
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('edit-form');
+        const passwordField = document.getElementById('edit_password');
+        const confirmPasswordField = document.getElementById('edit_password2');
+        const usernameField = document.getElementById('edit_username');
+        const firstNameField = document.getElementById('edit_first_name');
+        const lastNameField = document.getElementById('edit_last_name');
 
-    form.addEventListener('submit', function (event) {
-        event.preventDefault();
+        // Guarda los valores iniciales de los campos
+        const initialValues = {
+            username: usernameField.value.trim(),
+            firstName: firstNameField.value.trim(),
+            lastName: lastNameField.value.trim()
+        };
 
-        const password = passwordField.value;
-        const confirmPassword = confirmPasswordField.value;
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
 
-        const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
-        if (!passwordRegex.test(password)) {
-            Swal.fire({
-                icon: 'error',
-                title: '¡Error!',
-                text: 'La contraseña debe tener al menos 8 caracteres y un carácter especial.',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
+            const password = passwordField.value.trim();
+            const confirmPassword = confirmPasswordField.value.trim();
+            const username = usernameField.value.trim();
+            const firstName = firstNameField.value.trim();
+            const lastName = lastNameField.value.trim();
 
-        if (password !== confirmPassword) {
-            Swal.fire({
-                icon: 'error',
-                title: '¡Error!',
-                text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¿Deseas guardar los cambios realizados?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire(
-                    '¡Guardado!',
-                    'La información del usuario se ha actualizado correctamente.',
-                    'success'
-                ).then(() => {
-                    form.submit();
-                });
+            // Verifica si los campos de contraseña están vacíos
+            if (password === '' && confirmPassword === '') {
+                // Verifica si otros campos han cambiado
+                if (
+                    username !== initialValues.username ||
+                    firstName !== initialValues.firstName ||
+                    lastName !== initialValues.lastName
+                ) {
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: "¿Deseas guardar los cambios realizados?",
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, guardar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire(
+                                '¡Guardado!',
+                                'La información del usuario se ha actualizado correctamente.',
+                                'success'
+                            ).then(() => {
+                                form.submit(); // Envía el formulario después de la confirmación
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Sin cambios',
+                        text: 'No se detectaron cambios en los campos.',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+                return;
             }
+
+            // Valida la contraseña solo si se ha proporcionado
+            const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+            if (password !== '' && !passwordRegex.test(password)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'La contraseña debe tener al menos 8 caracteres y un carácter especial.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Verifica si las contraseñas coinciden
+            if (password !== confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error!',
+                    text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+
+            // Si todo está correcto, muestra la confirmación
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Deseas guardar los cambios realizados?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire(
+                        '¡Guardado!',
+                        'La información del usuario se ha actualizado correctamente.',
+                        'success'
+                    ).then(() => {
+                        form.submit();
+                    });
+                }
+            });
         });
     });
-});
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
 </script>
 {% endblock %}
