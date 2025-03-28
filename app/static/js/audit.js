@@ -41,6 +41,7 @@ const initDataTableAudit = async () => {
                 { data: "description"},
                 { data: "timestamp"}
             ],
+            serverSide: true,
             responsive: true,
             dom: "lBfrtip",
             buttons: [
@@ -61,10 +62,10 @@ const initDataTableAudit = async () => {
                     action: (e, dt, button, config) => {
                         $("#loading-indicator").show();
                         $.ajax({
-                            url: listAuditUrl,
+                            url: '/audit/logs_list/?all=true',
                             type: 'GET',
                             success: (response) => {
-                                const data = response.audit.map(audit => [audit.user, audit.action, audit.description, audit.timestamp]);
+                                const data = response.data.map(audit => [audit.user, audit.action, audit.description, audit.timestamp]);
 
                                 // Obtener la fecha actual
                                 const today = new Date();
@@ -113,46 +114,43 @@ const initDataTableAudit = async () => {
                                         {
                                             table: {
                                                 headerRows: 1,
-                                                widths: ['*', '*'],
+                                                widths: ['auto', 'auto', '*' , 'auto'],
                                                 body: [
-                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
-                                                    ...data
-                                                ]
+                                                    [{ text: 'Usuario', style: 'tableHeader', alignment: 'center' },
+                                                    { text: 'Acción', style: 'tableHeader', alignment: 'center' },
+                                                    { text: 'Descripción', style: 'tableHeader', alignment: 'center'},
+                                                    { text: 'Fecha y hora', style: 'tableHeader', alignment: 'center'}
+                                                    ],
+                                                    ...data.map(row => row.map(cell => ({
+                                                        text: cell,
+                                                        alignment: 'center',
+                                                        noWrap: false,
+                                                    })))
+                                                ],
+
                                             },
-                                            layout: 'lightHorizontalLines' // Estilo de la tabla
+                                            layout: 'lightHorizontalLines'
                                         }
                                     ],
                                     styles: {
-                                        header: {
-                                            fontSize: 18,
-                                            bold: true,
-                                            color: '#2c3e50' // Color del texto
-                                        },
-                                        tableHeader: {
-                                            bold: true,
-                                            fontSize: 13,
-                                            color: '#34495e' // Color del texto del encabezado de la tabla
-                                        },
-                                        footer: {
-                                            fontSize: 10,
-                                            alignment: 'center',
-                                            color: '#666666' // Color del texto del pie de página
-                                        }
+                                        header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                                        tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                                        footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+                                    
                                     },
                                     defaultStyle: {
                                         fontSize: 12,
-                                        color: '#2c3e50' // Color del texto por defecto
+                                        color: '#2c3e50'
                                     },
                                     footer: (currentPage, pageCount) => {
                                         return {
                                             text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
                                             style: 'footer',
-                                            margin: [0, 10, 0, 0] // Margen del pie de página
+                                            margin: [0, 10, 0, 0]
                                         };
                                     }
                                 };
 
-                                // Generar y descargar el PDF con un nombre personalizado
                                 pdfMake.createPdf(docDefinition).download(`Auditoria_${formattedDateTime}.pdf`);
                                 $("#loading-indicator").hide();
                             },
@@ -162,15 +160,6 @@ const initDataTableAudit = async () => {
                                 $("#loading-indicator").hide();
                             },
                         });
-                    },
-                },
-                {
-                    extend: "print",
-                    text: '<i class="fa fa-print"></i> ',
-                    titleAttr: "Imprimir",
-                    className: "btn btn-info",
-                    exportOptions: {
-                        columns: [0, 1],
                     },
                 },
             ],

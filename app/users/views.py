@@ -52,7 +52,7 @@ def list_users(request):
     try:
         draw = int(request.GET.get('draw', 0))
         start = int(request.GET.get('start', 0))
-        length = int(request.GET.get('length', 10))  # Número de registros por página
+        length = int(request.GET.get('length', 10))
     except (ValueError, TypeError):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
