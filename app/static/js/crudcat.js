@@ -176,14 +176,6 @@ const initDataTableCategory = (() => {
                             });
                         }
                     },
-                    {
-                        extend: "print",
-                        text: '<i class="fa fa-print"></i>',
-                        titleAttr: "Imprimir",
-                        className: "btn btn-info",
-                        exportOptions: { columns: [0, 1] }
-                    }
-
                 ]
             });
 

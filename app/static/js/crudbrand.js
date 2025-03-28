@@ -70,60 +70,62 @@ const initDataTablebrand = async () => {
                                 const data = response.Brand.map(brand => [brand.id, brand.name]);
                                 const today = new Date();
                                 const formattedDateTime = today.toLocaleString();
-
                                 const docDefinition = {
-                                    content: [
-                                        {
-                                            columns: [
-                                                { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
-                                                { text: '', width: '*' },
-                                                { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
-                                            ],
-                                            columnGap: 10
-                                        },
-                                        {
-                                            text: 'Lista de Categorias',
-                                            style: 'header',
-                                            alignment: 'center',
-                                            margin: [0, 10, 0, 20]
-                                        },
-                                        {
-                                            table: {
-                                                headerRows: 1,
-                                                widths: ['auto', '*'],
-                                                body: [
-                                                    [
-                                                        { text: 'ID', style: 'tableHeader', alignment: 'center' },
-                                                        { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
-                                                    ],
-                                                    ...data.map(row => row.map(cell => ({
-                                                        text: cell,
-                                                        alignment: 'center',
-                                                        noWrap: false,
-                                                    })))
-                                                ]
+                                        content: [
+                                            {
+                                                columns: [
+                                                    { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
+                                                    { text: '', width: '*' },
+                                                    { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
+                                                ],
+                                                columnGap: 10
                                             },
-                                            layout: 'lightHorizontalLines'
-                                        }
-                                    ],
-                                    styles: {
-                                        header: { fontSize: 18, bold: true, color: '#2c3e50' },
-                                        tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
-                                        footer: { fontSize: 10, alignment: 'center', color: '#666666' }
-                                    },
-                                    defaultStyle: {
-                                        fontSize: 12,
-                                        color: '#2c3e50'
-                                    },
-                                    footer: (currentPage, pageCount) => ({
-                                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                        style: 'footer',
-                                        margin: [0, 10, 0, 0]
-                                    })
-                                };
+                                            {
+                                                text: 'Lista de Categorias',
+                                                style: 'header',
+                                                alignment: 'center',
+                                                margin: [0, 10, 0, 20]
+                                            },
+                                            {
+                                                table: {
+                                                    headerRows: 1,
+                                                    widths: ['auto', '*'],
+                                                    body: [
+                                                        [
+                                                            { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                                            { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
+                                                        ],
+                                                        ...data.map(row => row.map(cell => ({
+                                                            text: cell,
+                                                            alignment: 'center',
+                                                            noWrap: false,
+                                                        })))
+                                                    ]
+                                                },
+                                                layout: 'lightHorizontalLines'
+                                            }
+                                        ],
+                                        styles: {
+                                            header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                                            tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                                            footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+                                        },
+                                        defaultStyle: {
+                                            fontSize: 12,
+                                            color: '#2c3e50'
+                                        },
+                                        footer: (currentPage, pageCount) => ({
+                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                                            style: 'footer',
+                                            margin: [0, 10, 0, 0]
+                                        })
+                                    };
 
-                                pdfMake.createPdf(docDefinition).download(`Lista_de_Categorias_${formattedDateTime}.pdf`);
-                                $("#loading-indicator").hide();
+                                    const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+                                    pdfDocGenerator.getBlob((blob) => {
+                                        saveAs(blob, `Lista_de_Categorias_${formattedDateTime}.pdf`);
+                                        $("#loading-indicator").hide();
+                                    });
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
                                 console.error('Error fetching all data:', textStatus, errorThrown);
@@ -131,15 +133,6 @@ const initDataTablebrand = async () => {
                             },
                         });
                     }
-                },
-                {
-                    extend: "print",
-                    text: '<i class="fa fa-print"></i> ',
-                    titleAttr: "Imprimir",
-                    className: "btn btn-info",
-                    exportOptions: {
-                        columns: [0, 1],
-                    },
                 },
             ],
         });
