@@ -143,36 +143,6 @@
     });
 </script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('edit-form');
-
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // Evita el envío inmediato del formulario
-
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Deseas guardar los cambios realizados?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, guardar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        '¡Guardado!',
-                        'La información del usuario se ha actualizado correctamente.',
-                        'success'
-                    ).then(() => {
-                        form.submit(); // Envía el formulario después de la confirmación
-                    });
-                }
-            });
-        });
-    });
-</script>
 <!-- script funcionalidad del ojo V.Parra -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
