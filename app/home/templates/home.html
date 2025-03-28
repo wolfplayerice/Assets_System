@@ -17,6 +17,10 @@
   <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/home.css' %} " rel="stylesheet">
   
+  {% if request.resolver_match.url_name == "user_info" %}
+  <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
+  {% endif %}
+  
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
   <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
