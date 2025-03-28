@@ -17,6 +17,10 @@
   <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/home.css' %} " rel="stylesheet">
   
+  {% if request.resolver_match.url_name == "user_info" %}
+  <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
+  {% endif %}
+  
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
   <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
@@ -37,7 +41,7 @@
       </ul>
     </nav>
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
-      <a href="" class="brand-link d-flex align-items-center">
+      <a href="{% url 'home:dashboard' %}" class="brand-link d-flex align-items-center">
         <img src="{% static 'img/broba_blanco.png' %}" alt="Inventario Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
         <span class="brand-text font-weight-light ml-2">Inventario_carmbiar_nombre</span>
       </a>
