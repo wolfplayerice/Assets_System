@@ -6,7 +6,7 @@ const initDataTablebrand = async () => {
     try {
         if (dataTableIsInitializedbrand) {
             dataTablebrand.destroy();
-            dataTablebrand = null; // Liberar referencia para la recolección de basura
+            dataTablebrand = null;
         }
 
         dataTablebrand = $("#datatable-brand").DataTable({
@@ -33,11 +33,11 @@ const initDataTablebrand = async () => {
                 {
                     data: null,
                     render: (data, type, row) => `
-                            <button class='btn btn-sm btn-primary edit-bra-btn' 
+                        <button class='btn btn-sm btn-primary edit-bra-btn' 
                             data-id='${row.id}'
                             data-name='${row.name}'>
-                                <i class='fa-solid fa-pencil'></i>
-                            </button>
+                            <i class='fa-solid fa-pencil'></i>
+                        </button>
                         <button class='btn btn-sm btn-danger delete-btn-brand' data-id='${row.id}'>
                             <i class='fa-solid fa-trash-can'></i>
                         </button>`,
@@ -55,86 +55,8 @@ const initDataTablebrand = async () => {
             },
             responsive: true,
             dom: "lBfrtip",
-            buttons: [
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="fas fa-file-pdf"></i>',
-                    titleAttr: 'Exportar a PDF',
-                    className: 'btn btn-danger',
-                    action: (e, dt, button, config) => {
-                        $("#loading-indicator").show();
-                        $.ajax({
-                            url: '/brand/list_brand/?all=true',
-                            type: 'GET',
-                            success: (response) => {
-                                const data = response.Brand.map(brand => [brand.id, brand.name]);
-                                const today = new Date();
-                                const formattedDateTime = today.toLocaleString();
-                                const docDefinition = {
-                                        content: [
-                                            {
-                                                columns: [
-                                                    { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
-                                                    { text: '', width: '*' },
-                                                    { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
-                                                ],
-                                                columnGap: 10
-                                            },
-                                            {
-                                                text: 'Lista de Categorias',
-                                                style: 'header',
-                                                alignment: 'center',
-                                                margin: [0, 10, 0, 20]
-                                            },
-                                            {
-                                                table: {
-                                                    headerRows: 1,
-                                                    widths: ['auto', '*'],
-                                                    body: [
-                                                        [
-                                                            { text: 'ID', style: 'tableHeader', alignment: 'center' },
-                                                            { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
-                                                        ],
-                                                        ...data.map(row => row.map(cell => ({
-                                                            text: cell,
-                                                            alignment: 'center',
-                                                            noWrap: false,
-                                                        })))
-                                                    ]
-                                                },
-                                                layout: 'lightHorizontalLines'
-                                            }
-                                        ],
-                                        styles: {
-                                            header: { fontSize: 18, bold: true, color: '#2c3e50' },
-                                            tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
-                                            footer: { fontSize: 10, alignment: 'center', color: '#666666' }
-                                        },
-                                        defaultStyle: {
-                                            fontSize: 12,
-                                            color: '#2c3e50'
-                                        },
-                                        footer: (currentPage, pageCount) => ({
-                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                            style: 'footer',
-                                            margin: [0, 10, 0, 0]
-                                        })
-                                    };
-
-                                    const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-                                    pdfDocGenerator.getBlob((blob) => {
-                                        saveAs(blob, `Lista_de_Categorias_${formattedDateTime}.pdf`);
-                                        $("#loading-indicator").hide();
-                                    });
-                            },
-                            error: (jqXHR, textStatus, errorThrown) => {
-                                console.error('Error fetching all data:', textStatus, errorThrown);
-                                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-                            },
-                        });
-                    }
-                },
-            ],
+            // Eliminamos el botón PDF de aquí
+            buttons: [] // Dejamos vacío el array de buttons
         });
 
         dataTableIsInitializedbrand = true;
@@ -144,6 +66,106 @@ const initDataTablebrand = async () => {
     }
 };
 
+
+function generateBrandsPDF() {
+    const pdfButton = $('#external-pdf-button');
+    
+
+    pdfButton.addClass('pdf-button-loading');
+    pdfButton.prop('disabled', true);
+    
+    $.ajax({
+        url: '/brand/list_brand/?all=true',
+        type: 'GET',
+        success: (response) => {
+            const data = response.Brand.map(brand => [brand.id, brand.name]);
+            const today = new Date();
+            const formattedDateTime = today.toLocaleString();
+            
+            const docDefinition = {
+                content: [
+                    {
+                        columns: [
+                            { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
+                            { text: '', width: '*' },
+                            { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
+                        ],
+                        columnGap: 10
+                    },
+                    {
+                        text: 'Lista de Marcas',
+                        style: 'header',
+                        alignment: 'center',
+                        margin: [0, 10, 0, 20]
+                    },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['auto', '*'],
+                            body: [
+                                [
+                                    { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                    { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
+                                ],
+                                ...data.map(row => row.map(cell => ({
+                                    text: cell,
+                                    alignment: 'center',
+                                    noWrap: false,
+                                })))
+                            ]
+                        },
+                        layout: 'lightHorizontalLines'
+                    }
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                    footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+                },
+                defaultStyle: {
+                    fontSize: 12,
+                    color: '#2c3e50'
+                },
+                footer: (currentPage, pageCount) => ({
+                    text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                    style: 'footer',
+                    margin: [0, 10, 0, 0]
+                })
+            
+            };
+
+            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+            pdfDocGenerator.getBlob((blob) => {
+                // Animación de éxito
+                pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
+                setTimeout(() => {
+                    pdfButton.removeClass('pdf-button-success');
+                    pdfButton.prop('disabled', false);
+                }, 2000);
+                
+                saveAs(blob, `Lista_de_Marcas_${formattedDateTime}.pdf`);
+            });
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            console.error('Error fetching all data:', textStatus, errorThrown);
+            // Animación de error
+            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+            setTimeout(() => {
+                pdfButton.removeClass('pdf-button-error');
+                pdfButton.prop('disabled', false);
+            }, 2000);
+            
+            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+        },
+    });
+}
+
+// Evento click para el botón externo de PDF
+$(document).on('click', '#external-pdf-button', function() {
+    generateBrandsPDF();
+});
+
+// Resto del código se mantiene igual
 $(document).on('click', '.delete-btn-brand', function () {
     const brandId = $(this).data('id');
     Swal.fire({
@@ -197,10 +219,7 @@ $(document).on('click', '.edit-bra-btn', function () {
 
     $('#edit-bra-id').val(brandId);
     $('#edit-bra-name').val(brandName);
-
-    // Establecer la acción del formulario dinámicamente
     $('#edit-bra-form').attr('action', `/brand/brand_edit/${brandId}/`);
-
     $('#editBraModal').modal('show');
 });
 
