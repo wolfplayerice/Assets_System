@@ -40,7 +40,7 @@
                 <thead>
                   <div class="flex-row d-flex btn-add-pdf">
                     <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
-                      <i class='fa-solid fa-plus'></i>  <strong>Añadir Bien</strong>
+                      <i class='fa-solid fa-plus'></i> <strong>Añadir Bien</strong>
                     </button>
                     <button id="external-pdf-button" class="btn btn-danger mb-3 ">
                       <i class="fas fa-file-pdf"></i> Generar Reporte PDF
@@ -90,11 +90,12 @@
                           <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         </div>
                         {% endfor %}
-                        <input type="submit" value="Submit" class="btn btn-primary">
+
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                          <input type="submit" value="Guardar" class="btn btn-primary">
+                        </div>
                       </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                   </div>
                 </div>
@@ -266,8 +267,8 @@
                 {% for message in messages %}
                 {% if message.tags == 'success' %}
                 $(document).ready(function () {
-                $('#successModal').modal('show');
-              });
+                  $('#successModal').modal('show');
+                });
                 {% elif message.tags == 'error' %}
 
                 $(document).ready(function () {
