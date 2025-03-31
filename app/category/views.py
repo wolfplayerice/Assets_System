@@ -66,7 +66,7 @@ def list_category(request):
         return JsonResponse(response_data)
     draw = int(request.GET.get('draw', 0))
     start = int(request.GET.get('start', 0))
-    length = int(request.GET.get('length', 10))
+    length = int(request.GET.get('length', 10))  # Número de registros por página
 
     search_value = request.GET.get('search[value]', None)
 

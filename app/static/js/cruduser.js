@@ -43,7 +43,7 @@ const initDataTableuser = async () => {
                 { data: "name" },
                 { data: "last_name" },
                 { data: "email" },
-                {
+                { 
                     data: "is_active",
                     render: function (data, type, row) {
                         return data ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
@@ -69,7 +69,6 @@ const initDataTableuser = async () => {
                     `,
                 },
             ],
-            serverSide: true,
             responsive: true,
             dom: "lBfrtip",
             buttons: [
@@ -90,88 +89,43 @@ const initDataTableuser = async () => {
                     action: (e, dt, button, config) => {
                         $("#loading-indicator").show();
                         $.ajax({
-                            url: 'http://127.0.0.1:8000/users/list_users/?all=true',
+                            url: listUsersUrl,
                             type: 'GET',
                             success: (response) => {
-                                const data = response.users.map(user => [user.id, user.username, user.name,  user.last_name,
-                                    user.email, user.is_active
-                                ]);
-
-                                const today = new Date();
-
-                                const formattedDateTime = today.toLocaleString();
+                                const data = response.Category.map(category => [category.id, category.name]);
                                 const docDefinition = {
                                     content: [
-                                        {
-                                            columns: [
-                                                {
-                                                    image: gobernacion, 
-                                                    width: 80, 
-                                                    alignment: 'left', 
-                                                    margin: [0, 0, 0, 10] 
-                                                },
-                                                {
-                                                    text: '', 
-                                                    width: '*', 
-                                                },
-                                                {
-                                                    image: logo, 
-                                                    width: 80, 
-                                                    alignment: 'right', 
-                                                    margin: [0, 0, 0, 10] 
-                                                }
-                                            ],
-                                            columnGap: 10 
-                                        },
-                                        {
-                                            text: 'Lista de usuarios',
-                                            style: 'header',
-                                            alignment: 'center',
-                                            margin: [0, 10, 0, 20]
-                                        },
+                                        { text: 'Lista de Categorías', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
                                         {
                                             table: {
                                                 headerRows: 1,
-                                                widths: ['auto', 'auto', 'auto' , 'auto', '*', 'auto'],
+                                                widths: ['*', '*'],
                                                 body: [
-                                                    [{ text: 'ID', style: 'tableHeader', alignment: 'center' },
-                                                    { text: 'Usuario', style: 'tableHeader', alignment: 'center' },
-                                                    { text: 'Nombre', style: 'tableHeader', alignment: 'center'},
-                                                    { text: 'Apellido', style: 'tableHeader', alignment: 'center'},
-                                                    { text: 'Correo', style: 'tableHeader', alignment: 'center'},
-                                                    { text: 'Estado', style: 'tableHeader', alignment: 'center'},
-                                                    ],
-                                                    ...data.map(row => row.map(cell => ({
-                                                        text: cell,
-                                                        alignment: 'center',
-                                                        noWrap: false,
-                                                    })))
-                                                ],
-
+                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
+                                                    ...data
+                                                ]
                                             },
-                                            layout: 'lightHorizontalLines'
+                                            layout: 'lightHorizontalLines' // Estilo de la tabla
                                         }
                                     ],
                                     styles: {
-                                        header: { fontSize: 18, bold: true, color: '#2c3e50' },
-                                        tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
-                                        footer: { fontSize: 10, alignment: 'center', color: '#666666' }
-                                    
+                                        header: {
+                                            fontSize: 18,
+                                            bold: true,
+                                            color: '#2c3e50' // Color del texto
+                                        },
+                                        tableHeader: {
+                                            bold: true,
+                                            fontSize: 13,
+                                            color: '#34495e' // Color del texto del encabezado de la tabla
+                                        }
                                     },
                                     defaultStyle: {
                                         fontSize: 12,
-                                        color: '#2c3e50'
-                                    },
-                                    footer: (currentPage, pageCount) => {
-                                        return {
-                                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                                            style: 'footer',
-                                            margin: [0, 10, 0, 0]
-                                        };
+                                        color: '#2c3e50' // Color del texto por defecto
                                     }
                                 };
-
-                                pdfMake.createPdf(docDefinition).download(`Usuarios_${formattedDateTime}.pdf`);
+                                pdfMake.createPdf(docDefinition).open();
                                 $("#loading-indicator").hide();
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
@@ -180,6 +134,15 @@ const initDataTableuser = async () => {
                                 $("#loading-indicator").hide();
                             },
                         });
+                    },
+                },
+                {
+                    extend: "print",
+                    text: '<i class="fa fa-print"></i> ',
+                    titleAttr: "Imprimir",
+                    className: "btn btn-info",
+                    exportOptions: {
+                        columns: [0, 1],
                     },
                 },
             ],

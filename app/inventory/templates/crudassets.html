@@ -43,9 +43,6 @@
                       <i class='fa-solid fa-plus'></i>
                     </button>
                     <p>Añadir bien</p>
-                    <button id="external-pdf-button" class="btn btn-danger mb-3">
-                      <i class="fas fa-file-pdf"></i> Generar Reporte PDF
-                    </button>
                   </div>
 
                   <tr>
@@ -91,18 +88,18 @@
                           <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         </div>
                         {% endfor %}
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                          <input type="submit" value="Añadir" class="btn btn-primary">
-                        </div>
+                        <input type="submit" value="Submit" class="btn btn-primary">
                       </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                     </div>
                   </div>
                 </div>
               </div>
 
               <!-- Modal para mostrar el mensaje -->
-              <!-- <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+              <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
@@ -118,7 +115,7 @@
                     </div>
                   </div>
                 </div>
-              </div> -->
+              </div>
 
               <!-- Modal para dispositivos inoperativos -->
               <!-- Modal -->
@@ -174,7 +171,7 @@
                 </div>
               </div>
 
-              <!-- <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
+              <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
@@ -190,7 +187,7 @@
                     </div>
                   </div>
                 </div>
-              </div> -->
+              </div>
 
               <!-- Modal para opciones de PDF -->
               <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel"
@@ -262,13 +259,13 @@
                   toggleObservationsField();
                 });
               </script>
-              <!-- <script>
+              <script>
                 {% if messages %}
                 {% for message in messages %}
                 {% if message.tags == 'success' %}
                 $(document).ready(function () {
-                  $('#successModal').modal('show');
-                });
+                $('#successModal').modal('show');
+              });
                 {% elif message.tags == 'error' %}
 
                 $(document).ready(function () {
@@ -279,7 +276,7 @@
                 {% endif %}
                 {% endfor %}
                 {% endif %}
-              </script> -->
+              </script>
               {% endblock %}
 
               {% block extra_js %}

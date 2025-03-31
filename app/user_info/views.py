@@ -39,7 +39,7 @@ def user_edit(request, user_id):
         if form.is_valid():
             try:
                 form.save()  # Guarda los cambios en la base de datos
-                # messages.success(request, 'La información del usuario se ha actualizado correctamente.')
+                messages.success(request, 'La información del usuario se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
         else:

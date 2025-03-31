@@ -22,9 +22,6 @@
                       <i class='fa-solid fa-plus'></i>
                     </button>
                     <p>Añadir Categoria</p>
-                    <button id="external-pdf-button" class="btn btn-danger mb-3">
-                      <i class="fas fa-file-pdf"></i> Generar Reporte PDF
-                    </button>
                   </div>
                   <tr>
                     <th class="centered" scope="col">#</th>
@@ -66,15 +63,15 @@
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                       </div>
                       {% endfor %}
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <input type="submit" value="Añadir" class="btn btn-primary">
-                      </div>
+                      <input type="submit" value="Submit" class="btn btn-primary">
                     </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                   </div>
                 </div>
               </div>
-            </div>
+            </div>´
 
             <!-- Modal para editar -->
             <div class="modal fade" id="editCatModal" tabindex="-1" aria-labelledby="editCatModalLabel" aria-hidden="true">
