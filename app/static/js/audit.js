@@ -12,7 +12,7 @@ const initDataTableAudit = async () => {
         dataTableaudit = $("#datatable-audit").DataTable({
             serverSide: false,
             ajax: {
-                url: "http://127.0.0.1:8000/audit/logs_list/",
+                url: listAuditUrl,
                 error: (jqXHR, textStatus, errorThrown) => {
                     console.error("Error fetching data:", textStatus, errorThrown);
                     Swal.fire('Error!', 'Error al cargar los datos. Por favor, inténtelo de nuevo.', 'error');
