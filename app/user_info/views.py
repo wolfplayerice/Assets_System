@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from .forms import EditUserInfo
+from audit.models import AuditLog 
 
 @login_required
 def user_info(request): 
@@ -34,11 +35,69 @@ def user_edit(request, user_id):
         return HttpResponseRedirect(reverse('user_info:user_info'))
 
     user = request.user  # Obtén el usuario autenticado
+    FIELD_NAMES = {
+        'username': 'Usuario',
+        'first_name': 'Nombre',
+        'last_name': 'Apellido',
+        'email': 'Correo electrónico',
+        'is_active': 'Estado'
+    }
     if request.method == "POST":
         form = EditUserInfo(request.POST, instance=user)  # Inicializa el formulario con los datos enviados
         if form.is_valid():
             try:
-                form.save()  # Guarda los cambios en la base de datos
+                original_user = User.objects.get(pk=user_id)
+                old_values = {
+                    'username': original_user.username,
+                    'first_name': original_user.first_name,
+                    'last_name': original_user.last_name,
+                    'email': original_user.email,
+                    'is_active': original_user.is_active
+                }
+                
+                # 2. Guardar el formulario
+                form.save()
+                
+                # 3. Obtener el objeto ACTUALIZADO directamente desde el formulario
+                updated_user = form.instance
+                new_values = {
+                    'username': updated_user.username,
+                    'first_name': updated_user.first_name,
+                    'last_name': updated_user.last_name,
+                    'email': updated_user.email,
+                    'is_active': updated_user.is_active
+                }
+
+                
+                # 5. Detectar cambios REALES
+                changes = []
+                for field in old_values:
+                    old_val = old_values[field]
+                    new_val = new_values[field]
+                    
+                    if str(old_val) != str(new_val):  # Comparación como strings
+                        if field == 'is_active':
+                            action = "Habilitación" if new_val else "Inhabilitación"
+                            changes.append(f"{action} del usuario")
+                        else:
+                            field_name = FIELD_NAMES.get(field, field)
+                            changes.append(f"{field_name}: '{old_val}' cambio a '{new_val}'")
+                
+                # 6. Crear mensaje de auditoría
+                if changes:
+                    changes_str = "; ".join(changes)
+                    audit_message = f"Actualización de usuario {updated_user.username} (ID: {updated_user.id}): {changes_str}"
+                else:
+                    audit_message = f"Usuario {updated_user.username} (ID: {updated_user.id}) editado sin cambios significativos."
+                
+                # 7. Registrar auditoría
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="update",
+                    model_name="User",
+                    object_id=updated_user.id,
+                    description=audit_message
+                )
                 messages.success(request, 'La información del usuario se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
