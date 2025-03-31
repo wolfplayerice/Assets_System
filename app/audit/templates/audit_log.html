@@ -13,7 +13,9 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-
+            <button id="external-pdf-button" class="btn btn-danger mb-3">
+              <i class="fas fa-file-pdf"></i> Generar Reporte PDF
+            </button>
             <div id="data-container" data-list-audit-url="{% url 'audit:logs_list' %}">
               <table id="datatable-audit" class="table">
                 <thead>
