@@ -63,11 +63,14 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
                 buttons += `
                     <button class='btn btn-sm btn-primary btn-edit centered' 
                         data-id="${row.id}" 
+                        data-brand="${row.fk_brand}" 
                         data-brand-id="${row.fk_brand_id}" 
                         data-model="${row.model}" 
+                        data-category="${row.fk_category}" 
                         data-category-id="${row.fk_category_id}"
                         data-serial="${row.serial_number}" 
                         data-state="${row.state_asset}" 
+                        data-status="${row.status}" 
                         data-status-id="${row.status_id}"
                         data-observation="${row.observation}"
                         data-table-id="${tableId}">
@@ -219,16 +222,13 @@ async function generateAssetPDF() {
 }
 
 $(document).ready(function () {
-    // Inicializar DataTables
     initDataTableAssets("datatable-assets");
 
-    // Configurar el botón externo de PDF
     $('#external-pdf-button').on('click', function() {
         if ($(this).hasClass('pdf-button-loading')) return;
         $('#pdfOptionsModal').modal('show');
     });
 
-    // Configurar el modal de opciones de PDF
     const pdfOptionsModal = $('#pdfOptionsModal');
     
     function initializeSelect2() {
@@ -304,42 +304,39 @@ $(document).on('click', '.btn-inoperativo', function () {
 });
 
 function clearEditForm() {
-    // Limpiar campos básicos
     $('[name="fk_brand"], #id_fk_brand').val('').trigger('change');
     $('[name="model"], #id_model').val('');
     $('[name="fk_category"], #id_fk_category').val('').trigger('change');
     $('[name="serial_number"], #id_serial_number').val('');
     $('[name="state_asset"], #id_state_asset').val('');
     $('[name="observation"], #id_observation').val('');
-    
-    // Restablecer el estado
+    $('[name="prefix"], #id_prefix').val('').trigger('change');
     $('[name="status"], #id_status').val('True').trigger('change');
     
-    // Limpiar la acción del formulario
     $('#edit-form').attr('action', '');
 }
 
 $(document).on('click', '.btn-edit', function () {
     const assetId = $(this).data('id');
-    
     const assetData = {
         fk_brand: $(this).data('brand-id'),
         model: $(this).data('model'),
         fk_category: $(this).data('category-id'),
         serial_number: $(this).data('serial'),
-        state_asset: $(this).data('state'), 
+        state_asset: $(this).data('state'),
         status: $(this).data('status-id'),
         observation: $(this).data('observation') || ''
     };
 
-    let stateAssetValue;
-    if (assetData.state_asset && assetData.state_asset.includes('-')) {
-        stateAssetValue = assetData.state_asset.split('-')[1];
-    } else {
-        stateAssetValue = assetData.state_asset;
-    }
+    let prefix = '';
+    let stateAssetValue = assetData.state_asset;
     
-    // Llenar campos del formulario
+    if (assetData.state_asset?.includes('-')) {
+        const parts = assetData.state_asset.split('-');
+        prefix = parts[0] + '-';  
+        stateAssetValue = parts[1]; 
+    }
+
     $('[name="fk_brand"], #id_fk_brand').val(assetData.fk_brand).trigger('change');
     $('[name="model"], #id_model').val(assetData.model);
     $('[name="fk_category"], #id_fk_category').val(assetData.fk_category).trigger('change');
@@ -347,13 +344,14 @@ $(document).on('click', '.btn-edit', function () {
     $('[name="state_asset"], #id_state_asset').val(stateAssetValue || '');
     $('[name="observation"], #id_observation').val(assetData.observation);
     
+    $('[name="prefix"], #id_prefix').val(prefix).trigger('change');
+console.log(prefix);
     const statusValue = assetData.status ? 'True' : 'False';
     $('[name="status"], #id_status').val(statusValue).trigger('change');
 
     $('#edit-form').attr('action', `/inventory/asset_edit/${assetId}/`);
     $('#editModal').modal('show');
 });
-
 
 $('#editModal').on('hidden.bs.modal', function () {
     clearEditForm();
