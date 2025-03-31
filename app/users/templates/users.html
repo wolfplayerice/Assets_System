@@ -14,16 +14,16 @@
         <div class="row">
           <div class="col-md-12">
             <div id="data-container" data-list-users-url="{% url 'users:users_list' %}">
-            <table id="datatable-users" class="table">
-              <thead>
+              <table id="datatable-users" class="table">
+                <thead>
                   <div class="flex-row d-flex btn-add-pdf">
-                      <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal"> <i
-                          class='fa-solid fa-plus'></i> <strong>Añadir Usuario</strong>
-                      </button>
-                      <button id="external-pdf-button" class="btn btn-danger mb-3">
-                        <i class="fas fa-file-pdf"></i> Generar Reporte PDF
-                      </button>
-                    </div>
+                    <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
+                      <i class='fa-solid fa-plus'></i> <strong>Añadir Usuario</strong>
+                    </button>
+                    <button id="external-pdf-button" class="btn btn-danger mb-3">
+                      <i class="fas fa-file-pdf"></i> Generar Reporte PDF
+                    </button>
+                  </div>
                   <tr>
                     <th class="centered" scope="col">#</th>
                     <th class="centered" scope="col">Username</th>
@@ -39,7 +39,8 @@
                 </tbody>
               </table>
 
-              <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+              <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -70,7 +71,8 @@
                           <label for="edit-user-password">Nueva contraseña (opcional)</label>
                           <div class="input-group">
                             <input type="password" class="form-control" id="edit-user-password" name="password">
-                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="#edit-user-password">
+                            <button type="button" class="btn btn-outline-secondary toggle-password"
+                              data-target="#edit-user-password">
                               <i class="fas fa-eye"></i>
                             </button>
                           </div>
@@ -78,9 +80,10 @@
                         <div class="form-group">
                           <label for="edit-user-password2">Confirmar nueva contraseña</label>
                           <div class="input-group">
-                            <input type="password" class="form-control" id="edit-user-password2" name="password2" 
-                                   title="Por favor, repite la contraseña.">
-                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="#edit-user-password2">
+                            <input type="password" class="form-control" id="edit-user-password2" name="password2"
+                              title="Por favor, repite la contraseña.">
+                            <button type="button" class="btn btn-outline-secondary toggle-password"
+                              data-target="#edit-user-password2">
                               <i class="fas fa-eye"></i>
                             </button>
                           </div>
@@ -95,31 +98,40 @@
                 </div>
               </div>
 
-              
-
-            <!-- Modal para editar -->
-            <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="editUserModal">Editar Usuario</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="infoModalLabel">Registro de Usuarios</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <!-- Contenido del modal -->
+                      <form action="{% url 'users:create_user' %}" method="post">
+                        {% csrf_token %}
+                        {% for field in user_form %}
+                        <div class="form-group form-floating mb-3">
+                          {% if field.field.widget.input_type == 'text' %}
+                          {{ field|add_class:"form-control" }}
+                          {% elif field.field.widget.input_type == 'password' %}
+                          {{ field|add_class:"form-control" }}
+                          {% elif field.field.widget.input_type == 'email' %}
+                          {{ field|add_class:"form-control" }}
+                          {% endif %}
+                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% endfor %}
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                          <input type="submit" value="Añadir" class="btn btn-primary">
+                        </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="modal-body">
-                  <form id="edit-user-form" action="{% url 'users:user_edit' 0 %}" method="post">
-                    {% csrf_token %}
-                    {{ edit_user_form }}
-                    <input type="hidden" id="edit-user-id" name="id">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                  <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
-                </div>
-                </form>
               </div>
-            </div>
-          </div>
 
               <!-- Modal para mostrar el mensaje -->
               <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
@@ -158,22 +170,20 @@
                 </div>
               </div>
 
-          <script>
-          {% if messages %}
-          {% for message in messages %}
-          {% if message.tags == 'success' %}
-          $(document).ready(function () {
-          $('#successModal').modal('show');
-          });
-          {% elif message.tags == 'error' %}
-            $(document).ready(function () {
-            $('#errorModal').modal('show');
-            });
-          {% endif %}
-          {% endfor %}
-          {% endif %}
-        </script>
-            {% endblock %}
+              <script>
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                $('#successModal').modal('show');
+                {% elif message.tags == 'error' %}
+                $(document).ready(function () {
+                  $('#errorModal').modal('show');
+                });
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+              </script>
+              {% endblock %}
 
               {% block extra_js %}
               <script src="{% static 'js/cruduser.js' %}"></script>
