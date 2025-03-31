@@ -153,7 +153,7 @@ def asset_create(request):
                     username=request.user.username,  
                     model_name='Asset',
                     object_id=assets.id,
-                    description=f"Activo creado: {assets.fk_brand.name} {assets.model} {assets.serial_number}"
+                    description=f"Activo creado (ID: {assets.id}): {assets.fk_brand.name} {assets.model} {assets.serial_number}"
                 )
                 return JsonResponse({'status': 'success', 'message': 'El activo se ha guardado correctamente.'})
                 # messages.success(request, 'El activo se ha guardado correctamente.')
@@ -207,7 +207,7 @@ def delete_asset(request, asset_id):
                     username=request.user.username,  
                     model_name='Asset',
                     object_id=asset_id,
-                    description=f"Activo eliminado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
+                    description=f"Activo eliminado (ID: {asset_id}): {asset.fk_brand.name} {asset.model} {asset.serial_number}"
                 )
             return JsonResponse({"message": "Categoría eliminada correctamente."})
         except Asset.DoesNotExist:
