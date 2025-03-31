@@ -119,7 +119,7 @@ async function generateAssetPDF() {
 
     try {
         const response = await $.ajax({
-            url: 'http://127.0.0.1:8000/inventory/list_assets/',
+            url: '/inventory/list_assets/',
             type: 'GET',
             data: {
                 status: statusFilter,
@@ -345,7 +345,6 @@ $(document).on('click', '.btn-edit', function () {
     $('[name="observation"], #id_observation').val(assetData.observation);
     
     $('[name="prefix"], #id_prefix').val(prefix).trigger('change');
-console.log(prefix);
     const statusValue = assetData.status ? 'True' : 'False';
     $('[name="status"], #id_status').val(statusValue).trigger('change');
 
