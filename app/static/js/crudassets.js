@@ -140,6 +140,167 @@ const initDataTableAssets = async (tableId = "datatable-assets", includeActions 
     }
 };
 
+// Función para generar PDF con animaciones
+async function generateAssetPDF() {
+    const pdfButton = $('#external-pdf-button');
+    const statusFilter = $('select[name="statusFilter"]').val();
+    const categories = $('.js-example-basic-multiple').val() || [];
+    const brand = $('.brand').val() || [];
+
+    // Iniciar animación de carga
+    pdfButton.addClass('pdf-button-loading').prop('disabled', true);
+
+    try {
+        const response = await $.ajax({
+            url: '/inventory/list_assets/',
+            type: 'GET',
+            data: {
+                status: statusFilter,
+                'categories[]': categories,
+                'brand[]': brand,
+                all: true
+            }
+        });
+
+        const data = response.Asset.map(asset => [
+            asset.id,
+            asset.fk_brand,
+            asset.model,
+            asset.fk_category,
+            asset.serial_number,
+            asset.state_asset,
+            asset.status,
+            asset.observation,
+        ]);
+
+        const today = new Date();
+        const formattedDateTime = today.toLocaleString();
+
+        const docDefinition = {
+            pageSize: 'LETTER',
+            pageOrientation: 'landscape',
+            pageMargins: [40, 80, 40, 40],
+            header: {
+                columns: [
+                    { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
+                    {
+                        text: 'INVENTARIO DE BIENES MUEBLES',
+                        style: 'header',
+                        alignment: 'center',
+                        margin: [0, 20, 0, 20]
+                    },
+                    { image: logo, width: 60, alignment: 'right', margin: [10, 10, 20, 10] }
+                ],
+                columnGap: 10,
+            },
+            content: [
+                {
+                    table: {
+                        widths: ['5%', '10%', '10%', '10%', '15%', '15%', '10%', '25%'],
+                        headerRows: 1,
+                        body: [
+                            [
+                                { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Marca', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Modelo', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Categoría', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Serial', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Estado', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Estatus', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Observación', style: 'tableHeader', alignment: 'center' }
+                            ],
+                            ...data.map(row => row.map(cell => ({
+                                text: cell,
+                                alignment: 'justify',
+                                noWrap: false,
+                            })))
+                        ]
+                    },
+                    layout: 'lightHorizontalLines'
+                }
+            ],
+            styles: {
+                header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+            },
+            defaultStyle: { fontSize: 12, color: '#2c3e50' },
+            footer: (currentPage, pageCount) => ({
+                text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                style: 'footer',
+                margin: [0, 10, 0, 0]
+            })
+        };
+
+        // Animación de éxito
+        pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
+        
+        pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime}.pdf`);
+        
+        setTimeout(() => {
+            pdfButton.removeClass('pdf-button-success').prop('disabled', false);
+        }, 2000);
+
+    } catch (error) {
+        console.error('Error generando PDF:', error);
+        
+        // Animación de error
+        pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+        setTimeout(() => {
+            pdfButton.removeClass('pdf-button-error').prop('disabled', false);
+        }, 2000);
+        
+        Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+    }
+}
+
+$(document).ready(function () {
+    // Inicializar DataTables
+    initDataTableAssets("datatable-assets");
+
+    // Configurar el botón externo de PDF
+    $('#external-pdf-button').on('click', function() {
+        if ($(this).hasClass('pdf-button-loading')) return;
+        $('#pdfOptionsModal').modal('show');
+    });
+
+    // Configurar el modal de opciones de PDF
+    const pdfOptionsModal = $('#pdfOptionsModal');
+    
+    function initializeSelect2() {
+        $('.js-example-basic-multiple').select2({
+            width: '100%',
+            dropdownParent: pdfOptionsModal,
+            placeholder: "Seleccione categorías",
+            closeOnSelect: false,
+            theme: 'default'
+        });
+
+        $('.brand').select2({
+            width: '100%',
+            dropdownParent: pdfOptionsModal,
+            placeholder: "Seleccione marcas",
+            closeOnSelect: false,
+            theme: 'default'
+        });
+    }
+
+    function clearSelects() {
+        $('.js-example-basic-multiple').val(null).trigger('change');
+        $('.brand').val(null).trigger('change');
+    }
+
+    pdfOptionsModal.on('shown.bs.modal', initializeSelect2);
+    pdfOptionsModal.on('hidden.bs.modal', clearSelects);
+    
+    // Botón de generación dentro del modal
+    $('#generatePdfButton').on('click', function() {
+        generateAssetPDF();
+        pdfOptionsModal.modal('hide');
+    });
+});
+
+// Resto de los event listeners (eliminación, edición, etc.)
 $(document).on('click', '.delete-asset-btn', function () {
     const assetId = $(this).data('id');
     const tableId = $(this).data('table-id');

@@ -71,81 +71,7 @@ const initDataTableuser = async () => {
             ],
             responsive: true,
             dom: "lBfrtip",
-            buttons: [
-                {
-                    extend: "excelHtml5",
-                    text: '<i class="fas fa-file-excel"></i> ',
-                    titleAttr: "Exportar a Excel",
-                    className: "btn btn-success",
-                    exportOptions: {
-                        columns: [0, 1],
-                    },
-                },
-                {
-                    extend: 'pdfHtml5',
-                    text: '<i class="fas fa-file-pdf"></i>',
-                    titleAttr: 'Exportar a PDF',
-                    className: 'btn btn-danger',
-                    action: (e, dt, button, config) => {
-                        $("#loading-indicator").show();
-                        $.ajax({
-                            url: listUsersUrl,
-                            type: 'GET',
-                            success: (response) => {
-                                const data = response.Category.map(category => [category.id, category.name]);
-                                const docDefinition = {
-                                    content: [
-                                        { text: 'Lista de Categorías', style: 'header', alignment: 'center', margin: [0, 10, 0, 20] },
-                                        {
-                                            table: {
-                                                headerRows: 1,
-                                                widths: ['*', '*'],
-                                                body: [
-                                                    [{ text: 'ID', style: 'tableHeader' }, { text: 'Nombre', style: 'tableHeader' }],
-                                                    ...data
-                                                ]
-                                            },
-                                            layout: 'lightHorizontalLines' // Estilo de la tabla
-                                        }
-                                    ],
-                                    styles: {
-                                        header: {
-                                            fontSize: 18,
-                                            bold: true,
-                                            color: '#2c3e50' // Color del texto
-                                        },
-                                        tableHeader: {
-                                            bold: true,
-                                            fontSize: 13,
-                                            color: '#34495e' // Color del texto del encabezado de la tabla
-                                        }
-                                    },
-                                    defaultStyle: {
-                                        fontSize: 12,
-                                        color: '#2c3e50' // Color del texto por defecto
-                                    }
-                                };
-                                pdfMake.createPdf(docDefinition).open();
-                                $("#loading-indicator").hide();
-                            },
-                            error: (jqXHR, textStatus, errorThrown) => {
-                                console.error('Error fetching all data:', textStatus, errorThrown);
-                                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-                                $("#loading-indicator").hide();
-                            },
-                        });
-                    },
-                },
-                {
-                    extend: "print",
-                    text: '<i class="fa fa-print"></i> ',
-                    titleAttr: "Imprimir",
-                    className: "btn btn-info",
-                    exportOptions: {
-                        columns: [0, 1],
-                    },
-                },
-            ],
+            buttons: [],
         });
 
         dataTableIsInitializeduser = true;
@@ -154,6 +80,113 @@ const initDataTableuser = async () => {
         Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
     }
 };
+
+function generateUserPDF() {
+    const pdfButton = $('#external-pdf-button');
+
+
+    pdfButton.addClass('pdf-button-loading');
+    pdfButton.prop('disabled', true);
+
+    $.ajax({
+        url: 'http://127.0.0.1:8000/users/list_users/?all=true',
+        type: 'GET',
+        success: (response) => {
+            const data = response.users.map(user => [user.id, user.username, user.name, user.last_name,
+            user.email, user.is_active ? 'Activo' : 'Inactivo'
+            ]);
+
+            const today = new Date();
+
+            const formattedDateTime = today.toLocaleString();
+            const docDefinition = {
+                pageSize: 'LETTER',
+                pageMargins: [40, 80, 40, 40],
+                header: {
+                    columns: [
+                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
+                        {
+                            text: 'LISTA DE USUARIOS',
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [10, 20, 0, 20]
+                        },
+                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 10, 10] }
+                    ],
+                    columnGap: 10,
+                },
+                content: [
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['auto', 'auto', 'auto', 'auto', '*', 'auto'],
+                            body: [
+                                [{ text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Usuario', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Apellido', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Correo', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Estado', style: 'tableHeader', alignment: 'center' },
+                                ],
+                                ...data.map(row => row.map(cell => ({
+                                    text: cell,
+                                    alignment: 'center',
+                                    noWrap: false,
+                                })))
+                            ],
+
+                        },
+                        layout: 'lightHorizontalLines'
+                    }
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                    footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+
+                },
+                defaultStyle: {
+                    fontSize: 12,
+                    color: '#2c3e50'
+                },
+                footer: (currentPage, pageCount) => {
+                    return {
+                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                        style: 'footer',
+                        margin: [0, 10, 0, 0]
+                    };
+                }
+            };
+
+            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+            pdfDocGenerator.getBlob((blob) => {
+                pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
+                setTimeout(() => {
+                    pdfButton.removeClass('pdf-button-success');
+                    pdfButton.prop('disabled', false);
+                }, 2000);
+
+                saveAs(blob, `Usuarios_${formattedDateTime}.pdf`);
+            });
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            console.error('Error fetching all data:', textStatus, errorThrown);
+            // Animación de error
+            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+            setTimeout(() => {
+                pdfButton.removeClass('pdf-button-error');
+                pdfButton.prop('disabled', false);
+            }, 2000);
+
+            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+        },
+    });
+}
+
+// Evento click para el botón externo de PDF
+$(document).on('click', '#external-pdf-button', function () {
+    generateUserPDF();
+});
 
 $(document).on('click', '.disable-user-btn', function () {
     const userId = $(this).data('id');

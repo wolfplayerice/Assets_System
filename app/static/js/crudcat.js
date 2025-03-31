@@ -148,6 +148,110 @@ const initDataTableCategory = (() => {
     };
 })();
 
+function generateBrandsPDF() {
+    const pdfButton = $('#external-pdf-button');
+    
+
+    pdfButton.addClass('pdf-button-loading');
+    pdfButton.prop('disabled', true);
+    
+    $.ajax({
+        url: 'http://127.0.0.1:8000/category/list_category/?all=true',
+        type: 'GET',
+        success: (response) => {
+            const data = response.Category.map(category => [category.id, category.name]);
+            const today = new Date();
+            const formattedDateTime = today.toLocaleString();
+
+            const docDefinition = {
+                pageSize: 'LETTER',
+                pageMargins: [40, 80, 40, 40],
+                header: {
+                    columns: [
+                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
+                        {
+                            text: 'LISTA DE CATEGORIAS',
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [10, 20, 0, 20]
+                        },
+                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 10, 10] }
+                    ],
+                    columnGap: 10,
+                },
+                content: [
+                    {
+                        text: 'Lista de Categorias',
+                        style: 'header',
+                        alignment: 'center',
+                        margin: [0, 10, 0, 20]
+                    },
+                    {
+                        table: {
+                            headerRows: 1,
+                            widths: ['auto', '*'],
+                            body: [
+                                [
+                                    { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                    { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
+                                ],
+                                ...data.map(row => row.map(cell => ({
+                                    text: cell,
+                                    alignment: 'center',
+                                    noWrap: false,
+                                })))
+                            ]
+                        },
+                        layout: 'lightHorizontalLines'
+                    }
+                ],
+                styles: {
+                    header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                    footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+                },
+                defaultStyle: {
+                    fontSize: 12,
+                    color: '#2c3e50'
+                },
+                footer: (currentPage, pageCount) => ({
+                    text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                    style: 'footer',
+                    margin: [0, 10, 0, 0]
+                })
+            };
+
+
+            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+            pdfDocGenerator.getBlob((blob) => {
+                // Animación de éxito
+                pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
+                setTimeout(() => {
+                    pdfButton.removeClass('pdf-button-success');
+                    pdfButton.prop('disabled', false);
+                }, 2000);
+                saveAs(blob, `Lista_de_Categorias_${formattedDateTime}.pdf`);
+            });
+        },
+        error: (jqXHR, textStatus, errorThrown) => {
+            console.error('Error fetching all data:', textStatus, errorThrown);
+            // Animación de error
+            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+            setTimeout(() => {
+                pdfButton.removeClass('pdf-button-error');
+                pdfButton.prop('disabled', false);
+            }, 2000);
+            
+            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+        },
+    });
+}
+
+// Evento click para el botón externo de PDF
+$(document).on('click', '#external-pdf-button', function() {
+    generateBrandsPDF();
+});
+
 $(document).on('click', '.edit-cat-btn', function () {
     const catId = $(this).data('id');
     const catName = $(this).data('name');
