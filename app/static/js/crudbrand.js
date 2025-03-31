@@ -6,7 +6,7 @@ const initDataTablebrand = async () => {
     try {
         if (dataTableIsInitializedbrand) {
             dataTablebrand.destroy();
-            dataTablebrand = null;
+            dataTablebrand = null; // Liberar referencia para la recolección de basura
         }
 
         dataTablebrand = $("#datatable-brand").DataTable({
@@ -33,11 +33,11 @@ const initDataTablebrand = async () => {
                 {
                     data: null,
                     render: (data, type, row) => `
-                        <button class='btn btn-sm btn-primary edit-bra-btn' 
+                            <button class='btn btn-sm btn-primary edit-bra-btn' 
                             data-id='${row.id}'
                             data-name='${row.name}'>
-                            <i class='fa-solid fa-pencil'></i>
-                        </button>
+                                <i class='fa-solid fa-pencil'></i>
+                            </button>
                         <button class='btn btn-sm btn-danger delete-btn-brand' data-id='${row.id}'>
                             <i class='fa-solid fa-trash-can'></i>
                         </button>`,
@@ -52,7 +52,7 @@ const initDataTablebrand = async () => {
                 "sSearch": "Buscar:",
                 "sProcessing": "Procesando...",
                 "emptyTable": "No hay datos disponibles en la tabla"
-            },
+                },
             responsive: true,
             dom: "lBfrtip",
             // Eliminamos el botón PDF de aquí
@@ -220,7 +220,10 @@ $(document).on('click', '.edit-bra-btn', function () {
 
     $('#edit-bra-id').val(brandId);
     $('#edit-bra-name').val(brandName);
+
+    // Establecer la acción del formulario dinámicamente
     $('#edit-bra-form').attr('action', `/brand/brand_edit/${brandId}/`);
+
     $('#editBraModal').modal('show');
 });
 

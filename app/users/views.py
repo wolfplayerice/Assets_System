@@ -52,7 +52,7 @@ def list_users(request):
     try:
         draw = int(request.GET.get('draw', 0))
         start = int(request.GET.get('start', 0))
-        length = int(request.GET.get('length', 10))
+        length = int(request.GET.get('length', 10))  # Número de registros por página
     except (ValueError, TypeError):
         return JsonResponse({'error': 'Invalid parameters'}, status=400)
 
@@ -127,29 +127,26 @@ def user_create(request):
 
 @login_required
 def user_edit(request, user_id):
-    # Asegúrate de que el usuario autenticado está editando su propia información
-    if request.user.id != user_id:
-        messages.error(request, "No tienes permiso para editar este usuario.")
-        return HttpResponseRedirect(reverse('user_info:user_info'))
+    user = get_object_or_404(User, pk=user_id)
 
-    user = request.user  # Obtén el usuario autenticado
     if request.method == "POST":
-        form = EditUserInfo(request.POST, instance=user)
+        form = EditUser(request.POST, instance=user)
         if form.is_valid():
             try:
-                form.save()  # Guarda los cambios en la base de datos
-                messages.success(request, 'La información del usuario se ha actualizado correctamente.')
+                form.save()  # Guarda los cambios, incluyendo la contraseña encriptada
+                messages.success(request, 'El usuario se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
-        return HttpResponseRedirect(reverse('user_info:user_info'))
+        return HttpResponseRedirect(reverse('users:users'))
     else:
-        form = EditUserInfo(instance=user)  # Carga el formulario con los datos actuales del usuario
-    return render(request, 'user_info.html', {
-        'EditUserInfo': form,
+        form = EditUser(instance=user)
+
+    return render(request, 'users/edit_user.html', {
+        'form': form,
         'user_id': user_id
     })
     

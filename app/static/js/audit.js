@@ -41,7 +41,6 @@ const initDataTableAudit = async () => {
                 { data: "description"},
                 { data: "timestamp"}
             ],
-            serverSide: true,
             responsive: true,
             dom: "lBfrtip",
             buttons: [
@@ -67,16 +66,16 @@ function generateBrandsPDF() {
         success: (response) => {
             const data = response.data.map(audit => [audit.user, audit.action, audit.description, audit.timestamp]);
 
-            // Obtener la fecha actual
-            const today = new Date();
+                                // Obtener la fecha actual
+                                const today = new Date();
 
-            // Obtener componentes de la fecha y hora
-            /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
-            const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
-            const year = today.getFullYear(); // Año (4 dígitos)
-            const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
-            const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
-            const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
+                                // Obtener componentes de la fecha y hora
+                                /* const day = String(today.getDate()).padStart(2, '0'); // Día (2 dígitos)
+                                const month = String(today.getMonth() + 1).padStart(2, '0'); // Mes (2 dígitos)
+                                const year = today.getFullYear(); // Año (4 dígitos)
+                                const hours = String(today.getHours()).padStart(2, '0'); // Hora (2 dígitos)
+                                const minutes = String(today.getMinutes()).padStart(2, '0'); // Minutos (2 dígitos)
+                                const seconds = String(today.getSeconds()).padStart(2, '0'); */ // Segundos (2 dígitos)
 
             // Formato personalizado: DD-MM-YYYY HH:MM:SS
             /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
@@ -138,35 +137,36 @@ function generateBrandsPDF() {
                 }
             };
 
-            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-            pdfDocGenerator.getBlob((blob) => {
-                // Animación de éxito
-                pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
-                setTimeout(() => {
-                    pdfButton.removeClass('pdf-button-success');
-                    pdfButton.prop('disabled', false);
-                }, 2000);
-                saveAs(blob, `Auditoria_${formattedDateTime}.pdf`);
-            });
-        },
-        error: (jqXHR, textStatus, errorThrown) => {
-            console.error('Error fetching all data:', textStatus, errorThrown);
-            // Animación de error
-            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
-            setTimeout(() => {
-                pdfButton.removeClass('pdf-button-error');
-                pdfButton.prop('disabled', false);
-            }, 2000);
-            
-            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-        },
-    });
-}
+                                // Generar y descargar el PDF con un nombre personalizado
+                                pdfMake.createPdf(docDefinition).download(`Auditoria_${formattedDateTime}.pdf`);
+                                $("#loading-indicator").hide();
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                console.error('Error fetching all data:', textStatus, errorThrown);
+                                Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+                                $("#loading-indicator").hide();
+                            },
+                        });
+                    },
+                },
+                {
+                    extend: "print",
+                    text: '<i class="fa fa-print"></i> ',
+                    titleAttr: "Imprimir",
+                    className: "btn btn-info",
+                    exportOptions: {
+                        columns: [0, 1],
+                    },
+                },
+            ],
+        });
 
-// Evento click para el botón externo de PDF
-$(document).on('click', '#external-pdf-button', function() {
-    generateBrandsPDF();
-});
+        dataTableIsInitializedaudit = true;
+    } catch (error) {
+        console.error("Error initializing DataTable:", error);
+        Swal.fire('Error!', 'Error al inicializar la tabla.', 'error');
+    }
+};
 
 window.addEventListener('load', async () => {
     await initDataTableAudit("datatable-audit");

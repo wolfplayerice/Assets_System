@@ -13,6 +13,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
+
             <div id="data-container" data-list-brands-url="{% url 'brand:list_brand' %}">
               <table id="datatable-brand" class="table">
                 <thead>
@@ -64,11 +65,11 @@
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                       </div>
                       {% endfor %}
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <input type="submit" value="Añadir" class="btn btn-primary">
-                      </div>
+                      <input type="submit" value="Submit" class="btn btn-primary">
                     </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                   </div>
                 </div>
               </div>
@@ -136,28 +137,28 @@
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-            <script>
-              {% if messages %}
-              {% for message in messages %}
-              {% if message.tags == 'success' %}
-              $(document).ready(function () {
-                $('#successModal').modal('show');
-              });
-              {% elif message.tags == 'error' %}
-
-              $(document).ready(function () {
-
-                $('#errorModal').modal('show');
-
-              });
-              {% endif %}
-              {% endfor %}
-              {% endif %}
-            </script>
-            {% endblock %}
+<script>
+  {% if messages %}
+  {% for message in messages %}
+  {% if message.tags == 'success' %}
+  $(document).ready(function () {
+  $('#successModal').modal('show');
+});
+  {% elif message.tags == 'error' %}
+  
+    $(document).ready(function () {
+  
+     $('#errorModal').modal('show');
+  
+    });
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+  </script>
+{% endblock %}
 
             {% block extra_js %}
             <script src="{% static 'js/crudbrand.js' %}"></script>
 
-
+            
             {% endblock %}

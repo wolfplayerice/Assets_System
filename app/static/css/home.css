@@ -5,7 +5,7 @@
     display: block;
     font-size: 1rem;
     max-width: 100%;
-}
+  }
 
 .nav-link.active {
     background-color: rgb(0, 183, 255) !important;
