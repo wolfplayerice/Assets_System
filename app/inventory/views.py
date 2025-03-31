@@ -37,6 +37,22 @@ def list_assets(request):
     brand = request.GET.getlist('brand[]', [])
     all_data = request.GET.get('all', False)
 
+    order_column_index = request.GET.get('order[0][column]', '0')
+    order_direction = request.GET.get('order[0][dir]', 'asc')
+    
+
+    column_map = {
+        '0': 'id',
+        '1': 'fk_brand__name',
+        '2': 'model',
+        '3': 'fk_category__name',
+        '4': 'serial_number',
+        '5': 'state_asset',
+        '6': 'status',
+    }
+    
+    order_field = column_map.get(order_column_index, 'id')
+
     assets = Asset.objects.all()
 
     if status_filter != 'all':
@@ -47,6 +63,11 @@ def list_assets(request):
 
     if brand and 'all' not in brand:
         assets = assets.filter(fk_brand_id__in=brand)
+
+
+    if order_direction == 'desc':
+        order_field = f'-{order_field}'
+    assets = assets.order_by(order_field)
 
     if all_data:
         data = [asset.to_dict() for asset in assets]
@@ -63,13 +84,12 @@ def list_assets(request):
 
     search_value = request.GET.get('search[value]', '').strip().lower()
     if search_value:
-            # Mapeo de términos de búsqueda a valores booleanos
+
             status_mapping = {
                 'operativo': True,
                 'inoperativo': False
             }
             
-            # Verificar si la búsqueda coincide con algún estado
             status_filter = None
             for term, bool_value in status_mapping.items():
                 if term.startswith(search_value):
@@ -135,28 +155,35 @@ def asset_create(request):
                     object_id=assets.id,
                     description=f"Activo creado: {assets.fk_brand.name} {assets.model} {assets.serial_number}"
                 )
-                messages.success(request, 'El activo se ha guardado correctamente.')
-                return HttpResponseRedirect(reverse('home:inventory'))
+                return JsonResponse({'status': 'success', 'message': 'El activo se ha guardado correctamente.'})
+                # messages.success(request, 'El activo se ha guardado correctamente.')
+                # return HttpResponseRedirect(reverse('home:inventory'))
             
             except IntegrityError as e:
                 if 'serial_number' in str(e):
-                    messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
-                    return HttpResponseRedirect(reverse('home:inventory'))
+                    return JsonResponse({'status': 'error', 'message': 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'})
+                    # messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
+                    # return HttpResponseRedirect(reverse('home:inventory'))
                 else:
-                    messages.error(request, 'Error: Ocurrió un problema al guardar el activo. Por favor, inténtelo de nuevo.')
-                    return HttpResponseRedirect(reverse('home:inventory'))
+                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al guardar el activo. Por favor, inténtelo de nuevo.'})
+                    # messages.error(request, 'Error: Ocurrió un problema al guardar el activo. Por favor, inténtelo de nuevo.')
+                    # return HttpResponseRedirect(reverse('home:inventory'))
             
             except Exception as e:
-                # Captura cualquier otro error inesperado
-                messages.error(request, f'Error inesperado: {str(e)}')
-                return HttpResponseRedirect(reverse('home:inventory'))
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                # messages.error(request, f'Error inesperado: {str(e)}')
+                # return HttpResponseRedirect(reverse('home:inventory'))
         
         else:
-            # Si el formulario no es válido, muestra errores de validación
-            for field, errors in asset_create_form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
-                    return HttpResponseRedirect(reverse('home:inventory'))
+            errors = []
+            for field, error_list in asset_create_form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+            # for field, errors in asset_create_form.errors.items():
+            #     for error in errors:
+            #         messages.error(request, f'Error en el campo {field}: {error}')
+            #         return HttpResponseRedirect(reverse('home:inventory'))
     
     else:
         asset_create_form = AssetCreate()
@@ -169,7 +196,7 @@ def asset_create(request):
 
 @login_required
 def delete_asset(request, asset_id):
-    print(f"Received request method: {request.method}")  # Para depuración
+    print(f"Received request method: {request.method}")  
     if request.method == "DELETE":
         try:
             asset = Asset.objects.get(pk=asset_id)
@@ -188,7 +215,7 @@ def delete_asset(request, asset_id):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     else:
-        return HttpResponse(status=405)  # Método no permitido
+        return HttpResponse(status=405)  
 
 @login_required
 def asset_edit(request, asset_id):
@@ -202,21 +229,20 @@ def asset_edit(request, asset_id):
                 number = form.cleaned_data.get('state_asset', '').strip()
                 
                 if not number:
-                    messages.error(request, 'El número del activo no puede estar vacío')
-                    return HttpResponseRedirect(reverse('home:inventory'))
+                    return JsonResponse({'status': 'error', 'message': 'El número del activo no puede estar vacío.'})
+                    #messages.error(request, 'El número del activo no puede estar vacío')
+                    #return HttpResponseRedirect(reverse('home:inventory'))
                 
-                # Verificar si el número de serie ya existe en otro activo
                 serial = form.cleaned_data.get('serial_number', '').strip()
                 if serial:
                     existing_asset = Asset.objects.filter(serial_number=serial).exclude(pk=asset_id).first()
                     if existing_asset:
-                        messages.error(request, f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}')
-                        return HttpResponseRedirect(reverse('home:inventory'))
+                        return JsonResponse({'status': 'error', 'message': f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}'})
+                        #messages.error(request, f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}')
+                        #return HttpResponseRedirect(reverse('home:inventory'))
                 
-                # Construir el state_asset completo
                 full_st = f"{prefix}-{number}"
                 
-                # Actualizar el activo
                 asset.model = form.cleaned_data['model']
                 asset.serial_number = serial
                 asset.state_asset = full_st
@@ -236,26 +262,34 @@ def asset_edit(request, asset_id):
                     description=f"Activo actualizado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
                 )
                 
-                messages.success(request, 'El activo se ha actualizado correctamente.')
-                return HttpResponseRedirect(reverse('home:inventory'))
+                return JsonResponse({'status': 'success', 'message': 'El activo se ha actualizado correctamente.'})
+                #messages.success(request, 'El activo se ha actualizado correctamente.')
+                #return HttpResponseRedirect(reverse('home:inventory'))
             
             except IntegrityError as e:
                 if 'serial_number' in str(e):
-                    messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
+                    return JsonResponse({'status': 'error', 'message': 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'})
+                    #messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
                 else:
-                    messages.error(request, 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.')
-                return HttpResponseRedirect(reverse('home:inventory'))
+                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.'})
+                    #messages.error(request, 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.')
+                #return HttpResponseRedirect(reverse('home:inventory'))
             
             except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
-                return HttpResponseRedirect(reverse('home:inventory'))
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                #messages.error(request, f'Error inesperado: {str(e)}')
+                #return HttpResponseRedirect(reverse('home:inventory'))
         
         else:
-            # Si el formulario no es válido, muestra errores de validación
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
-                return HttpResponseRedirect(reverse('home:inventory'))
+            errors = []
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+            # for field, errors in form.errors.items():
+            #     for error in errors:
+            #         messages.error(request, f'Error en el campo {field}: {error}')
+            #     return HttpResponseRedirect(reverse('home:inventory'))
     
     else:
         initial_data = {}
