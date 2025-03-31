@@ -5,7 +5,7 @@
     display: block;
     font-size: 1rem;
     max-width: 100%;
-}
+  }
 
 .nav-link.active {
     background-color: rgb(0, 183, 255) !important;
@@ -34,85 +34,4 @@ aside a i{
     padding-left: 10px !important;
     padding-right: 5px;
     color: black !important;
-}
-
-/* Estilo base del botón */
-#external-pdf-button {
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    border: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-/* Efecto hover */
-#external-pdf-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-/* Efecto active */
-#external-pdf-button:active {
-    transform: translateY(1px);
-}
-
-/* Animación de carga */
-#external-pdf-button.pdf-button-loading {
-    padding-left: 40px;
-}
-
-#external-pdf-button.pdf-button-loading:after {
-    content: "";
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-}
-
-/* Animación de éxito */
-#external-pdf-button.pdf-button-success {
-    background-color: #28a745;
-    animation: pulseSuccess 0.5s;
-}
-
-/* Animación de error */
-#external-pdf-button.pdf-button-error {
-    background-color: #dc3545;
-    animation: pulseError 0.5s;
-}
-
-/* Keyframes para animaciones */
-@keyframes spin {
-    to { transform: translateY(-50%) rotate(360deg); }
-}
-
-@keyframes pulseSuccess {
-    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
-}
-
-@keyframes pulseError {
-    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
-}
-
-/* Icono de PDF */
-#external-pdf-button i {
-    margin-right: 8px;
-    transition: all 0.3s ease;
-}
-
-#external-pdf-button.pdf-button-loading i {
-    opacity: 0;
 }

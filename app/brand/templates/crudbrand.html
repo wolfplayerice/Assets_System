@@ -13,6 +13,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
+
             <div id="data-container" data-list-brands-url="{% url 'brand:list_brand' %}">
               <table id="datatable-brand" class="table">
                 <thead>
@@ -21,9 +22,6 @@
                       <i class='fa-solid fa-plus'></i>
                     </button>
                     <p>Añadir marca</p>
-                    <button id="external-pdf-button" class="btn btn-danger mb-3">
-                      <i class="fas fa-file-pdf"></i> Generar Reporte PDF
-                    </button>
                   </div>
                   <tr>
                     <th class="centered" scope="col">#</th>
@@ -137,28 +135,28 @@
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-            <script>
-              {% if messages %}
-              {% for message in messages %}
-              {% if message.tags == 'success' %}
-              $(document).ready(function () {
-                $('#successModal').modal('show');
-              });
-              {% elif message.tags == 'error' %}
-
-              $(document).ready(function () {
-
-                $('#errorModal').modal('show');
-
-              });
-              {% endif %}
-              {% endfor %}
-              {% endif %}
-            </script>
-            {% endblock %}
+<script>
+  {% if messages %}
+  {% for message in messages %}
+  {% if message.tags == 'success' %}
+  $(document).ready(function () {
+  $('#successModal').modal('show');
+});
+  {% elif message.tags == 'error' %}
+  
+    $(document).ready(function () {
+  
+     $('#errorModal').modal('show');
+  
+    });
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+  </script>
+{% endblock %}
 
             {% block extra_js %}
             <script src="{% static 'js/crudbrand.js' %}"></script>
 
-
+            
             {% endblock %}

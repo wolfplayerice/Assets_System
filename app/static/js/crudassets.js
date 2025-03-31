@@ -12,6 +12,9 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
         columnDefs: [
             { targets: "_all", className: 'centered' }
         ],
+        /*         scrollCollapse: true,
+                scroller: true,
+                scrollY: 200, */
         "language": {
             "lengthMenu": "Mostrar _MENU_ registros",
             "zeroRecords": "No se encontraron resultados",
@@ -49,7 +52,19 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
         ],
         responsive: true,
         dom: "lBfrtip",
-        buttons: [] // Eliminamos el botón PDF de DataTables
+        buttons: [
+            {
+                extend: 'pdfHtml5',
+                text: '<i class="fas fa-file-pdf"></i>',
+                titleAttr: 'Exportar a PDF',
+                className: 'btn btn-danger',
+                action: function (e, dt, button, config) {
+                    // Abrir el modal de opciones de PDF
+                    $('#pdfOptionsModal').modal('show');
+                }
+            },
+        ],
+
     };
 
     if (includeActions) {
@@ -83,7 +98,7 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
         });
 
         baseConfig.columnDefs.push({
-            targets: [-1],
+            targets: [-1], // Apunta a la última columna (acciones)
             orderable: false,
             searchable: false
         });
@@ -96,7 +111,7 @@ const initDataTableAssets = async (tableId = "datatable-assets", includeActions 
     try {
         if (dataTable[tableId]) {
             dataTable[tableId].destroy();
-            dataTable[tableId] = null;
+            dataTable[tableId] = null; // Eliminar la referencia para la recolección de basura
         }
 
         const dataTableOptions = getDataTableConfig(includeActions, tableId);
@@ -107,60 +122,94 @@ const initDataTableAssets = async (tableId = "datatable-assets", includeActions 
     }
 };
 
-// Función para generar PDF con animaciones
-async function generateAssetPDF() {
-    const pdfButton = $('#external-pdf-button');
-    const statusFilter = $('select[name="statusFilter"]').val();
-    const categories = $('.js-example-basic-multiple').val() || [];
-    const brand = $('.brand').val() || [];
+$(document).on('click', '.delete-asset-btn', function () {
+    const assetId = $(this).data('id');
+    const tableId = $(this).data('table-id');
 
-    // Iniciar animación de carga
-    pdfButton.addClass('pdf-button-loading').prop('disabled', true);
+    Swal.fire({
+        title: '¿Estás seguro de eliminar este registro?',
+        text: "No podrás revertir esto.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `http://127.0.0.1:8000/inventory/delete_asset/${assetId}/`,
+                type: 'DELETE',
+                headers: {
+                    "X-CSRFToken": getCookie("csrftoken")
+                },
+                success: function (response) {
+                    Swal.fire('Eliminado!', response.message, 'success');
+                    if (dataTable[tableId]) {
+                        dataTable[tableId].ajax.reload(null, false);
+                    } else {
+                        console.error("No se encontró la instancia de DataTables para la tabla:", tableId);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    Swal.fire('Error!', "Error al eliminar el activo: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                }
+            });
+        }
+    });
+});
 
-    try {
-        const response = await $.ajax({
-            url: 'http://127.0.0.1:8000/inventory/list_assets/',
-            type: 'GET',
-            data: {
-                status: statusFilter,
-                'categories[]': categories,
-                'brand[]': brand,
-                all: true
-            }
+$(document).ready(function () {
+    const pdfOptionsModal = $('#pdfOptionsModal');
+    const loadingIndicator = $("#loading-indicator");
+    const generatePdfButton = $('#generatePdfButton');
+
+    function initializeSelect2() {
+        const selectOptions = {
+            width: '100%',
+            dropdownParent: pdfOptionsModal,
+            placeholder: "Seleccione",
+            closeOnSelect: false,
+            theme: 'default'
+        };
+
+        $('.js-example-basic-multiple').select2({
+            ...selectOptions,
+            placeholder: "Seleccione categorías"
         });
 
-        const data = response.Asset.map(asset => [
-            asset.id,
-            asset.fk_brand,
-            asset.model,
-            asset.fk_category,
-            asset.serial_number,
-            asset.state_asset,
-            asset.status,
-            asset.observation,
-        ]);
+        $('.brand').select2({
+            ...selectOptions,
+            placeholder: "Seleccione marcas"
+        });
+    }
 
+    function clearSelects() {
+        $('.js-example-basic-multiple').val(null).trigger('change');
+    }
+
+    function generatePdf(data) {
         const today = new Date();
         const formattedDateTime = today.toLocaleString();
 
         const docDefinition = {
             pageSize: 'A4',
             pageOrientation: 'landscape',
-            pageMargins: [40, 80, 40, 40],
-            header: {
-                columns: [
-                    { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
-                    {
-                        text: 'INVENTARIO DE BIENES MUEBLES',
-                        style: 'header',
-                        alignment: 'center',
-                        margin: [0, 20, 0, 20]
-                    },
-                    { image: logo, width: 60, alignment: 'right', margin: [10, 10, 20, 10] }
-                ],
-                columnGap: 10,
-            },
+            pageMargins: [40, 40, 40, 40],
             content: [
+                {
+                    columns: [
+                        { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
+                        { text: '', width: '*' },
+                        { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
+                    ],
+                    columnGap: 10
+                },
+                {
+                    text: 'Lista de Bienes',
+                    style: 'header',
+                    alignment: 'center',
+                    margin: [0, 10, 0, 20]
+                },
                 {
                     table: {
                         widths: ['5%', '10%', '10%', '10%', '15%', '15%', '10%', '25%'],
@@ -198,105 +247,53 @@ async function generateAssetPDF() {
                 margin: [0, 10, 0, 0]
             })
         };
-
-        // Animación de éxito
-        pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
-        
-        pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime}.pdf`);
-        
-        setTimeout(() => {
-            pdfButton.removeClass('pdf-button-success').prop('disabled', false);
-        }, 2000);
-
-    } catch (error) {
-        console.error('Error generando PDF:', error);
-        
-        // Animación de error
-        pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
-        setTimeout(() => {
-            pdfButton.removeClass('pdf-button-error').prop('disabled', false);
-        }, 2000);
-        
-        Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-    }
-}
-
-$(document).ready(function () {
-    // Inicializar DataTables
-    initDataTableAssets("datatable-assets");
-
-    // Configurar el botón externo de PDF
-    $('#external-pdf-button').on('click', function() {
-        if ($(this).hasClass('pdf-button-loading')) return;
-        $('#pdfOptionsModal').modal('show');
-    });
-
-    // Configurar el modal de opciones de PDF
-    const pdfOptionsModal = $('#pdfOptionsModal');
-    
-    function initializeSelect2() {
-        $('.js-example-basic-multiple').select2({
-            width: '100%',
-            dropdownParent: pdfOptionsModal,
-            placeholder: "Seleccione categorías",
-            closeOnSelect: false,
-            theme: 'default'
-        });
-
-        $('.brand').select2({
-            width: '100%',
-            dropdownParent: pdfOptionsModal,
-            placeholder: "Seleccione marcas",
-            closeOnSelect: false,
-            theme: 'default'
-        });
+        pdfMake.createPdf(docDefinition).download(`Lista_de_bienes_${formattedDateTime}.pdf`);
     }
 
-    function clearSelects() {
-        $('.js-example-basic-multiple').val(null).trigger('change');
-        $('.brand').val(null).trigger('change');
+    async function fetchData() {
+        const statusFilter = $('select[name="statusFilter"]').val();
+        const categories = $('.js-example-basic-multiple').val() || [];
+        const brand = $('.brand').val() || [];
+
+        loadingIndicator.show();
+
+        try {
+            const response = await $.ajax({
+                url: 'http://127.0.0.1:8000/inventory/list_assets/',
+                type: 'GET',
+                data: {
+                    status: statusFilter,
+                    'categories[]': categories,
+                    'brand[]': brand,
+                    all: true
+                }
+            });
+
+            const data = response.Asset.map(asset => [
+                asset.id,
+                asset.fk_brand,
+                asset.model,
+                asset.fk_category,
+                asset.serial_number,
+                asset.state_asset,
+                asset.status,
+                asset.observation,
+            ]);
+
+            generatePdf(data);
+        } catch (error) {
+            console.error('Error fetching filtered data:', error);
+            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+        } finally {
+            loadingIndicator.hide();
+        }
     }
 
     pdfOptionsModal.on('shown.bs.modal', initializeSelect2);
     pdfOptionsModal.on('hidden.bs.modal', clearSelects);
-    
-    // Botón de generación dentro del modal
-    $('#generatePdfButton').on('click', function() {
-        generateAssetPDF();
+    generatePdfButton.on('click', function () {
+        fetchData();
         pdfOptionsModal.modal('hide');
-    });
-});
-
-// Resto de los event listeners (eliminación, edición, etc.)
-$(document).on('click', '.delete-asset-btn', function () {
-    const assetId = $(this).data('id');
-    const tableId = $(this).data('table-id');
-
-    Swal.fire({
-        title: '¿Estás seguro de eliminar este registro?',
-        text: "No podrás revertir esto.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: `http://127.0.0.1:8000/inventory/delete_asset/${assetId}/`,
-                type: 'DELETE',
-                headers: { "X-CSRFToken": getCookie("csrftoken") },
-                success: (response) => {
-                    Swal.fire('Eliminado!', response.message, 'success');
-                    if (dataTable[tableId]) {
-                        dataTable[tableId].ajax.reload(null, false);
-                    }
-                },
-                error: (jqXHR, textStatus, errorThrown) => {
-                    Swal.fire('Error!', "Error al eliminar el activo: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
-                }
-            });
-        }
     });
 });
 
@@ -306,24 +303,9 @@ $(document).on('click', '.btn-inoperativo', function () {
     $('#inoperativoModal').modal('show');
 });
 
-function clearEditForm() {
-    // Limpiar campos básicos
-    $('[name="fk_brand"], #id_fk_brand').val('').trigger('change');
-    $('[name="model"], #id_model').val('');
-    $('[name="fk_category"], #id_fk_category').val('').trigger('change');
-    $('[name="serial_number"], #id_serial_number').val('');
-    $('[name="state_asset"], #id_state_asset').val('');
-    $('[name="observation"], #id_observation').val('');
-    
-    // Restablecer el estado
-    $('[name="status"], #id_status').val('True').trigger('change');
-    
-    // Limpiar la acción del formulario
-    $('#edit-form').attr('action', '');
-}
-
 $(document).on('click', '.btn-edit', function () {
     const assetId = $(this).data('id');
+
     const assetData = {
         fk_brand: $(this).data('brand-id'),
         model: $(this).data('model'),
@@ -334,10 +316,14 @@ $(document).on('click', '.btn-edit', function () {
         observation: $(this).data('observation') || ''
     };
 
-    let stateAssetValue = assetData.state_asset?.includes('-') 
-        ? assetData.state_asset.split('-')[1] 
-        : assetData.state_asset;
+    let stateAssetValue;
+    if (assetData.state_asset && assetData.state_asset.includes('-')) {
+        stateAssetValue = assetData.state_asset.split('-')[1];
+    } else {
+        stateAssetValue = assetData.state_asset;
+    }
 
+    // Llenar campos del formulario
     $('[name="fk_brand"], #id_fk_brand').val(assetData.fk_brand).trigger('change');
     $('[name="model"], #id_model').val(assetData.model);
     $('[name="fk_category"], #id_fk_category').val(assetData.fk_category).trigger('change');
@@ -352,10 +338,6 @@ $(document).on('click', '.btn-edit', function () {
     $('#editModal').modal('show');
 });
 
-$('#editModal').on('hidden.bs.modal', function () {
-    clearEditForm();
-});
-
 $(document).on('submit', '#edit-form', function (e) {
     e.preventDefault();
     const form = $(this);
@@ -365,8 +347,7 @@ $(document).on('submit', '#edit-form', function (e) {
     $.post(url, data, function (response) {
         if (response.status === 'success') {
             Swal.fire('Éxito', response.message, 'success').then(() => {
-                location.reload();
-                clearEditForm();
+                location.reload(); // Recargar la página para actualizar la tabla
             });
         } else {
             Swal.fire('Error', response.message, 'error');
@@ -385,7 +366,7 @@ $(document).on('submit', '#register-modal form', function (e) {
     $.post(url, data, function (response) {
         if (response.status === 'success') {
             Swal.fire('Éxito', response.message, 'success').then(() => {
-                location.reload();
+                location.reload(); // Recargar la página para actualizar la tabla
             });
         } else {
             Swal.fire('Error', response.message, 'error');
@@ -394,6 +375,7 @@ $(document).on('submit', '#register-modal form', function (e) {
         Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
     });
 });
+
 
 function getCookie(name) {
     let cookieValue = null;
