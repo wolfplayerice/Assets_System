@@ -43,7 +43,7 @@ const initDataTableuser = async () => {
                 { data: "name" },
                 { data: "last_name" },
                 { data: "email" },
-                { 
+                {
                     data: "is_active",
                     render: function (data, type, row) {
                         return data ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-danger">Inactivo</span>';
@@ -283,4 +283,126 @@ function getCookie(name) {
 
 window.addEventListener('load', async () => {
     await initDataTableuser();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('edit-user-form');
+    const passwordField = document.getElementById('edit-user-password');
+    const confirmPasswordField = document.getElementById('edit-user-password2');
+
+    form.addEventListener('submit', function (event) {
+        const password = passwordField.value.trim();
+        const confirmPassword = confirmPasswordField.value.trim();
+
+        // Verifica si las contraseñas coinciden
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert('Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.');
+            return;
+        }
+
+        // Valida la contraseña
+        const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+        if (password && !passwordRegex.test(password)) {
+            event.preventDefault();
+            alert('La contraseña debe tener al menos 8 caracteres y un carácter especial.');
+            return;
+        }
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('edit-user-form'); // Cambiado para coincidir con el ID del formulario en users.html
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita el envío inmediato del formulario
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas guardar los cambios realizados?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    '¡Guardado!',
+                    'La información del usuario se ha actualizado correctamente.',
+                    'success'
+                ).then(() => {
+                    form.submit(); // Envía el formulario después de la confirmación
+                });
+            }
+        });
+    });
+});
+
+// Script para la funcionalidad del ojo (mostrar/ocultar contraseñas)
+document.addEventListener('DOMContentLoaded', function () {
+    const togglePassword = document.querySelector('[data-target="#edit-user-password"]');
+    const passwordField = document.getElementById('edit-user-password');
+
+    togglePassword.addEventListener('click', function () {
+        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    const togglePassword2 = document.querySelector('[data-target="#edit-user-password2"]');
+    const passwordField2 = document.getElementById('edit-user-password2');
+
+    togglePassword2.addEventListener('click', function () {
+        const type = passwordField2.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordField2.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+});
+
+// Validación de contraseñas
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('edit-user-form');
+    const passwordField = document.getElementById('edit-user-password');
+    const confirmPasswordField = document.getElementById('edit-user-password2');
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita el envío inmediato del formulario
+
+        // Verifica si las contraseñas coinciden
+        if (passwordField.value !== confirmPasswordField.value) {
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
+                confirmButtonText: 'Aceptar'
+            });
+            return; // Detiene el proceso de envío
+        }
+
+        // Si las contraseñas coinciden, muestra el mensaje de confirmación
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Deseas guardar los cambios realizados?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire(
+                    '¡Guardado!',
+                    'La información del usuario se ha actualizado correctamente.',
+                    'success'
+                ).then(() => {
+                    form.submit(); // Envía el formulario después de la confirmación
+                });
+            }
+        });
+    });
 });

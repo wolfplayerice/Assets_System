@@ -25,131 +25,155 @@
                       </button>
                     </div>
                   <tr>
-                      <th class="centered" scope="col">#</th>
-                      <th class="centered" scope="col">Username</th>
-                      <th class="centered" scope="col">Nombre</th>
-                      <th class="centered" scope="col">Apellido</th>
-                      <th class="centered" scope="col">Email</th>
-                      <th class="centered" scope="col">Estado</th>
-                      <th class="centered" scope="col">Opciones</th>
+                    <th class="centered" scope="col">#</th>
+                    <th class="centered" scope="col">Username</th>
+                    <th class="centered" scope="col">Nombre</th>
+                    <th class="centered" scope="col">Apellido</th>
+                    <th class="centered" scope="col">Email</th>
+                    <th class="centered" scope="col">Estado</th>
+                    <th class="centered" scope="col">Opciones</th>
                   </tr>
-              </thead>
-              <tbody id="tablebody_user">
-          
-              </tbody>
-          </table>
+                </thead>
+                <tbody id="tablebody_user">
 
-            <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">Registro de Usuarios</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <!-- Contenido del modal -->
-                    <form action="{% url 'users:create_user' %}" method="post">
-                      {% csrf_token %}
-                      {% for field in user_form %}
-                      <!-- se usa django-widget_tweaks -->
-                      <div class="form-group form-floating mb-3">
-                        {% if field.field.widget.input_type == 'text' or field.field.widget.input_type == 'password' or field.field.widget.input_type == 'email'%}
-                        <!-- Campos de tipo select -->
-                        {{ field|add_class:"form-control" }}
-                        {% endif %}
-                        
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                      </div>
-                      {% endfor %}
-                      <input type="submit" value="Submit" class="btn btn-primary">
+                </tbody>
+              </table>
+
+              <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="editUserModalLabel">Editar Usuario</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="edit-user-form" action="{% url 'users:user_edit' 0 %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" id="edit-user-id" name="id">
+                        <div class="form-group">
+                          <label for="edit-user-username">Nombre de usuario</label>
+                          <input type="text" class="form-control" id="edit-user-username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="edit-user-name">Nombre</label>
+                          <input type="text" class="form-control" id="edit-user-name" name="first_name" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="edit-user-last_name">Apellido</label>
+                          <input type="text" class="form-control" id="edit-user-last_name" name="last_name" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="edit-user-email">Correo electrónico</label>
+                          <input type="email" class="form-control" id="edit-user-email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="edit-user-password">Nueva contraseña (opcional)</label>
+                          <div class="input-group">
+                            <input type="password" class="form-control" id="edit-user-password" name="password">
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="#edit-user-password">
+                              <i class="fas fa-eye"></i>
+                            </button>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <label for="edit-user-password2">Confirmar nueva contraseña</label>
+                          <div class="input-group">
+                            <input type="password" class="form-control" id="edit-user-password2" name="password2" 
+                                   title="Por favor, repite la contraseña.">
+                            <button type="button" class="btn btn-outline-secondary toggle-password" data-target="#edit-user-password2">
+                              <i class="fas fa-eye"></i>
+                            </button>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </div>
                     </form>
                   </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+              </div>
+
+              
+
+              <!-- Modal para editar -->
+              <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="editUserModal">Editar Marcas</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form id="edit-user-form" action="{% url 'users:user_edit' 0 %}" method="post">
+                        {% csrf_token %}
+                        {{ edit_user_form }}
+                        <input type="hidden" id="edit-user-id" name="id">
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
+                    </div>
+                    </form>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Modal para editar -->
-            <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="editUserModal">Editar Marcas</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                  <form id="edit-user-form" action="{% url 'users:user_edit' 0 %}" method="post">
-                    {% csrf_token %}
-                    {{ edit_user_form }}
-                    <input type="hidden" id="edit-user-id" name="id">
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                  <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
-                </div>
-                </form>
-              </div>
-            </div>
-          </div>
-
-            <!-- Modal para mostrar el mensaje -->
-            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Éxito</h5>
-                  </div>
-                  <div class="modal-body">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
+              <!-- Modal para mostrar el mensaje -->
+              <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="successModalLabel">Éxito</h5>
+                    </div>
+                    <div class="modal-body">
+                      {% if messages %}
+                      {% for message in messages %}
+                      <div class="alert alert-success">{{ message }}</div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error.</h5>
-                  </div>
-                  <div class="modal-body">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
+              <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="errorModalLabel">Error.</h5>
+                    </div>
+                    <div class="modal-body">
+                      {% if messages %}
+                      {% for message in messages %}
+                      <div class="alert alert-danger">{{ message }}</div>
+                      {% endfor %}
+                      {% endif %}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-          <script>
-          {% if messages %}
-          {% for message in messages %}
-          {% if message.tags == 'success' %}
-          $('#successModal').modal('show');
-          {% elif message.tags == 'error' %}
-            $(document).ready(function () {
-            $('#errorModal').modal('show');
-            });
-          {% endif %}
-          {% endfor %}
-          {% endif %}
-        </script>
-            {% endblock %}
+              <script>
+                {% if messages %}
+                {% for message in messages %}
+                {% if message.tags == 'success' %}
+                $('#successModal').modal('show');
+                {% elif message.tags == 'error' %}
+                $(document).ready(function () {
+                  $('#errorModal').modal('show');
+                });
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+              </script>
+              {% endblock %}
 
-            {% block extra_js %}
-            <script src="{% static 'js/cruduser.js' %}"></script>
-            
-            {% endblock %}
+              {% block extra_js %}
+              <script src="{% static 'js/cruduser.js' %}"></script>
+
+              {% endblock %}
