@@ -220,65 +220,105 @@ def delete_asset(request, asset_id):
 @login_required
 def asset_edit(request, asset_id):
     asset = get_object_or_404(Asset, pk=asset_id)
-    
+    FIELD_NAMES = {
+        'model': 'Modelo',
+        'serial_number': 'Número de serie',
+        'state_asset': 'Bien de estado',
+        'status': 'Estatus',
+        'observation': 'Observaciones',
+        'fk_category': 'Categoría',
+        'fk_brand': 'Marca'
+    }
+
     if request.method == "POST":
         form = AssetEdit(request.POST, instance=asset)
         if form.is_valid():
             try:
+                # 1. Capturar valores ANTES de guardar
+                original_asset = Asset.objects.get(pk=asset.id)
+                old_values = {
+                    'model': original_asset.model,
+                    'serial_number': original_asset.serial_number,
+                    'state_asset': original_asset.state_asset,
+                    'status': original_asset.status,
+                    'observation': original_asset.observation,
+                    'fk_category': original_asset.fk_category,
+                    'fk_brand': original_asset.fk_brand
+                }
+
+                # 2. Procesar prefijo y número
                 prefix = form.cleaned_data.get('prefix', 'BE-').rstrip('-')
                 number = form.cleaned_data.get('state_asset', '').strip()
                 
                 if not number:
                     return JsonResponse({'status': 'error', 'message': 'El número del activo no puede estar vacío.'})
-                    #messages.error(request, 'El número del activo no puede estar vacío')
-                    #return HttpResponseRedirect(reverse('home:inventory'))
                 
+                # 3. Validar número de serie
                 serial = form.cleaned_data.get('serial_number', '').strip()
                 if serial:
                     existing_asset = Asset.objects.filter(serial_number=serial).exclude(pk=asset_id).first()
                     if existing_asset:
                         return JsonResponse({'status': 'error', 'message': f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}'})
-                        #messages.error(request, f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}')
-                        #return HttpResponseRedirect(reverse('home:inventory'))
                 
+                # 4. Construir state_asset completo
                 full_st = f"{prefix}-{number}"
                 
-                asset.model = form.cleaned_data['model']
-                asset.serial_number = serial
-                asset.state_asset = full_st
-                asset.status = form.cleaned_data['status']
-                asset.observation = form.cleaned_data['observation']
-                asset.fk_category = form.cleaned_data['fk_category']
-                asset.fk_brand = form.cleaned_data['fk_brand']
-                asset.save()
+                # 5. Actualizar el activo
+                updated_asset = form.save(commit=False)
+                updated_asset.state_asset = full_st
+                updated_asset.save()
+
+                # 6. Obtener nuevos valores
+                updated_asset.refresh_from_db()
+                new_values = {
+                    'model': updated_asset.model,
+                    'serial_number': updated_asset.serial_number,
+                    'state_asset': updated_asset.state_asset,
+                    'status': updated_asset.status,
+                    'observation': updated_asset.observation,
+                    'fk_category': updated_asset.fk_category,
+                    'fk_brand': updated_asset.fk_brand
+                }
                 
-                # Registrar en el log de auditoría
+                # 7. Detectar cambios (CORRECCIÓN PRINCIPAL)
+                changes = []
+                for field in old_values:
+                    old_val = old_values[field]
+                    new_val = new_values[field]
+                    
+                    if str(old_val) != str(new_val):
+                        field_name = FIELD_NAMES.get(field, field)
+                        if field in ['fk_category', 'fk_brand']:
+                            changes.append(f"{field_name}: '{old_val.name if old_val else 'Ninguno'}' → '{new_val.name if new_val else 'Ninguno'}'")
+                        else:
+                            changes.append(f"{field_name}: '{old_val}' → '{new_val}'")
+
+                # 8. Crear mensaje de auditoría
+                if changes:
+                    changes_str = "; ".join(changes)
+                    audit_message = f"Actualización de activo {updated_asset.state_asset} (ID: {updated_asset.id}): {changes_str}"
+                else:
+                    audit_message = f"Activo {updated_asset.state_asset} (ID: {updated_asset.id}) editado sin cambios significativos."
+
+                # 9. Registrar auditoría
                 AuditLog.objects.create(
                     user=request.user,
                     action='update',
-                    username=request.user.username,
                     model_name='Asset',
                     object_id=asset.id,
-                    description=f"Activo actualizado: {asset.fk_brand.name} {asset.model} {asset.serial_number}"
+                    description=audit_message
                 )
                 
                 return JsonResponse({'status': 'success', 'message': 'El activo se ha actualizado correctamente.'})
-                #messages.success(request, 'El activo se ha actualizado correctamente.')
-                #return HttpResponseRedirect(reverse('home:inventory'))
             
             except IntegrityError as e:
                 if 'serial_number' in str(e):
                     return JsonResponse({'status': 'error', 'message': 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'})
-                    #messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
                 else:
                     return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.'})
-                    #messages.error(request, 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.')
-                #return HttpResponseRedirect(reverse('home:inventory'))
             
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                #messages.error(request, f'Error inesperado: {str(e)}')
-                #return HttpResponseRedirect(reverse('home:inventory'))
         
         else:
             errors = []
@@ -286,10 +326,6 @@ def asset_edit(request, asset_id):
                 for error in error_list:
                     errors.append(f'Error en el campo {field}: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
-            # for field, errors in form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f'Error en el campo {field}: {error}')
-            #     return HttpResponseRedirect(reverse('home:inventory'))
     
     else:
         initial_data = {}
