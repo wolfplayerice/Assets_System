@@ -10,6 +10,7 @@ from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt
+from audit.models import AuditLog 
 
 def is_staff_user(user):
     return user.is_staff  # Solo permite acceso a staff
@@ -96,7 +97,14 @@ def user_create(request):
         user_create_form = CreateUser(request.POST)
         if user_create_form.is_valid():
             try:
-                user_create_form.save()
+                user=user_create_form.save()
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="create",
+                    model_name="User",
+                    object_id=user.id,
+                    description=f"Creación de usuario {user.username} (ID: {user.id})"
+                )
                 messages.success(request, 'El usuario se ha guardado correctamente.')
                 return HttpResponseRedirect(reverse('home:users'))
             
@@ -128,12 +136,73 @@ def user_create(request):
 @login_required
 def user_edit(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-
+    
+    # Diccionario de traducción de nombres de campos
+    FIELD_NAMES = {
+        'username': 'Usuario',
+        'first_name': 'Nombre',
+        'last_name': 'Apellido',
+        'email': 'Correo electrónico',
+        'is_active': 'Estado'
+    }
     if request.method == "POST":
         form = EditUser(request.POST, instance=user)
         if form.is_valid():
             try:
-                form.save()  # Guarda los cambios, incluyendo la contraseña encriptada
+                # 1. Crear una copia COMPLETA del objeto ANTES de guardar
+                original_user = User.objects.get(pk=user.id)
+                old_values = {
+                    'username': original_user.username,
+                    'first_name': original_user.first_name,
+                    'last_name': original_user.last_name,
+                    'email': original_user.email,
+                    'is_active': original_user.is_active
+                }
+                
+                # 2. Guardar el formulario
+                form.save()
+                
+                # 3. Obtener el objeto ACTUALIZADO directamente desde el formulario
+                updated_user = form.instance
+                new_values = {
+                    'username': updated_user.username,
+                    'first_name': updated_user.first_name,
+                    'last_name': updated_user.last_name,
+                    'email': updated_user.email,
+                    'is_active': updated_user.is_active
+                }
+
+                
+                # 5. Detectar cambios REALES
+                changes = []
+                for field in old_values:
+                    old_val = old_values[field]
+                    new_val = new_values[field]
+                    
+                    if str(old_val) != str(new_val):  # Comparación como strings
+                        if field == 'is_active':
+                            action = "Habilitación" if new_val else "Inhabilitación"
+                            changes.append(f"{action} del usuario")
+                        else:
+                            field_name = FIELD_NAMES.get(field, field)
+                            changes.append(f"{field_name}: '{old_val}' cambio a '{new_val}'")
+                
+                # 6. Crear mensaje de auditoría
+                if changes:
+                    changes_str = "; ".join(changes)
+                    audit_message = f"Actualización de usuario {updated_user.username} (ID: {updated_user.id}): {changes_str}"
+                else:
+                    audit_message = f"Usuario {updated_user.username} (ID: {updated_user.id}) editado sin cambios significativos."
+                
+                # 7. Registrar auditoría
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="update",
+                    model_name="User",
+                    object_id=updated_user.id,
+                    description=audit_message
+                )
+                
                 messages.success(request, 'El usuario se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
@@ -158,6 +227,13 @@ def disable_user(request, user_id):
         if not user.is_staff:  # Asegúrate de que no sea un administrador
             user.is_active = False
             user.save()
+            AuditLog.objects.create(
+                user=request.user,
+                action="update",
+                model_name="User",
+                object_id=user.id,
+                description=f"Inhabilitación del usuario {user.username} (ID: {user.id})"
+            )
             return JsonResponse({
                 'message': 'El usuario ha sido deshabilitado correctamente.',
                 'is_active': "Inactivo"
@@ -173,6 +249,13 @@ def enable_user(request, user_id):
         if not user.is_staff:  # Asegúrate de que no sea un administrador
             user.is_active = True
             user.save()
+            AuditLog.objects.create(
+                user=request.user,
+                action="update",
+                model_name="User",
+                object_id=user.id,
+                description=f"Habilitación del usuario {user.username} (ID: {user.id})"
+            )
             return JsonResponse({
                 'message': 'El usuario ha sido habilitado correctamente.',
                 'is_active': "Activo"

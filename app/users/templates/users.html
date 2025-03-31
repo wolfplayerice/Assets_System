@@ -78,7 +78,7 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="editUserModal">Editar Marcas</h5>
+                  <h5 class="modal-title" id="editUserModal">Editar Usuario</h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
@@ -136,7 +136,9 @@
           {% if messages %}
           {% for message in messages %}
           {% if message.tags == 'success' %}
+          $(document).ready(function () {
           $('#successModal').modal('show');
+          });
           {% elif message.tags == 'error' %}
             $(document).ready(function () {
             $('#errorModal').modal('show');

@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from audit.models import AuditLog 
+from django.db import IntegrityError
 # Create your views here.
 
 @login_required
@@ -33,20 +34,30 @@ def category_create(request):
                     modified_by=request.user
                 )
                 category.save()
+                
+                # Registrar auditoría con más detalles
                 AuditLog.objects.create(
                     user=request.user,
                     action='create',
-                    username=request.user.username, 
                     model_name='Category',
                     object_id=category.id,
-                    description=f"Categoría creada: {category.name}"
+                    description=f"Categoría creada: {category.name} (ID: {category.id})"
                 )
+                
                 messages.success(request, 'La categoría se ha guardado correctamente.')
                 return HttpResponseRedirect(reverse('home:category'))
+            
+            except IntegrityError as e:
+                messages.error(request, 'Error: Ya existe una categoría con este nombre.')
+            
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
-                return HttpResponseRedirect(reverse('home:category'))
-    return render(request, 'crudcat.html', {'cat_form': Create_category()})
+    
+    return render(request, 'crudcat.html', {
+        'cat_form': Create_category(),
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+    })
 
 @login_required
 def list_category(request):
@@ -103,46 +114,91 @@ def list_category(request):
 @login_required
 def delete_category(request, category_id):
     if request.method == "DELETE":
-        category = get_object_or_404(Category, pk=category_id)
-        category.delete()
-        AuditLog.objects.create(
-            user=request.user,
-            action='delete',
-            username=request.user.username,  
-            model_name='Category',
-            object_id=category_id,
-            description=f"Categoría eliminada: {category.name}"
-        )
-        return JsonResponse({"message": "Categoría eliminada correctamente."})
+        try:
+            category = get_object_or_404(Category, pk=category_id)
+            category_name = category.name
+            category.delete()
+                
+            AuditLog.objects.create(
+                user=request.user,
+                action='delete',
+                model_name='Category',
+                object_id=category_id,
+                description=f"Categoría eliminada: {category_name} (ID: {category_id})"
+            )
+                
+            return JsonResponse({
+                    "message": "Categoría eliminada correctamente.",
+                    "status": "success"
+                })
+        
+        except Exception as e:
+            return JsonResponse({
+                "error": str(e),
+                "status": "error"
+            }, status=500)
+    
     return HttpResponse(status=405)
 
 @login_required
 def category_edit(request, cat_id):
     category = get_object_or_404(Category, pk=cat_id)
+    
     if request.method == "POST":
         form = Edit_category(request.POST, instance=category)
         if form.is_valid():
             try:
-                updated_category = form.save()
+                # Capturar valores antiguos
+                original_cat = Category.objects.get(pk=cat_id)
+                old_value= original_cat.name
+                # Guardar cambios
+                form.save()
+
+                updated_cat = form.instance
+                new_value = updated_cat.name
+                
+                # Detectar cambios
+                changes = []
+                if old_value != new_value:
+                    changes.append(f"Nombre: '{old_value}' cambio a '{new_value}'")
+                
+                # Crear mensaje de auditoría
+                if changes:
+                    changes_str = "; ".join(changes)
+                    audit_message = f"Categoría actualizada (ID: {cat_id}): {changes_str}"
+                else:
+                    audit_message = f"Categoría (ID: {cat_id}) editada sin cambios significativos"
+                
+                # Registrar auditoría
                 AuditLog.objects.create(
                     user=request.user,
                     action='update',
-                    username=request.user.username, 
                     model_name='Category',
                     object_id=cat_id,
-                    description=f"Categoría editada: {updated_category.name}"
+                    description=audit_message
                 )
+                
                 messages.success(request, 'La categoría se ha actualizado correctamente.')
+            
+            except IntegrityError as e:
+                messages.error(request, 'Error: Ya existe una categoría con este nombre.')
+            
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
+        
         else:
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
+        
         return HttpResponseRedirect(reverse('category:category'))
+    
     else:
         form = Edit_category(instance=category)
+    
     return render(request, 'crudcat.html', {
         'edit_cat_form': form,
         'cat_id': cat_id,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
     })

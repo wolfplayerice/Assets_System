@@ -6,7 +6,7 @@ from django.urls import reverse
 
 @login_required
 def audit_log_view(request):
-    logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset']).order_by('-timestamp')
+    logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User']).order_by('-timestamp')
     return render(request, 'audit_log.html', {'logs': logs,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
@@ -21,7 +21,7 @@ def logs_list(request):
             "delete": "Eliminar",
             "update": "Actualizar"
         }
-        logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset' ]).order_by('-timestamp')
+        logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User' ]).order_by('-timestamp')
         data = [
             {
                 "user": log.username,

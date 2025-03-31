@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from audit.models import AuditLog 
+from django.db import IntegrityError
 # Create your views here.
 
 @login_required
@@ -90,11 +91,15 @@ def brand_create(request):
                     username=request.user.username,
                     model_name='Brand',
                     object_id=brands.id,
-                    description=f"Marca creada: {brands.name}"
+                    description=f"Marca creada: {brands.name} (ID: {brands.id})"
                 )
                 messages.success(request, 'La marca se ha guardado correctamente.')
                 return HttpResponseRedirect(reverse('home:brand'))
             
+            except IntegrityError as e:
+                messages.error(request, 'Error: Ya existe una categoría con este nombre.')
+            
+
             except Exception as e:
                 # Captura cualquier otro error inesperado
                 messages.error(request, f'Error inesperado: {str(e)}')
@@ -120,14 +125,16 @@ def delete_brand(request, brand_id):
     if request.method == "DELETE":
         try:
             brand = Brand.objects.get(pk=brand_id)
+            brand_name= brand.name
             brand.delete()
+
             AuditLog.objects.create(
                     user=request.user,
                     action='delete',
                     username=request.user.username,  
                     model_name='Brand',
                     object_id=brand_id,
-                    description=f"Marca eliminada: {brand.name}"
+                    description=f"Marca eliminada: {brand_name} (ID: {brand_id})"
                 )
             return JsonResponse({"message": "Categoría eliminada correctamente."})
         except Brand.DoesNotExist:
@@ -147,7 +154,24 @@ def brand_edit(request, bra_id):
         form = Edit_brand(request.POST, instance=brand)  # Se asocia el formulario con la instancia de la marca
         if form.is_valid():  # Valida los datos del formulario
             try:
-                updated_brand = form.save()  # Guarda los cambios y devuelve la instancia actualizada
+                original_brand = Brand.objects.get(pk=bra_id)
+                old_value= original_brand.name
+                # Guardar cambios
+                form.save()
+
+                updated_brand = form.instance
+                new_value = updated_brand.name
+
+                changes = []
+                if old_value != new_value:
+                    changes.append(f"Nombre: '{old_value}' cambio a '{new_value}'")
+                
+                # Crear mensaje de auditoría
+                if changes:
+                    changes_str = "; ".join(changes)
+                    audit_message = f"Marca actualizada (ID: {bra_id}): {changes_str}"
+                else:
+                    audit_message = f"Marca (ID: {bra_id}) editada sin cambios significativos"
                 
                 # Guardamos en el log la edición con el nombre correcto
                 AuditLog.objects.create(
@@ -156,7 +180,7 @@ def brand_edit(request, bra_id):
                     username=request.user.username, 
                     model_name='Brand',
                     object_id=bra_id,
-                    description=f"Marca editada: {updated_brand.name}"  # Aquí obtenemos el nombre correctamente
+                    description=audit_message
                 )
                 messages.success(request, 'La marca se ha actualizado correctamente.')
             except Exception as e:
