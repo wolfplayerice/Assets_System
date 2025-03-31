@@ -7,7 +7,7 @@
   <div class="col-md-12">
     <div class="card custom-card-height">
       <div class="card-header">
-        <h5 class="card-title">Tabla de las marcas</h5>
+        <h5 class="card-title">Tabla de las Marcas</h5>
       </div>
       <!-- /.card-header -->
       <div class="card-body">
@@ -16,11 +16,10 @@
             <div id="data-container" data-list-brands-url="{% url 'brand:list_brand' %}">
               <table id="datatable-brand" class="table">
                 <thead>
-                  <div class="flex-row d-flex">
+                  <div class="flex-row d-flex btn-add-pdf">
                     <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
-                      <i class='fa-solid fa-plus'></i>
+                      <i class='fa-solid fa-plus'></i> <strong>Añadir Marca</strong>
                     </button>
-                    <p>Añadir marca</p>
                     <button id="external-pdf-button" class="btn btn-danger mb-3">
                       <i class="fas fa-file-pdf"></i> Generar Reporte PDF
                     </button>
@@ -46,7 +45,7 @@
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">Registro de marca</h5>
+                    <h5 class="modal-title" id="infoModalLabel">Registro de Marcas</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>

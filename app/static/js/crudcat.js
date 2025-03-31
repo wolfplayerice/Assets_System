@@ -119,15 +119,22 @@ function generateBrandsPDF() {
             const formattedDateTime = today.toLocaleString();
 
             const docDefinition = {
+                pageSize: 'LETTER',
+                pageMargins: [40, 80, 40, 40],
+                header: {
+                    columns: [
+                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
+                        {
+                            text: 'LISTA DE CATEGORIAS',
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [10, 20, 0, 20]
+                        },
+                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 10, 10] }
+                    ],
+                    columnGap: 10,
+                },
                 content: [
-                    {
-                        columns: [
-                            { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
-                            { text: '', width: '*' },
-                            { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
-                        ],
-                        columnGap: 10
-                    },
                     {
                         text: 'Lista de Categorias',
                         style: 'header',

@@ -119,7 +119,7 @@ async function generateAssetPDF() {
 
     try {
         const response = await $.ajax({
-            url: 'http://127.0.0.1:8000/inventory/list_assets/',
+            url: '/inventory/list_assets/',
             type: 'GET',
             data: {
                 status: statusFilter,
@@ -144,7 +144,7 @@ async function generateAssetPDF() {
         const formattedDateTime = today.toLocaleString();
 
         const docDefinition = {
-            pageSize: 'A4',
+            pageSize: 'LETTER',
             pageOrientation: 'landscape',
             pageMargins: [40, 80, 40, 40],
             header: {

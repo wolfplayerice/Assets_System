@@ -145,28 +145,27 @@ def brand_edit(request, bra_id):
     
     if request.method == "POST":  # Si el método es POST, se intenta actualizar
         form = Edit_brand(request.POST, instance=brand)  # Se asocia el formulario con la instancia de la marca
-        if form.is_valid():  # Valida los datos del formulario
+        if form.is_valid():  
             try:
-                updated_brand = form.save()  # Guarda los cambios y devuelve la instancia actualizada
+                updated_brand = form.save()  
                 
-                # Guardamos en el log la edición con el nombre correcto
                 AuditLog.objects.create(
                     user=request.user,
                     action='update',
                     username=request.user.username, 
                     model_name='Brand',
                     object_id=bra_id,
-                    description=f"Marca editada: {updated_brand.name}"  # Aquí obtenemos el nombre correctamente
+                    description=f"Marca editada: {updated_brand.name}"  
                 )
                 messages.success(request, 'La marca se ha actualizado correctamente.')
             except Exception as e:
                 messages.error(request, f'Error inesperado: {str(e)}')
-        else:  # Si hay errores en el formulario, se muestran los mensajes de error
+        else:  
             for field, errors in form.errors.items():
                 for error in errors:
                     messages.error(request, f'Error en el campo {field}: {error}')
-        return HttpResponseRedirect(reverse('brand:brand'))  # Redirige a la página de marcas
-    else:  # Si el método no es POST, se muestra el formulario con los datos actuales de la marca
+        return HttpResponseRedirect(reverse('brand:brand')) 
+    else:  
         form = Edit_brand(instance=brand)
     
     return render(request, 'crudbrand.html', {

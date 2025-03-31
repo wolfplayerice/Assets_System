@@ -116,3 +116,7 @@ aside a i{
 #external-pdf-button.pdf-button-loading i {
     opacity: 0;
 }
+
+.btn-add-pdf{
+    justify-content: space-between;
+}

@@ -69,11 +69,11 @@ const initDataTablebrand = async () => {
 
 function generateBrandsPDF() {
     const pdfButton = $('#external-pdf-button');
-    
+
 
     pdfButton.addClass('pdf-button-loading');
     pdfButton.prop('disabled', true);
-    
+
     $.ajax({
         url: '/brand/list_brand/?all=true',
         type: 'GET',
@@ -81,23 +81,24 @@ function generateBrandsPDF() {
             const data = response.Brand.map(brand => [brand.id, brand.name]);
             const today = new Date();
             const formattedDateTime = today.toLocaleString();
-            
+
             const docDefinition = {
+                pageSize: 'LETTER',
+                pageMargins: [40, 80, 40, 40],
+                header: {
+                    columns: [
+                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
+                        {
+                            text: 'LISTA DE MARCAS',
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [10, 20, 0, 20]
+                        },
+                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 10, 10] }
+                    ],
+                    columnGap: 10,
+                },
                 content: [
-                    {
-                        columns: [
-                            { image: gobernacion, width: 80, alignment: 'left', margin: [0, 0, 0, 10] },
-                            { text: '', width: '*' },
-                            { image: logo, width: 80, alignment: 'right', margin: [0, 0, 0, 10] }
-                        ],
-                        columnGap: 10
-                    },
-                    {
-                        text: 'Lista de Marcas',
-                        style: 'header',
-                        alignment: 'center',
-                        margin: [0, 10, 0, 20]
-                    },
                     {
                         table: {
                             headerRows: 1,
@@ -113,55 +114,55 @@ function generateBrandsPDF() {
                                     noWrap: false,
                                 })))
                             ]
-                        },
-                        layout: 'lightHorizontalLines'
+},
+layout: 'lightHorizontalLines'
                     }
                 ],
-                styles: {
-                    header: { fontSize: 18, bold: true, color: '#2c3e50' },
-                    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
-                    footer: { fontSize: 10, alignment: 'center', color: '#666666' }
-                },
-                defaultStyle: {
-                    fontSize: 12,
-                    color: '#2c3e50'
-                },
-                footer: (currentPage, pageCount) => ({
-                    text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                    style: 'footer',
-                    margin: [0, 10, 0, 0]
-                })
+styles: {
+    header: { fontSize: 18, bold: true, color: '#2c3e50' },
+    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+    footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+},
+defaultStyle: {
+    fontSize: 12,
+        color: '#2c3e50'
+},
+footer: (currentPage, pageCount) => ({
+    text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+    style: 'footer',
+    margin: [0, 10, 0, 0]
+})
             
             };
 
-            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-            pdfDocGenerator.getBlob((blob) => {
-                // Animación de éxito
-                pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
-                setTimeout(() => {
-                    pdfButton.removeClass('pdf-button-success');
-                    pdfButton.prop('disabled', false);
-                }, 2000);
-                
-                saveAs(blob, `Lista_de_Marcas_${formattedDateTime}.pdf`);
-            });
+const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+pdfDocGenerator.getBlob((blob) => {
+    // Animación de éxito
+    pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
+    setTimeout(() => {
+        pdfButton.removeClass('pdf-button-success');
+        pdfButton.prop('disabled', false);
+    }, 2000);
+
+    saveAs(blob, `Lista_de_Marcas_${formattedDateTime}.pdf`);
+});
         },
-        error: (jqXHR, textStatus, errorThrown) => {
-            console.error('Error fetching all data:', textStatus, errorThrown);
-            // Animación de error
-            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
-            setTimeout(() => {
-                pdfButton.removeClass('pdf-button-error');
-                pdfButton.prop('disabled', false);
-            }, 2000);
-            
-            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-        },
+error: (jqXHR, textStatus, errorThrown) => {
+    console.error('Error fetching all data:', textStatus, errorThrown);
+    // Animación de error
+    pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+    setTimeout(() => {
+        pdfButton.removeClass('pdf-button-error');
+        pdfButton.prop('disabled', false);
+    }, 2000);
+
+    Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+},
     });
 }
 
 // Evento click para el botón externo de PDF
-$(document).on('click', '#external-pdf-button', function() {
+$(document).on('click', '#external-pdf-button', function () {
     generateBrandsPDF();
 });
 

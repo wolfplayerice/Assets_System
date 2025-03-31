@@ -57,7 +57,6 @@ const initDataTableAudit = async () => {
 
 function generateBrandsPDF() {
     const pdfButton = $('#external-pdf-button');
-    
 
     pdfButton.addClass('pdf-button-loading');
     pdfButton.prop('disabled', true);
@@ -83,35 +82,22 @@ function generateBrandsPDF() {
             /* const formattedDateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`; */
             const formattedDateTime = today.toLocaleString();
             const docDefinition = {
+                pageSize: 'LETTER',
+                pageMargins: [40, 80, 40, 40],
+                header: {
+                    columns: [
+                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
+                        {
+                            text: 'LISTA DE AUDITORIA',
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [10, 20, 0, 20]
+                        },
+                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 10, 10] }
+                    ],
+                    columnGap: 10,
+                },
                 content: [
-                    // Logos en columnas
-                    {
-                        columns: [
-                            {
-                                image: gobernacion, // Logo izquierdo (Base64 o URL)
-                                width: 80, // Ancho de la imagen
-                                alignment: 'left', // Alineación a la izquierda
-                                margin: [0, 0, 0, 10] // Margen de la imagen
-                            },
-                            {
-                                text: '', // Columna vacía para separar los logos
-                                width: '*', // Ocupa el espacio restante
-                            },
-                            {
-                                image: logo, // Logo derecho (Base64 o URL)
-                                width: 80, // Ancho de la imagen
-                                alignment: 'right', // Alineación a la derecha
-                                margin: [0, 0, 0, 10] // Margen de la imagen
-                            }
-                        ],
-                        columnGap: 10 // Espacio entre columnas (opcional)
-                    },
-                    {
-                        text: 'Auditoria',
-                        style: 'header',
-                        alignment: 'center',
-                        margin: [0, 10, 0, 20]
-                    },
                     {
                         table: {
                             headerRows: 1,

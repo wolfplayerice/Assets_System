@@ -9,7 +9,6 @@
       <div class="card-header">
         <h5 class="card-title">Tabla de las Categorias</h5>
       </div>
-      <!-- /.card-header -->
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
@@ -17,11 +16,10 @@
             <div id="data-container" data-list-category-url="{% url 'category:list_category' %}">
               <table id="datatable-cat" class="table">
                 <thead>
-                  <div class="flex-row d-flex">
+                  <div class="flex-row d-flex btn-add-pdf">
                     <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
-                      <i class='fa-solid fa-plus'></i>
+                      <i class='fa-solid fa-plus'></i> <strong>Añadir Categoria</strong>
                     </button>
-                    <p>Añadir Categoria</p>
                     <button id="external-pdf-button" class="btn btn-danger mb-3">
                       <i class="fas fa-file-pdf"></i> Generar Reporte PDF
                     </button>
@@ -36,9 +34,6 @@
 
                 </tbody>
               </table>
-
-
-
 
             </div>
 
@@ -77,7 +72,8 @@
             </div>
 
             <!-- Modal para editar -->
-            <div class="modal fade" id="editCatModal" tabindex="-1" aria-labelledby="editCatModalLabel" aria-hidden="true">
+            <div class="modal fade" id="editCatModal" tabindex="-1" aria-labelledby="editCatModalLabel"
+              aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -134,25 +130,25 @@
               </div>
             </div>
 
-<script>
-  {% if messages %}
-  {% for message in messages %}
-  {% if message.tags == 'success' %}
-  $(document).ready(function () {
-  $('#successModal').modal('show');
-});
-  {% elif message.tags == 'error' %}
-  
-    $(document).ready(function () {
-  
-     $('#errorModal').modal('show');
-  
-    });
-  {% endif %}
-  {% endfor %}
-  {% endif %}
-  </script>
-{% endblock %}
+            <script>
+              {% if messages %}
+              {% for message in messages %}
+              {% if message.tags == 'success' %}
+              $(document).ready(function () {
+                $('#successModal').modal('show');
+              });
+              {% elif message.tags == 'error' %}
+
+              $(document).ready(function () {
+
+                $('#errorModal').modal('show');
+
+              });
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+            </script>
+            {% endblock %}
 
             {% block extra_js %}
             <script src="{% static 'js/crudcat.js' %}"></script>
