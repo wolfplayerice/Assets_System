@@ -10,7 +10,7 @@ const initDataTableAudit = async () => {
         }
 
         dataTableaudit = $("#datatable-audit").DataTable({
-            serverSide: false,
+            serverSide: true,
             ajax: {
                 url: "http://127.0.0.1:8000/audit/logs_list/",
                 error: (jqXHR, textStatus, errorThrown) => {
