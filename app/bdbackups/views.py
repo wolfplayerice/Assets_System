@@ -6,28 +6,30 @@ from datetime import datetime
 from django.conf import settings
 import glob
 from cryptography.fernet import Fernet
+import base64
+import hashlib
 
-# Genera o carga una clave de encriptación (guárdala en settings.py)
+## --- CÓDIGO DE ENCRIPTACIÓN MEJORADO --- ##
+
 def get_encryption_key():
-    key_path = os.path.join(settings.BASE_DIR, 'backup_key.key')
-    if not os.path.exists(key_path):
-        key = Fernet.generate_key()
-        with open(key_path, 'wb') as key_file:
-            key_file.write(key)
-    else:
-        with open(key_path, 'rb') as key_file:
-            key = key_file.read()
-    return key
-
-# Función auxiliar para obtener/crear la carpeta de backups
-def get_backups_dir():
-    backups_dir = os.path.join(settings.BASE_DIR, 'backups')
-    if not os.path.exists(backups_dir):
-        os.makedirs(backups_dir)
-    return backups_dir
+    """
+    Obtiene la clave de encriptación en este orden:
+    1. Usa settings.BACKUP_ENCRYPTION_KEY si está definida
+    2. Deriva una clave segura desde settings.SECRET_KEY
+    """
+    # Primero intenta con una clave dedicada para backups
+    if hasattr(settings, 'BACKUP_ENCRYPTION_KEY'):
+        return settings.BACKUP_ENCRYPTION_KEY.encode('utf-8')
+    
+    # Fallback: Deriva una clave desde SECRET_KEY
+    secret = settings.SECRET_KEY.encode('utf-8')
+    # Usamos SHA-256 para obtener los 32 bytes necesarios
+    hash_key = hashlib.sha256(secret).digest()
+    # Codificamos en base64 url-safe (requerido por Fernet)
+    return base64.urlsafe_b64encode(hash_key)
 
 def encrypt_file(input_path, output_path):
-    """Encripta un archivo usando Fernet (AES)"""
+    """Encripta un archivo usando la clave configurada"""
     fernet = Fernet(get_encryption_key())
     with open(input_path, 'rb') as f:
         data = f.read()
@@ -36,7 +38,7 @@ def encrypt_file(input_path, output_path):
         f.write(encrypted_data)
 
 def decrypt_file(input_path, output_path):
-    """Desencripta un archivo"""
+    """Desencripta un archivo usando la clave configurada"""
     fernet = Fernet(get_encryption_key())
     with open(input_path, 'rb') as f:
         encrypted_data = f.read()
@@ -45,12 +47,20 @@ def decrypt_file(input_path, output_path):
         with open(output_path, 'wb') as f:
             f.write(decrypted_data)
         return True
-    except:
+    except Exception as e:
+        print(f"Error al desencriptar: {str(e)}")
         return False
+
+## --- FUNCIONES PRINCIPALES MODIFICADAS --- ##
+
+def get_backups_dir():
+    backups_dir = os.path.join(settings.BASE_DIR, 'backups')
+    if not os.path.exists(backups_dir):
+        os.makedirs(backups_dir)
+    return backups_dir
 
 def backup_list(request):
     backups_dir = get_backups_dir()
-    # Busca tanto archivos .sql como .enc (encriptados)
     backup_files = glob.glob(os.path.join(backups_dir, 'backup_*.*'))
     backups = []
     
@@ -65,14 +75,15 @@ def backup_list(request):
             'path': file_path,
             'size': f"{file_size/1024:.2f} KB",
             'date': modified_time.strftime("%Y-%m-%d %H:%M:%S"),
-            'encrypted': file_ext == '.enc'
+            'encrypted': file_ext in ['.enc', '.crypt']  # Detecta archivos encriptados
         })
     
     backups.sort(key=lambda x: x['date'], reverse=True)
     
     return render(request, 'backup.html', {
         'backups': backups,
-        'db_name': settings.DATABASES['default']['NAME']
+        'db_name': settings.DATABASES['default']['NAME'],
+        'encryption_enabled': True
     })
 
 def create_backup(request):
@@ -89,7 +100,7 @@ def create_backup(request):
             
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_file = f"backup_{timestamp}.sql"
-            encrypted_file = f"backup_{timestamp}.enc"
+            encrypted_file = f"backup_{timestamp}.enc"  # Extensión para encriptados
             
             backups_dir = get_backups_dir()
             temp_backup_path = os.path.join(backups_dir, backup_file)
@@ -108,24 +119,28 @@ def create_backup(request):
             if db_pass:
                 env['MYSQL_PWD'] = db_pass
             
-            # 1. Crear backup temporal
+            # 1. Crear backup temporal sin encriptar
             with open(temp_backup_path, 'w') as f:
                 subprocess.run(cmd, stdout=f, env=env, check=True)
             
             # 2. Encriptar el backup
             encrypt_file(temp_backup_path, final_backup_path)
             
-            # 3. Eliminar el archivo temporal sin encriptar
+            # 3. Eliminar el archivo temporal
             os.remove(temp_backup_path)
             
-            messages.success(request, f'Respaldo encriptado creado exitosamente: {encrypted_file}')
+            messages.success(request, f'Respaldo encriptado creado: {encrypted_file}')
         except subprocess.CalledProcessError as e:
-            messages.error(request, f'Error en el comando de respaldo: {str(e)}')
+            messages.error(request, f'Error en el comando mysqldump: {str(e)}')
+            if os.path.exists(temp_backup_path):
+                os.remove(temp_backup_path)
         except Exception as e:
-            messages.error(request, f'Error al crear el respaldo: {str(e)}')
-            # Limpiar archivos temporales en caso de error
+            messages.error(request, f'Error al crear respaldo: {str(e)}')
+            # Limpieza de archivos temporales en caso de error
             if 'temp_backup_path' in locals() and os.path.exists(temp_backup_path):
                 os.remove(temp_backup_path)
+            if 'final_backup_path' in locals() and os.path.exists(final_backup_path):
+                os.remove(final_backup_path)
         
     return redirect('backup_list')
 
@@ -134,7 +149,7 @@ def restore_backup(request):
         backup_path = request.POST.get('backup_path')
         
         if not backup_path or not os.path.exists(backup_path):
-            messages.error(request, 'El archivo de respaldo no existe')
+            messages.error(request, 'Archivo de respaldo no encontrado')
             return redirect('backup_list')
         
         try:
@@ -149,15 +164,19 @@ def restore_backup(request):
             backups_dir = get_backups_dir()
             temp_restore_path = os.path.join(backups_dir, 'temp_restore.sql')
             
-            # Si es un archivo encriptado, desencriptarlo primero
-            if backup_path.endswith('.enc'):
-                if not decrypt_file(backup_path, temp_restore_path):
-                    messages.error(request, 'Error al desencriptar el respaldo. Clave incorrecta.')
-                    return redirect('backup_list')
-                restore_path = temp_restore_path
-            else:
-                restore_path = backup_path
+            # Verificar si el archivo está encriptado
+            is_encrypted = backup_path.endswith('.enc') or backup_path.endswith('.crypt')
             
+            if is_encrypted:
+                # Desencriptar primero
+                if not decrypt_file(backup_path, temp_restore_path):
+                    messages.error(request, 'Error al desencriptar. ¿Clave incorrecta?')
+                    return redirect('backup_list')
+                restore_file = temp_restore_path
+            else:
+                restore_file = backup_path
+            
+            # Comando para restaurar
             cmd = [
                 'mysql',
                 f'--host={db_host}',
@@ -169,16 +188,18 @@ def restore_backup(request):
             env = os.environ.copy()
             env['MYSQL_PWD'] = db_pass
             
-            with open(restore_path, 'r') as f:
-                subprocess.run(cmd, stdin=f, env=env, check=True)
+            with open(restore_file, 'r') as f:
+                result = subprocess.run(cmd, stdin=f, env=env, check=True)
             
-            # Limpiar archivo temporal si existió
-            if restore_path == temp_restore_path:
+            # Limpiar archivo temporal si se usó
+            if is_encrypted and os.path.exists(temp_restore_path):
                 os.remove(temp_restore_path)
             
-            messages.success(request, f'Base de datos restaurada exitosamente desde: {os.path.basename(backup_path)}')
+            messages.success(request, f'Base de datos restaurada desde: {os.path.basename(backup_path)}')
+        except subprocess.CalledProcessError as e:
+            messages.error(request, f'Error al ejecutar mysql: {str(e)}')
         except Exception as e:
-            messages.error(request, f'Error al restaurar la base de datos: {str(e)}')
+            messages.error(request, f'Error al restaurar: {str(e)}')
             if 'temp_restore_path' in locals() and os.path.exists(temp_restore_path):
                 os.remove(temp_restore_path)
     
@@ -196,6 +217,6 @@ def delete_backup(request):
             os.remove(backup_path)
             messages.success(request, f'Respaldo eliminado: {os.path.basename(backup_path)}')
         except Exception as e:
-            messages.error(request, f'Error al eliminar el respaldo: {str(e)}')
+            messages.error(request, f'Error al eliminar: {str(e)}')
     
     return redirect('backup_list')
