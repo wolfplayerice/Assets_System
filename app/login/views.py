@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import VerifyUser
 from django.contrib.auth.models import User  # Asegúrate de importar el modelo User
 from django.core.cache import cache
+from django.views.decorators.cache import never_cache
+
 
 def login(request):
     session_terminated = request.GET.get('session_terminated')
@@ -64,9 +66,15 @@ def login(request):
                 'VerifyUser': VerifyUser_Form
             })
 
-@login_required            
+@never_cache
+@login_required
 def log_out(request):
     cache_key = f"user_{request.user.pk}_active_session"
     cache.delete(cache_key)
     logout(request)
-    return redirect('login')
+    response = redirect('login')
+    # Headers para evitar cache
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
