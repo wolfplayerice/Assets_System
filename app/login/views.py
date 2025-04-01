@@ -3,13 +3,18 @@ from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import VerifyUser
 from django.contrib.auth.models import User  # Asegúrate de importar el modelo User
+from django.core.cache import cache
+
 def login(request):
+    session_terminated = request.GET.get('session_terminated')
+
     if request.user.is_authenticated:
         return redirect('../home/dashboard')
 
     if request.method == 'GET':
         return render(request, 'login.html', {
-            'VerifyUser': VerifyUser
+            'VerifyUser': VerifyUser,
+            'session_terminated': session_terminated 
         })
     
     elif request.method == 'POST':
@@ -44,6 +49,8 @@ def login(request):
 
             if User_Verification is not None:
                 auth_login(request, User_Verification)
+                cache_key = f"user_{request.user.pk}_active_session"
+                cache.set(cache_key, request.session.session_key, 900)
                 request.session['success'] = 'Inicio de sesión exitoso.'
                 return redirect('../home/dashboard')
             else:
@@ -59,5 +66,7 @@ def login(request):
 
 @login_required            
 def log_out(request):
+    cache_key = f"user_{request.user.pk}_active_session"
+    cache.delete(cache_key)
     logout(request)
     return redirect('login')
