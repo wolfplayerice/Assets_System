@@ -180,7 +180,7 @@ $(document).on('click', '.delete-btn-brand', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/brand/delete_brand/${brandId}/`,
+                url: `http://127.0.0.1:8000/brand/delete_brand/${brandId}/`,
                 type: 'DELETE',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -229,4 +229,43 @@ $(document).on('click', '.edit-bra-btn', function () {
 
 $(document).on('click', '#save-changes', function () {
     $('#edit-bra-form').submit();
+});
+
+$(document).on('submit', '#edit-bra-form', function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const url = form.attr('action');
+    const data = form.serialize();
+
+    $.post(url, data, function (response) {
+        if (response.status === 'success') {
+            Swal.fire('Éxito', response.message, 'success').then(() => {
+                location.reload();
+                clearEditForm();
+            });
+        } else {
+            Swal.fire('Error', response.message, 'error');
+        }
+    }).fail(function () {
+        Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
+    });
+});
+
+$(document).on('submit', '#register-modal form', function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const url = form.attr('action');
+    const data = form.serialize();
+
+    $.post(url, data, function (response) {
+        if (response.status === 'success') {
+            Swal.fire('Éxito', response.message, 'success').then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire('Error', response.message, 'error');
+        }
+    }).fail(function () {
+        Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
+    });
 });

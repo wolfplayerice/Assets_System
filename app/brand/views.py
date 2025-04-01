@@ -8,8 +8,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from audit.models import AuditLog 
-from django.db import IntegrityError
-# Create your views here.
+
 
 @login_required
 def brand(request):
@@ -91,24 +90,27 @@ def brand_create(request):
                     username=request.user.username,
                     model_name='Brand',
                     object_id=brands.id,
-                    description=f"Marca creada: {brands.name} (ID: {brands.id})"
+                    description=f"Marca creada: {brands.name}"
                 )
-                messages.success(request, 'La marca se ha guardado correctamente.')
-                return HttpResponseRedirect(reverse('home:brand'))
+                return JsonResponse({'status': 'success', 'message': 'Marca creada exitosamente.'})
+                #messages.success(request, 'La marca se ha guardado correctamente.')
+                #return HttpResponseRedirect(reverse('home:brand'))
             
-            except IntegrityError as e:
-                messages.error(request, 'Error: Ya existe una categoría con este nombre.')
-            
-
             except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
                 # Captura cualquier otro error inesperado
-                messages.error(request, f'Error inesperado: {str(e)}')
+                #messages.error(request, f'Error inesperado: {str(e)}')
         
         else:
+            errors = []
+            for field, error_list in brand_create_form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
             # Si el formulario no es válido, muestra errores de validación
-            for field, errors in brand_create_form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
+            # for field, errors in brand_create_form.errors.items():
+            #     for error in errors:
+            #         messages.error(request, f'Error en el campo {field}: {error}')
     
     else:
         brand_create_form = Create_brand()
@@ -125,16 +127,14 @@ def delete_brand(request, brand_id):
     if request.method == "DELETE":
         try:
             brand = Brand.objects.get(pk=brand_id)
-            brand_name= brand.name
             brand.delete()
-
             AuditLog.objects.create(
                     user=request.user,
                     action='delete',
                     username=request.user.username,  
                     model_name='Brand',
                     object_id=brand_id,
-                    description=f"Marca eliminada: {brand_name} (ID: {brand_id})"
+                    description=f"Marca eliminada: {brand.name}"
                 )
             return JsonResponse({"message": "Categoría eliminada correctamente."})
         except Brand.DoesNotExist:
@@ -154,24 +154,7 @@ def brand_edit(request, bra_id):
         form = Edit_brand(request.POST, instance=brand)  # Se asocia el formulario con la instancia de la marca
         if form.is_valid():  
             try:
-                original_brand = Brand.objects.get(pk=bra_id)
-                old_value= original_brand.name
-                # Guardar cambios
-                form.save()
-
-                updated_brand = form.instance
-                new_value = updated_brand.name
-
-                changes = []
-                if old_value != new_value:
-                    changes.append(f"Nombre: '{old_value}' cambio a '{new_value}'")
-                
-                # Crear mensaje de auditoría
-                if changes:
-                    changes_str = "; ".join(changes)
-                    audit_message = f"Marca actualizada (ID: {bra_id}): {changes_str}"
-                else:
-                    audit_message = f"Marca (ID: {bra_id}) editada sin cambios significativos"
+                updated_brand = form.save()  
                 
                 AuditLog.objects.create(
                     user=request.user,
@@ -179,16 +162,23 @@ def brand_edit(request, bra_id):
                     username=request.user.username, 
                     model_name='Brand',
                     object_id=bra_id,
-                    description=audit_message
+                    description=f"Marca editada: {updated_brand.name}"  
                 )
-                messages.success(request, 'La marca se ha actualizado correctamente.')
+                return JsonResponse({'status': 'success', 'message': 'La marca se ha actualizado correctamente.'})
+                #messages.success(request, 'La marca se ha actualizado correctamente.')
             except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
-        else:  
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
-        return HttpResponseRedirect(reverse('brand:brand')) 
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                #messages.error(request, f'Error inesperado: {str(e)}')
+        else:
+            errors = []
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
+        #     for field, errors in form.errors.items():
+        #         for error in errors:
+        #             messages.error(request, f'Error en el campo {field}: {error}')
+        # return HttpResponseRedirect(reverse('brand:brand')) 
     else:  
         form = Edit_brand(instance=brand)
     
