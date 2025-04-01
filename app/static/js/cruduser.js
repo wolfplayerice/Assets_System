@@ -285,60 +285,60 @@ window.addEventListener('load', async () => {
     await initDataTableuser();
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('edit-user-form');
-    const passwordField = document.getElementById('edit-user-password');
-    const confirmPasswordField = document.getElementById('edit-user-password2');
+// document.addEventListener('DOMContentLoaded', function () {
+//     const form = document.getElementById('edit-user-form');
+//     const passwordField = document.getElementById('edit-user-password');
+//     const confirmPasswordField = document.getElementById('edit-user-password2');
 
-    form.addEventListener('submit', function (event) {
-        const password = passwordField.value.trim();
-        const confirmPassword = confirmPasswordField.value.trim();
+//     form.addEventListener('submit', function (event) {
+//         const password = passwordField.value.trim();
+//         const confirmPassword = confirmPasswordField.value.trim();
 
-        // Verifica si las contraseñas coinciden
-        if (password !== confirmPassword) {
-            event.preventDefault();
-            alert('Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.');
-            return;
-        }
+//         // Verifica si las contraseñas coinciden
+//         if (password !== confirmPassword) {
+//             event.preventDefault();
+//             alert('Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.');
+//             return;
+//         }
 
-        // Valida la contraseña
-        const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
-        if (password && !passwordRegex.test(password)) {
-            event.preventDefault();
-            alert('La contraseña debe tener al menos 8 caracteres y un carácter especial.');
-            return;
-        }
-    });
-});
+//         // Valida la contraseña
+//         const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+//         if (password && !passwordRegex.test(password)) {
+//             event.preventDefault();
+//             alert('La contraseña debe tener al menos 8 caracteres y un carácter especial.');
+//             return;
+//         }
+//     });
+// });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('edit-user-form'); // Cambiado para coincidir con el ID del formulario en users.html
+// document.addEventListener('DOMContentLoaded', function () {
+//     const form = document.getElementById('edit-user-form'); // Cambiado para coincidir con el ID del formulario en users.html
 
-    form.addEventListener('submit', function (event) {
-        event.preventDefault(); // Evita el envío inmediato del formulario
+//     form.addEventListener('submit', function (event) {
+//         event.preventDefault(); // Evita el envío inmediato del formulario
 
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "¿Deseas guardar los cambios realizados?",
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, guardar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire(
-                    '¡Guardado!',
-                    'La información del usuario se ha actualizado correctamente.',
-                    'success'
-                ).then(() => {
-                    form.submit(); // Envía el formulario después de la confirmación
-                });
-            }
-        });
-    });
-});
+//         Swal.fire({
+//             title: '¿Estás seguro?',
+//             text: "¿Deseas guardar los cambios realizados?",
+//             icon: 'question',
+//             showCancelButton: true,
+//             confirmButtonColor: '#3085d6',
+//             cancelButtonColor: '#d33',
+//             confirmButtonText: 'Sí, guardar',
+//             cancelButtonText: 'Cancelar'
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 Swal.fire(
+//                     '¡Guardado!',
+//                     'La información del usuario se ha actualizado correctamente.',
+//                     'success'
+//                 ).then(() => {
+//                     form.submit(); // Envía el formulario después de la confirmación
+//                 });
+//             }
+//         });
+//     });
+// });
 
 // Script para la funcionalidad del ojo (mostrar/ocultar contraseñas)
 document.addEventListener('DOMContentLoaded', function () {
@@ -363,14 +363,77 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// Validación de contraseñas
+// // Validación de contraseñas
+// document.addEventListener('DOMContentLoaded', function () {
+//     const form = document.getElementById('edit-user-form');
+//     const passwordField = document.getElementById('edit-user-password');
+//     const confirmPasswordField = document.getElementById('edit-user-password2');
+
+//     form.addEventListener('submit', function (event) {
+//         event.preventDefault(); // Evita el envío inmediato del formulario
+
+//         // Verifica si las contraseñas coinciden
+//         if (passwordField.value !== confirmPasswordField.value) {
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: '¡Error!',
+//                 text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
+//                 confirmButtonText: 'Aceptar'
+//             });
+//             return; // Detiene el proceso de envío
+//         }
+
+//         // Si las contraseñas coinciden, muestra el mensaje de confirmación
+//         Swal.fire({
+//             title: '¿Estás seguro?',
+//             text: "¿Deseas guardar los cambios realizados?",
+//             icon: 'question',
+//             showCancelButton: true,
+//             confirmButtonColor: '#3085d6',
+//             cancelButtonColor: '#d33',
+//             confirmButtonText: 'Sí, guardar',
+//             cancelButtonText: 'Cancelar'
+//         }).then((result) => {
+//             if (result.isConfirmed) {
+//                 Swal.fire(
+//                     '¡Guardado!',
+//                     'La información del usuario se ha actualizado correctamente.',
+//                     'success'
+//                 ).then(() => {
+//                     form.submit(); // Envía el formulario después de la confirmación
+//                 });
+//             }
+//         });
+//     });
+// });
+
+// $(document).on('submit', '#edit-user-form', function (e) {
+//     e.preventDefault();
+//     const form = $(this);
+//     const url = form.attr('action');
+//     const data = form.serialize();
+
+//     $.post(url, data, function (response) {
+//         if (response.status === 'success') {
+//             Swal.fire('Éxito', response.message, 'success').then(() => {
+//                 location.reload();
+//                 clearEditForm();
+//             });
+//         } else {
+//             Swal.fire('Error', response.message, 'error');
+//         }
+//     }).fail(function () {
+//         Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
+//     });
+// });
+
 document.addEventListener('DOMContentLoaded', function () {
     const form = document.getElementById('edit-user-form');
     const passwordField = document.getElementById('edit-user-password');
     const confirmPasswordField = document.getElementById('edit-user-password2');
 
     form.addEventListener('submit', function (event) {
-        event.preventDefault(); // Evita el envío inmediato del formulario
+        event.preventDefault();
 
         // Verifica si las contraseñas coinciden
         if (passwordField.value !== confirmPasswordField.value) {
@@ -380,10 +443,22 @@ document.addEventListener('DOMContentLoaded', function () {
                 text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
                 confirmButtonText: 'Aceptar'
             });
-            return; // Detiene el proceso de envío
+            return;
         }
 
-        // Si las contraseñas coinciden, muestra el mensaje de confirmación
+        // Valida la contraseña
+        const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
+        if (passwordField.value && !passwordRegex.test(passwordField.value)) {
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: 'La contraseña debe tener al menos 8 caracteres y un carácter especial.',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+
+        // Si todo está bien, muestra el mensaje de confirmación
         Swal.fire({
             title: '¿Estás seguro?',
             text: "¿Deseas guardar los cambios realizados?",
@@ -395,14 +470,55 @@ document.addEventListener('DOMContentLoaded', function () {
             cancelButtonText: 'Cancelar'
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire(
-                    '¡Guardado!',
-                    'La información del usuario se ha actualizado correctamente.',
-                    'success'
-                ).then(() => {
-                    form.submit(); // Envía el formulario después de la confirmación
+                // Si el usuario confirma, envía el formulario
+                const formData = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire(
+                            '¡Guardado!',
+                            'La información del usuario se ha actualizado correctamente.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
                 });
             }
         });
     });
 });
+
+$(document).on('submit', '#register-modal form', function (e) {
+    e.preventDefault();
+    const form = $(this);
+    const url = form.attr('action');
+    const data = form.serialize();
+
+    $.post(url, data, function (response) {
+        if (response.status === 'success') {
+            Swal.fire('Éxito', response.message, 'success').then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire('Error', response.message, 'error');
+        }
+    }).fail(function () {
+        Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
+    });
+});
+
+window.addEventListener('load', initDataTableCategory);

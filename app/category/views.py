@@ -43,15 +43,13 @@ def category_create(request):
                     object_id=category.id,
                     description=f"Categoría creada: {category.name} (ID: {category.id})"
                 )
-                
-                messages.success(request, 'La categoría se ha guardado correctamente.')
-                return HttpResponseRedirect(reverse('home:category'))
-            
-            except IntegrityError as e:
-                messages.error(request, 'Error: Ya existe una categoría con este nombre.')
+                return JsonResponse({'status': 'success', 'message': 'Categoría creada exitosamente.'})
+                #messages.success(request, 'La categoría se ha guardado correctamente.')
+                #return HttpResponseRedirect(reverse('home:category'))
             
             except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                #messages.error(request, f'Error inesperado: {str(e)}')
     
     return render(request, 'crudcat.html', {
         'cat_form': Create_category(),
@@ -177,21 +175,24 @@ def category_edit(request, cat_id):
                     object_id=cat_id,
                     description=audit_message
                 )
-                
-                messages.success(request, 'La categoría se ha actualizado correctamente.')
-            
-            except IntegrityError as e:
-                messages.error(request, 'Error: Ya existe una categoría con este nombre.')
+                return JsonResponse({'status': 'success', 'message': 'La categoría se ha actualizado correctamente.'})
+                #messages.success(request, 'La categoría se ha actualizado correctamente.')
             
             except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                #messages.error(request, f'Error inesperado: {str(e)}')
         
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
+            errors = []
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
+            # for field, errors in form.errors.items():
+            #     for error in errors:
+            #         messages.error(request, f'Error en el campo {field}: {error}')
         
-        return HttpResponseRedirect(reverse('category:category'))
+        #return HttpResponseRedirect(reverse('category:category'))
     
     else:
         form = Edit_category(instance=category)
