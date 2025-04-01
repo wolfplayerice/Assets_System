@@ -201,6 +201,24 @@
         });
     });
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar si debemos forzar recarga
+        if (new URLSearchParams(window.location.search).has('session_terminated')) {
+            window.location.href = "{% url 'login' %}?session_terminated=1";
+        }
+        
+        // Manejar respuestas AJAX
+        $(document).ajaxComplete(function(event, xhr) {
+            try {
+                const response = JSON.parse(xhr.responseText);
+                if (response.force_reload) {
+                    window.location.href = response.login_url;
+                }
+            } catch(e) {}
+        });
+    });
+  </script>
 
 </body>
 
