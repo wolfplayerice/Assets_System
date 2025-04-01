@@ -209,9 +209,9 @@ def delete_asset(request, asset_id):
                     object_id=asset_id,
                     description=f"Activo eliminado (ID: {asset_id}): {asset.fk_brand.name} {asset.model} {asset.serial_number}"
                 )
-            return JsonResponse({"message": "Categoría eliminada correctamente."})
+            return JsonResponse({"message": "Bien eliminado correctamente."})
         except Asset.DoesNotExist:
-            return JsonResponse({"error": "Categoría no encontrada."}, status=404)
+            return JsonResponse({"error": "Bien no encontrado."}, status=404)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     else:

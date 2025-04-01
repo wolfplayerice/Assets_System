@@ -105,24 +105,33 @@ def user_create(request):
                     object_id=user.id,
                     description=f"Creación de usuario {user.username} (ID: {user.id})"
                 )
-                messages.success(request, 'El usuario se ha guardado correctamente.')
-                return HttpResponseRedirect(reverse('home:users'))
+                return JsonResponse({'status': 'success', 'message': 'Usuario creado exitosamente.'})
+                # messages.success(request, 'El usuario se ha guardado correctamente.')
+                # return HttpResponseRedirect(reverse('home:users'))
             
             except IntegrityError as e:
                 if 'username' in str(e):
-                    messages.error(request, 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.')
+                    return JsonResponse({'status': 'error', 'message': 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.'})
+                    #messages.error(request, 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.')
                 else:
-                    messages.error(request, 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.')
+                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.'})
+                    #messages.error(request, 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.')
             
             except Exception as e:
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
                 # Captura cualquier otro error inesperado
-                messages.error(request, f'Error inesperado: {str(e)}')
+                #messages.error(request, f'Error inesperado: {str(e)}')
         
         else:
+            errors = []
+            for field, error_list in user_create_form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
             # Si el formulario no es válido, muestra errores de validación
-            for field, errors in user_create_form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
+            # for field, errors in user_create_form.errors.items():
+            #     for error in errors:
+            #         messages.error(request, f'Error en el campo {field}: {error}')
     
     else:
         user_create_form = CreateUser()
@@ -202,15 +211,21 @@ def user_edit(request, user_id):
                     object_id=updated_user.id,
                     description=audit_message
                 )
-                
-                messages.success(request, 'El usuario se ha actualizado correctamente.')
+                return JsonResponse({'status': 'success', 'message': 'El usuario se ha actualizado correctamente.'})
+                #messages.success(request, 'El usuario se ha actualizado correctamente.')
             except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                #messages.error(request, f'Error inesperado: {str(e)}')
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
-        return HttpResponseRedirect(reverse('users:users'))
+            errors = []
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+        #     for field, errors in form.errors.items():
+        #         for error in errors:
+        #             messages.error(request, f'Error en el campo {field}: {error}')
+        # return HttpResponseRedirect(reverse('users:users'))
     else:
         form = EditUser(instance=user)
 
