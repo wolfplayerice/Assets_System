@@ -280,7 +280,7 @@ $(document).on('click', '.delete-asset-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `http://127.0.0.1:8000/inventory/delete_asset/${assetId}/`,
+                url: `/inventory/delete_asset/${assetId}/`,
                 type: 'DELETE',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {

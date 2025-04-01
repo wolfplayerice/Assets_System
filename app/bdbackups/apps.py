@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class BackupConfig(AppConfig):
+class BdbackupsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'backup'
+    name = 'bdbackups'
