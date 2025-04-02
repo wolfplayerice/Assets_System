@@ -1,66 +1,127 @@
-.login{
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/fondo_login.jpg') no-repeat center;
-    background-size: cover;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+/* Centrar el contenedor del login y el footer */
+.login {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/fondo_login.jpg') no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Centra verticalmente */
+  align-items: center;
+  /* Centra horizontalmente */
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
-.login-box{
-    margin-top: 60vh;
-}
-
-
+/* Contenedor del login */
 .login-box {
-    width: 400px;
-    margin: 7% auto;
-  }
-  .login-logo img {
-    width: 100px;
-  }
-  .login-card-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .login-box-msg {
-    font-size: 1.5rem;
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
-  }
-  .form-group {
-    width: 100%;
-  }
-  .btn-primary {
-    width: 100%;
-  }
+  width: 400px;
+  margin: 0 auto;
+  /* Centra horizontalmente */
+  text-align: center;
+}
+
+.login-logo img {
+  width: 100px;
+}
+
+.login-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-box-msg {
+  font-size: 1.5rem;
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
+}
+
+.form-group {
+  width: 100%;
+}
+
+.btn-primary {
+  width: 100%;
+}
 
 
 
 .logo_bva {
-    width: 50px;
+  width: 50px;
 }
 
 .login-logo img {
-    width: 300px;
-    height: 180px;
+  width: 300px;
+  height: 180px;
 }
 
 .login-card-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .login-box-msg {
-    font-size: 20px;
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
+  font-size: 20px;
+  font-family: 'Arial', sans-serif;
+  font-weight: bold;
 }
+
 .input-group .form-control {
   border-radius: 0.25rem;
 }
+
 .input-group .input-group-text {
   border-radius: 0.25rem;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .login-box {
+    width: 90%;
+  }
+
+  .main-footer {
+    max-width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box {
+    width: 100%;
+  }
+
+  .main-footer {
+    max-width: 100%;
+    padding: 8px 0;
+    /* Reduce el espaciado vertical */
+  }
+}
+
+/* Footer en la esquina inferior derecha */
+.main-footer {
+  position: fixed; /* Fija el footer en la pantalla */
+  bottom: 10px; /* Espaciado desde la parte inferior */
+  right: 10px; /* Espaciado desde la parte derecha */
+  background-color:white; /* Fondo transparente */
+  border-radius: 20px;
+  text-align: right; /* Alinea el texto a la derecha */
+  font-family: 'Arial', sans-serif; /* Fuente minimalista */
+  font-size: 14px; /* Tamaño de fuente */
+  color: #000000; /* Letras oscuras que resalten */
+  z-index: 10; /* Asegura que el footer esté por encima de otros elementos */
+  margin: 0; /* Elimina márgenes no deseados */
+  padding: 0; /* Elimina padding no deseado */
+}
+
+.main-footer strong {
+  font-weight: bold; /* Negrita para el texto principal */
+}
+
+.main-footer .moon-icon {
+  margin-left: 5px; /* Espaciado entre el texto y el ícono */
+  color: #000000; /* Gris oscuro para el ícono */
+  font-size: 16px; /* Tamaño del ícono */
 }
