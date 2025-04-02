@@ -8,7 +8,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from audit.models import AuditLog 
-
+from django.core.paginator import Paginator, EmptyPage
+from django.db.models import Q
 
 @login_required
 def brand(request):
@@ -24,55 +25,74 @@ def brand(request):
 
 @login_required
 def list_brand(request):
-    all_data = request.GET.get('all', False)
-
-    brand = Brand.objects.all()
-
-    data = [{
-        'name': brands.name,
-        'id': brands.id,
-    } for brands in brand]
-
-    if all_data:
-        response_data = {
-            'Brand': data,
-        }
-        return JsonResponse(response_data)
-    draw = int(request.GET.get('draw', 0))
-    start = int(request.GET.get('start', 0))
-    length = int(request.GET.get('length', 10))  # Número de registros por página
-
-    search_value = request.GET.get('search[value]', None)
-
-    brand = Brand.objects.all()
-
-    if search_value:
-        brand = brand.filter(name__icontains=search_value)
-
-    total_records = brand.count()
-    filtered_records = brand.count()
-
-    paginator = Paginator(brand, length)
-    page = (start // length) + 1
-
     try:
-        brand_page = paginator.page(page)
-    except Exception:
-        brand_page = paginator.page(1)
+        draw = int(request.GET.get('draw', 0))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+        search_value = request.GET.get('search[value]', '').strip()
+        all_data = request.GET.get('all', 'false').lower() == 'true'
 
-    data = [{
-        'name': brand.name,
-        'id': brand.id,
-    } for brand in brand_page]
+        order_column_index = request.GET.get('order[0][column]', '0')
+        order_direction = request.GET.get('order[0][dir]', 'asc')
+        
+        column_map = {
+            '0': 'id',
+            '1': 'name',
+        }
+        
+        order_field = column_map.get(order_column_index, 'id')
+        if order_direction == 'desc':
+            order_field = f'-{order_field}'
 
-    response_data = {
-        'draw': draw,
-        'recordsTotal': total_records,
-        'recordsFiltered': filtered_records,
-        'data': data,
-    }
+        queryset = Brand.objects.all()
 
-    return JsonResponse(response_data)
+        if search_value:
+            queryset = queryset.filter(
+                Q(name__icontains=search_value) |
+                Q(id__icontains=search_value)
+            )
+
+        queryset = queryset.order_by(order_field)
+
+        if all_data:
+            data = [{
+                'name': brand.name,
+                'id': brand.id,
+            } for brand in queryset]
+            
+            return JsonResponse({
+                'Brand': data,
+                'success': True
+            })
+
+        paginator = Paginator(queryset, length)
+        page_number = (start // length) + 1
+
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(1)
+
+        data = [{
+            'name': brand.name,
+            'id': brand.id,
+        } for brand in page]
+
+        response_data = {
+            'draw': draw,
+            'recordsTotal': Brand.objects.count(),
+            'recordsFiltered': paginator.count, 
+            'data': data,
+            'success': True
+        }
+
+        return JsonResponse(response_data)
+
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e),
+            'success': False
+        }, status=500)
 
 @login_required
 def brand_create(request):
@@ -93,13 +113,9 @@ def brand_create(request):
                     description=f"Marca creada: {brands.name}"
                 )
                 return JsonResponse({'status': 'success', 'message': 'Marca creada exitosamente.'})
-                #messages.success(request, 'La marca se ha guardado correctamente.')
-                #return HttpResponseRedirect(reverse('home:brand'))
             
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                # Captura cualquier otro error inesperado
-                #messages.error(request, f'Error inesperado: {str(e)}')
         
         else:
             errors = []
@@ -107,10 +123,6 @@ def brand_create(request):
                 for error in error_list:
                     errors.append(f'Error en el campo {field}: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
-            # Si el formulario no es válido, muestra errores de validación
-            # for field, errors in brand_create_form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f'Error en el campo {field}: {error}')
     
     else:
         brand_create_form = Create_brand()
@@ -165,20 +177,15 @@ def brand_edit(request, bra_id):
                     description=f"Marca editada: {updated_brand.name}"  
                 )
                 return JsonResponse({'status': 'success', 'message': 'La marca se ha actualizado correctamente.'})
-                #messages.success(request, 'La marca se ha actualizado correctamente.')
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                #messages.error(request, f'Error inesperado: {str(e)}')
         else:
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
                     errors.append(f'Error en el campo {field}: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
-        #     for field, errors in form.errors.items():
-        #         for error in errors:
-        #             messages.error(request, f'Error en el campo {field}: {error}')
-        # return HttpResponseRedirect(reverse('brand:brand')) 
+
     else:  
         form = Edit_brand(instance=brand)
     

@@ -11,6 +11,7 @@ const initDataTableuser = async () => {
 
         dataTableuser = $("#datatable-users").DataTable({
             serverSide: true,
+            processing: true,
             ajax: {
                 url: listUsersUrl,
                 error: (jqXHR, textStatus, errorThrown) => {
