@@ -11,6 +11,7 @@ const initDataTableAudit = async () => {
 
         dataTableaudit = $("#datatable-audit").DataTable({
             serverSide: true,
+            processing: true,
             ajax: {
                 url: listAuditUrl,
                 error: (jqXHR, textStatus, errorThrown) => {

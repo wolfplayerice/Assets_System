@@ -49,6 +49,7 @@ const initDataTableCategory = (() => {
 
             dataTableCategory = $datatableCat.DataTable({
                 serverSide: true,
+                processing: true,
                 ajax: {
                     url: listCategoryUrl,
                     error: (jqXHR, textStatus, errorThrown) => {

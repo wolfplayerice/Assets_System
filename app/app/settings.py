@@ -27,7 +27,7 @@ BACKUP_ENCRYPTION_KEY = 'JCqE0Yt_6UG7YDibxeiM7T5uvL5ou4Iqpd3ZQ9CrG5A='
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['localhost', '192.168.1.105']
+#ALLOWED_HOSTS = ['localhost', '192.168.0.107']
 
 
 # Application definition

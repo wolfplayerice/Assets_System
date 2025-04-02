@@ -11,6 +11,7 @@ const initDataTablebrand = async () => {
 
         dataTablebrand = $("#datatable-brand").DataTable({
             serverSide: true,
+            processing: true,
             ajax: {
                 url: listBrandsUrl,
                 error: (jqXHR, textStatus, errorThrown) => {
@@ -19,10 +20,8 @@ const initDataTablebrand = async () => {
                 },
             },
             columnDefs: [
-                {
-                    targets: [2], orderable: false, searchable: false,
-                    className: 'dt-center', targets: "_all"
-                },
+                { targets: [2], orderable: false, searchable: false },
+                { className: 'dt-center', targets: "_all" }
             ],
             columns: [
                 {

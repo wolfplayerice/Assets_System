@@ -9,6 +9,7 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
             dataSrc: 'data'
         },
         serverSide: true,
+        processing: true,
         columnDefs: [
             { targets: "_all", className: 'centered' }
         ],

@@ -1,6 +1,5 @@
 from django.shortcuts import render, get_object_or_404
 from django.http.response import JsonResponse, HttpResponse
-from django.core.paginator import Paginator
 from .models import Category
 from .forms import Create_category, Edit_category
 from django.contrib import messages
@@ -9,7 +8,8 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from audit.models import AuditLog 
 from django.db import IntegrityError
-# Create your views here.
+from django.core.paginator import Paginator, EmptyPage
+from django.db.models import Q
 
 @login_required
 def category(request):
@@ -59,55 +59,74 @@ def category_create(request):
 
 @login_required
 def list_category(request):
-    all_data = request.GET.get('all', False)
-
-    categories = Category.objects.all()
-
-    data = [{
-        'name': category.name,
-        'id': category.id,
-    } for category in categories]
-
-    if all_data:
-        response_data = {
-            'Category': data,
-        }
-        return JsonResponse(response_data)
-    draw = int(request.GET.get('draw', 0))
-    start = int(request.GET.get('start', 0))
-    length = int(request.GET.get('length', 10))  # Número de registros por página
-
-    search_value = request.GET.get('search[value]', None)
-
-    categories = Category.objects.all()
-
-    if search_value:
-        categories = categories.filter(name__icontains=search_value)
-
-    total_records = categories.count()
-    filtered_records = categories.count()
-
-    paginator = Paginator(categories, length)
-    page = (start // length) + 1
-
     try:
-        categories_page = paginator.page(page)
-    except Exception:
-        categories_page = paginator.page(1)
+        draw = int(request.GET.get('draw', 0))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+        search_value = request.GET.get('search[value]', '').strip()
+        all_data = request.GET.get('all', 'false').lower() == 'true'
 
-    data = [{
-        'name': category.name,
-        'id': category.id,
-    } for category in categories_page]
+        order_column_index = request.GET.get('order[0][column]', '0')
+        order_direction = request.GET.get('order[0][dir]', 'asc')
+        
+        column_map = {
+            '0': 'id',
+            '1': 'name',
+        }
+        
+        order_field = column_map.get(order_column_index, 'id')
+        if order_direction == 'desc':
+            order_field = f'-{order_field}'
 
-    response_data = {
-        'draw': draw,
-        'recordsTotal': total_records,
-        'recordsFiltered': filtered_records,
-        'data': data,
-    }
+        queryset = Category.objects.all()
 
-    return JsonResponse(response_data)
+        if search_value:
+            queryset = queryset.filter(
+                Q(name__icontains=search_value) |
+                Q(id__icontains=search_value)
+            )
+
+        queryset = queryset.order_by(order_field)
+
+        if all_data:
+            data = [{
+                'name': category.name,
+                'id': category.id,
+            } for category in queryset]
+            
+            return JsonResponse({
+                'Category': data,
+                'success': True
+            })
+
+        paginator = Paginator(queryset, length)
+        page_number = (start // length) + 1
+
+        try:
+            page = paginator.page(page_number)
+        except EmptyPage:
+            page = paginator.page(1)
+
+        data = [{
+            'name': category.name,
+            'id': category.id,
+        } for category in page]
+
+        response_data = {
+            'draw': draw,
+            'recordsTotal': Category.objects.count(),
+            'recordsFiltered': paginator.count, 
+            'data': data,
+            'success': True
+        }
+
+        return JsonResponse(response_data)
+
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e),
+            'success': False
+        }, status=500)
 
 @login_required
 def delete_category(request, category_id):
