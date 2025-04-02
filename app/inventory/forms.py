@@ -6,8 +6,24 @@ class AssetCreate(forms.Form):
     serial_number = forms.CharField(label="Número de serie", max_length=255)
     prefix = forms.ChoiceField(choices=[('BBVA-', 'BBVA'), ('BE-', 'BE')], label="Prefijo")
     state_asset = forms.CharField(label="BBVA/BE", max_length=255)
-    fk_category = forms.ModelChoiceField(queryset=Category.objects.all(), label="Categoría",)
-    fk_brand = forms.ModelChoiceField(queryset=Brand.objects.all(), label="Marca",)
+    fk_category = forms.ModelChoiceField(
+        queryset=Category.objects.all(),
+        label="",  # Eliminar el label
+        widget=forms.Select(attrs={
+            'class': 'form-select', 
+            'id': 'fk_category_select', 
+            'placeholder': 'Seleccione una categoría'
+        })
+    )
+    fk_brand = forms.ModelChoiceField(
+        queryset=Brand.objects.all(),
+        label="",  # Eliminar el label
+        widget=forms.Select(attrs={
+            'class': 'form-select', 
+            'id': 'fk_brand_select', 
+            'placeholder': 'Seleccione una marca'
+        })
+    )
     status = forms.ChoiceField(label='Estado del bien',choices=ACTIVE_CHOICES, widget=forms.Select(attrs={'id': 'status_select'}))
     observation = forms.CharField(widget=forms.Textarea(attrs={'id': 'id_observation'}), label="Observaciones", required=False)
 
