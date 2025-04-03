@@ -28,6 +28,11 @@ def category_create(request):
     if request.method == "POST":
         category_create_form = Create_category(request.POST)
         if category_create_form.is_valid():
+            name = category_create_form.cleaned_data['name'].strip()
+            # Verifica si ya existe una categoría con el mismo nombre
+            if Category.objects.filter(name__iexact=name).exists():
+                return JsonResponse({'status': 'error', 'message': 'Ya existe una categoría con este nombre.'})
+            
             try:
                 category = Category(
                     name=category_create_form.cleaned_data['name'],
@@ -164,6 +169,11 @@ def category_edit(request, cat_id):
     if request.method == "POST":
         form = Edit_category(request.POST, instance=category)
         if form.is_valid():
+            name = form.cleaned_data['name'].strip()
+            # Verifica si ya existe otra categoría con el mismo nombre
+            if Category.objects.filter(name__iexact=name).exclude(pk=cat_id).exists():
+                return JsonResponse({'status': 'error', 'message': 'Ya existe una categoría con este nombre.'})  
+            
             try:
                 # Capturar valores antiguos
                 original_cat = Category.objects.get(pk=cat_id)

@@ -99,6 +99,10 @@ def brand_create(request):
     if request.method == "POST":
         brand_create_form = Create_brand(request.POST)
         if brand_create_form.is_valid():
+            name = brand_create_form.cleaned_data['name'].strip()
+            # Verifica si ya existe una marca con el mismo nombre
+            if Brand.objects.filter(name__iexact=name).exists():
+                return JsonResponse({'status': 'error', 'message': 'Ya existe una marca con este nombre.'})
             try:
                 brands = Brand(
                     name=brand_create_form.cleaned_data['name'],
@@ -164,7 +168,11 @@ def brand_edit(request, bra_id):
     
     if request.method == "POST":  # Si el método es POST, se intenta actualizar
         form = Edit_brand(request.POST, instance=brand)  # Se asocia el formulario con la instancia de la marca
-        if form.is_valid():  
+        if form.is_valid():
+            name = form.cleaned_data['name'].strip()
+            # Verifica si ya existe otra marca con el mismo nombre
+            if Brand.objects.filter(name__iexact=name).exclude(pk=bra_id).exists():
+                return JsonResponse({'status': 'error', 'message': 'Ya existe una marca con este nombre.'})  
             try:
                 updated_brand = form.save()  
                 
