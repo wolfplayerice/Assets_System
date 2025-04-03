@@ -238,7 +238,8 @@ $(document).ready(function () {
             dropdownParent: pdfOptionsModal,
             placeholder: "Seleccione categorías",
             closeOnSelect: false,
-            theme: 'default'
+            theme: 'bootstrap-5',
+
         });
 
         $('.brand').select2({
@@ -246,7 +247,7 @@ $(document).ready(function () {
             dropdownParent: pdfOptionsModal,
             placeholder: "Seleccione marcas",
             closeOnSelect: false,
-            theme: 'default'
+            theme: 'bootstrap-5',
         });
     }
 
