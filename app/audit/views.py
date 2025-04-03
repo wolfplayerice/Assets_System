@@ -24,9 +24,39 @@ def logs_list(request):
             "update": "Actualizar"
         }
 
-        all_data = request.GET.get('all', False)
+        draw = int(request.GET.get('draw', 0))
+        start = int(request.GET.get('start', 0))
+        length = int(request.GET.get('length', 10))
+        search_value = request.GET.get('search[value]', '').strip()
+        all_data = request.GET.get('all', 'false').lower() == 'true'
 
-        logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User']).order_by('-timestamp')
+        
+        order_column_index = request.GET.get('order[0][column]', '0')
+        order_direction = request.GET.get('order[0][dir]', 'desc')  # Por defecto orden descendente
+
+        column_map = {
+            '0': 'username',  
+            '1': 'action',   
+            '2': 'description',     
+            '3': 'timestamp' 
+        }
+
+        order_field = column_map.get(order_column_index, 'timestamp')
+        if order_direction == 'desc':
+            order_field = f'-{order_field}'
+
+        logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User'])
+
+        if search_value:
+            logs = logs.filter(
+                Q(username__icontains=search_value) |
+                Q(action__icontains=search_value) |
+                Q(description__icontains=search_value) |
+                Q(model_name__icontains=search_value) |
+                Q(timestamp__icontains=search_value)
+            )
+
+        logs = logs.order_by(order_field)
 
         if all_data:
             data = [
@@ -40,21 +70,7 @@ def logs_list(request):
             ]
             return JsonResponse({"data": data}, json_dumps_params={'ensure_ascii': False})
 
-        draw = int(request.GET.get('draw', 0))
-        start = int(request.GET.get('start', 0))
-        length = int(request.GET.get('length', 10))
-
-        search_value = request.GET.get('search[value]', '').strip()
-        if search_value:
-            logs = logs.filter(
-                Q(username__icontains=search_value) |
-                Q(action__icontains=search_value) |
-                Q(description__icontains=search_value) |
-                Q(model_name__icontains=search_value) |
-                Q(timestamp__icontains=search_value)
-            )
-
-        total_records = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset']).count()
+        total_records = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User']).count()
         filtered_records = logs.count()
 
         paginator = Paginator(logs, length)

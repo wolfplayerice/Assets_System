@@ -21,11 +21,11 @@ const initDataTableAudit = async () => {
             },
             columnDefs: [
                 {
-                    targets: "_all", orderable: false, searchable: false,
+                    targets: "_all",
                     className: 'dt-center', targets: "_all"
                 },
-
             ],
+            order: [[3, 'desc']],
             "language": {
                 "lengthMenu": "Mostrar _MENU_ registros",
                 "zeroRecords": "No se encontraron resultados",

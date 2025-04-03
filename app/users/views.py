@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt
 from audit.models import AuditLog 
+from django.db.models import Q
 
 def is_staff_user(user):
     return user.is_staff  # Solo permite acceso a staff
@@ -31,65 +32,87 @@ def user(request):
 @login_required
 @user_passes_test(is_staff_user, login_url='home:dashboard')
 def list_users(request):
-    all_data = request.GET.get('all', False)
-
-    users = User.objects.filter(is_staff=False)
-
-    data = [{
-        'id': user.id,
-        'username': user.username,
-        'name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'is_active': user.is_active,
-    } for user in users]
-
-    if all_data:
-        response_data = {
-            'users': data,
-        }
-        return JsonResponse(response_data)
-
     try:
+        all_data = request.GET.get('all', False)
+
         draw = int(request.GET.get('draw', 0))
         start = int(request.GET.get('start', 0))
-        length = int(request.GET.get('length', 10))  # Número de registros por página
-    except (ValueError, TypeError):
-        return JsonResponse({'error': 'Invalid parameters'}, status=400)
+        length = int(request.GET.get('length', 10))
+        search_value = request.GET.get('search[value]', '').strip()
 
-    search_value = request.GET.get('search[value]', None)
+        order_column_index = request.GET.get('order[0][column]', '0')
+        order_direction = request.GET.get('order[0][dir]', 'asc')
 
-    if search_value:
-        users = users.filter(username__icontains=search_value)
+        column_map = {
+            '0': 'id',
+            '1': 'username',
+            '2': 'first_name',
+            '3': 'last_name',
+            '4': 'email',
+            '5': 'is_active',
+        }
 
-    total_records = users.count()
-    filtered_records = users.count()
+        order_field = column_map.get(order_column_index, 'id')
+        if order_direction == 'desc':
+            order_field = f'-{order_field}'
 
-    paginator = Paginator(users, length)
-    page = (start // length) + 1
+        users = User.objects.filter(is_staff=False).order_by(order_field)
 
-    try:
-        user_page = paginator.page(page)
-    except Exception:
-        user_page = paginator.page(1)
+        if search_value:
+            users = users.filter(
+                Q(username__icontains=search_value) |
+                Q(first_name__icontains=search_value) |
+                Q(last_name__icontains=search_value) |
+                Q(email__icontains=search_value) |
+                Q(id__icontains=search_value)
+            )
 
-    data = [{
-        'id': user.id,
-        'username': user.username,
-        'name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email,
-        'is_active': user.is_active,
-    } for user in user_page]
+        if all_data:
+            data = [{
+                'id': user.id,
+                'username': user.username,
+                'name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'is_active': user.is_active,
+            } for user in users]
+            
+            response_data = {
+                'users': data,
+            }
+            return JsonResponse(response_data)
 
-    response_data = {
-        'draw': draw,
-        'recordsTotal': total_records,
-        'recordsFiltered': filtered_records,
-        'data': data,
-    }
+        total_records = User.objects.filter(is_staff=False).count()
+        filtered_records = users.count()
 
-    return JsonResponse(response_data)
+        paginator = Paginator(users, length)
+        page_number = (start // length) + 1
+
+        try:
+            user_page = paginator.page(page_number)
+        except Exception:
+            user_page = paginator.page(1)
+
+        data = [{
+            'id': user.id,
+            'username': user.username,
+            'name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'is_active': user.is_active,
+        } for user in user_page]
+
+        response_data = {
+            'draw': draw,
+            'recordsTotal': total_records,
+            'recordsFiltered': filtered_records,
+            'data': data,
+        }
+
+        return JsonResponse(response_data)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
 @login_required
 def user_create(request):

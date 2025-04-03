@@ -21,8 +21,8 @@ const initDataTableuser = async () => {
             },
             columnDefs: [
                 {
-                    targets: [2], orderable: false, searchable: false,
-                    className: 'dt-center', targets: "_all"
+                    targets: [6], orderable: false, searchable: false,},
+                    {className: 'dt-center', targets: "_all"
                 },
             ],
             "language": {
