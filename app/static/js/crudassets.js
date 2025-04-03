@@ -202,22 +202,22 @@ async function generateAssetPDF() {
 
         // Animación de éxito
         pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
-        
+
         pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime}.pdf`);
-        
+
         setTimeout(() => {
             pdfButton.removeClass('pdf-button-success').prop('disabled', false);
         }, 2000);
 
     } catch (error) {
         console.error('Error generando PDF:', error);
-        
+
         // Animación de error
         pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
         setTimeout(() => {
             pdfButton.removeClass('pdf-button-error').prop('disabled', false);
         }, 2000);
-        
+
         Swal.fire('Error!', 'Error al generar el PDF.', 'error');
     }
 }
@@ -225,13 +225,13 @@ async function generateAssetPDF() {
 $(document).ready(function () {
     initDataTableAssets("datatable-assets");
 
-    $('#external-pdf-button').on('click', function() {
+    $('#external-pdf-button').on('click', function () {
         if ($(this).hasClass('pdf-button-loading')) return;
         $('#pdfOptionsModal').modal('show');
     });
 
     const pdfOptionsModal = $('#pdfOptionsModal');
-    
+
     function initializeSelect2() {
         $('.js-example-basic-multiple').select2({
             width: '100%',
@@ -257,9 +257,9 @@ $(document).ready(function () {
 
     pdfOptionsModal.on('shown.bs.modal', initializeSelect2);
     pdfOptionsModal.on('hidden.bs.modal', clearSelects);
-    
+
     // Botón de generación dentro del modal
-    $('#generatePdfButton').on('click', function() {
+    $('#generatePdfButton').on('click', function () {
         generateAssetPDF();
         pdfOptionsModal.modal('hide');
     });
@@ -313,7 +313,7 @@ function clearEditForm() {
     $('[name="observation"], #id_observation').val('');
     $('[name="prefix"], #id_prefix').val('').trigger('change');
     $('[name="status"], #id_status').val('True').trigger('change');
-    
+
     $('#edit-form').attr('action', '');
 }
 
@@ -331,11 +331,11 @@ $(document).on('click', '.btn-edit', function () {
 
     let prefix = '';
     let stateAssetValue = assetData.state_asset;
-    
+
     if (assetData.state_asset?.includes('-')) {
         const parts = assetData.state_asset.split('-');
-        prefix = parts[0] + '-';  
-        stateAssetValue = parts[1]; 
+        prefix = parts[0] + '-';
+        stateAssetValue = parts[1];
     }
 
     $('[name="fk_brand"], #id_fk_brand').val(assetData.fk_brand).trigger('change');
@@ -344,7 +344,7 @@ $(document).on('click', '.btn-edit', function () {
     $('[name="serial_number"], #id_serial_number').val(assetData.serial_number);
     $('[name="state_asset"], #id_state_asset').val(stateAssetValue || '');
     $('[name="observation"], #id_observation').val(assetData.observation);
-    
+
     $('[name="prefix"], #id_prefix').val(prefix).trigger('change');
     const statusValue = assetData.status ? 'True' : 'False';
     $('[name="status"], #id_status').val(statusValue).trigger('change');
@@ -414,3 +414,23 @@ function getCookie(name) {
 window.addEventListener('load', async () => {
     await initDataTableAssets("datatable-assets");
 });
+
+$(document).ready(function () {
+    // Inicializar Select2 en los campos de categoría y marca del modal "Registrar Bienes"
+    $('#fk_category_select').select2({
+        width: '100%',
+        dropdownParent: $('#register-modal'),
+        placeholder: "Seleccione una categoría", // Placeholder para categoría
+        theme: 'bootstrap-5',
+        allowClear: true // Permite limpiar la selección
+    });
+
+    $('#fk_brand_select').select2({
+        width: '100%',
+        dropdownParent: $('#register-modal'),
+        placeholder: "Seleccione una marca", // Placeholder para marca
+        theme: 'bootstrap-5',
+        allowClear: true // Permite limpiar la selección
+    });
+});
+

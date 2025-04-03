@@ -50,7 +50,8 @@ def logs_list(request):
                 Q(username__icontains=search_value) |
                 Q(action__icontains=search_value) |
                 Q(description__icontains=search_value) |
-                Q(model_name__icontains=search_value)
+                Q(model_name__icontains=search_value) |
+                Q(timestamp__icontains=search_value)
             )
 
         total_records = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset']).count()
