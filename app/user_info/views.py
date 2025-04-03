@@ -31,8 +31,9 @@ def user_info(request):
 def user_edit(request, user_id):
     # Asegúrate de que el usuario autenticado está editando su propia información
     if request.user.id != user_id:
-        messages.error(request, "No tienes permiso para editar este usuario.")
-        return HttpResponseRedirect(reverse('user_info:user_info'))
+        return JsonResponse({'status': 'error', 'message': 'Error: No tienes permiso para editar este usuario.'})
+        # messages.error(request, "No tienes permiso para editar este usuario.")
+        # return HttpResponseRedirect(reverse('user_info:user_info'))
 
     user = request.user  # Obtén el usuario autenticado
     FIELD_NAMES = {
@@ -98,14 +99,21 @@ def user_edit(request, user_id):
                     object_id=updated_user.id,
                     description=audit_message
                 )
-                messages.success(request, 'La información del usuario se ha actualizado correctamente.')
+                return JsonResponse({'status': 'success', 'message': 'El usuario se ha actualizado correctamente.'})
+                #messages.success(request, 'La información del usuario se ha actualizado correctamente.')
             except Exception as e:
-                messages.error(request, f'Error inesperado: {str(e)}')
+                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                #messages.error(request, f'Error inesperado: {str(e)}')
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'Error en el campo {field}: {error}')
-        return HttpResponseRedirect(reverse('user_info:user_info'))  # Redirige a la vista principal
+            errors = []
+            for field, error_list in form.errors.items():
+                for error in error_list:
+                    errors.append(f'Error en el campo {field}: {error}')
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+        #     for field, errors in form.errors.items():
+        #         for error in errors:
+        #             messages.error(request, f'Error en el campo {field}: {error}')
+        # return HttpResponseRedirect(reverse('user_info:user_info'))  # Redirige a la vista principal
     else:
         form = EditUserInfo(instance=user)  # Carga el formulario con los datos actuales del usuario
     return render(request, 'user_info.html', {
