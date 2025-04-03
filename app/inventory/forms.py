@@ -40,7 +40,7 @@ class AssetEdit(forms.ModelForm):
     )
     
     prefix = forms.ChoiceField(
-        choices=[('BBVA-', 'BBVA'), ('BE-', 'BE')],
+        choices=[('BBVA-', 'BBVA'), ('BE-', 'BE'), ('ILE-', 'ILE')],
         widget=forms.Select(attrs={
             'class': 'form-control',
             'id': 'id_prefix'
