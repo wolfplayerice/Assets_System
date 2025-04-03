@@ -5,38 +5,44 @@
 
 <div class="row">
     <div class="col-md-12">
-        <div class="card">
+        <div class="card custom-card-height">
             <div class="card-header">
                 <h5 class="card-title">Respaldos de Base de Datos</h5>
             </div>
-
-                <div class="flex-row d-flex btn-add-pdf mb-3">
-                    <form id="create-backup-form" method="post" class="d-inline me-2">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-plus-circle"></i> Crear Nuevo Respaldo
-                        </button>
-                    </form>
-                    <button id="external-pdf-button" class="btn btn-danger">
-                        <i class="fas fa-file-pdf"></i> Generar Reporte PDF
-                    </button>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="flex-row d-flex btn-add-pdf mb-3">
+                            <form id="create-backup-form" method="post" class="d-inline me-2">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus-circle"></i> Crear Nuevo Respaldo
+                                </button>
+                            </form>
+                            <button id="external-pdf-button" class="btn btn-danger">
+                                <i class="fas fa-file-pdf"></i> Generar Reporte PDF
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table id="datatable-backups" class="table table-hover" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Nombre del Respaldo</th>
+                                        <th class="text-center">Tamaño</th>
+                                        <th class="text-center">Fecha</th>
+                                        <th class="text-center">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+            </div>
+                
 
-                <div class="table-responsive">
-                    <table id="datatable-backups" class="table table-hover" style="width:100%">
-                        <thead class="thead-light">
-                            <tr>
-                                <th class="text-center">Nombre del Respaldo</th>
-                                <th class="text-center">Tamaño</th>
-                                <th class="text-center">Fecha</th>
-                                <th class="text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Datos cargados via AJAX -->
-                        </tbody>
-                    </table>
-                </div>
+                
             </div>
         </div>
     </div>
