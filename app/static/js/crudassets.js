@@ -435,3 +435,59 @@ $(document).ready(function () {
     });
 });
 
+$(document).ready(function () {
+    // Inicializar Select2 en los campos de categoría y marca del modal "Editar Bienes"
+    $('#edit_fk_category_select').select2({
+        width: '100%',
+        dropdownParent: $('#editModal'),
+        placeholder: "Seleccione una categoría", // Placeholder para categoría
+        theme: 'bootstrap-5',
+        allowClear: true // Permite limpiar la selección
+    });
+
+    $('#edit_fk_brand_select').select2({
+        width: '100%',
+        dropdownParent: $('#editModal'),
+        placeholder: "Seleccione una marca", // Placeholder para marca
+        theme: 'bootstrap-5',
+        allowClear: true // Permite limpiar la selección
+    });
+});
+
+// Al abrir el modal de edición, cargar los valores seleccionados
+$(document).on('click', '.btn-edit', function () {
+    const assetId = $(this).data('id');
+    const assetData = {
+        fk_category: $(this).data('category-id'),
+        fk_brand: $(this).data('brand-id'),
+    };
+
+    // Establecer los valores seleccionados en los campos Select2
+    $('#edit_fk_category_select').val(assetData.fk_category).trigger('change');
+    $('#edit_fk_brand_select').val(assetData.fk_brand).trigger('change');
+
+    // Mostrar el modal
+    $('#editModal').modal('show');
+});
+
+$(document).ready(function () {
+  // Obtén referencias a los campos usando los ids personalizados
+  const $statusField = $('#status_select');  // Campo de status con id personalizado
+  const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
+
+  // Función para mostrar u ocultar el campo de observaciones
+  function toggleObservationsField() {
+    if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
+      $observationsField.show();  // Muestra el campo
+    } else {  // Si se selecciona "Operativo"
+      $observationsField.hide();  // Oculta el campo
+    }
+  }
+
+  // Escucha cambios en el campo de status
+  $statusField.on('change', toggleObservationsField);
+
+  // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
+  toggleObservationsField();
+});
+

@@ -64,7 +64,8 @@
               </table>
 
               <!-- Modal para registrar bienes -->
-              <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel" aria-hidden="true">
+              <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -156,37 +157,52 @@
                 </div>
               </div>
 
+              <!-- Modal editar bienes -->
               <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Editar Bien</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="edit-form" method="post">
-                                {% csrf_token %}
-                                {% for field in form %}
-                                <div class="form-group form-floating mb-3">
-                                    {% if field.field.widget.input_type == 'select' %}
-                                    {{ field|add_class:"form-select select2" }}
-                                    {% else %}
-                                    {{ field|add_class:"form-control" }}
-                                    {% endif %}
-                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                </div>
-                                {% endfor %}
-                                <input type="hidden" name="asset_id" value="{{ asset_id }}">
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                            <button type="submit" form="edit-form" class="btn btn-primary">Guardar</button>
-                        </div>
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Editar Bien</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
+                    <div class="modal-body">
+                      <form id="edit-form" method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                        <div class="form-group form-floating mb-3">
+                          {% if field.name == 'fk_category' %}
+                          <label for="edit_fk_category_select">{{ field.label }}</label>
+                          <select id="edit_fk_category_select" name="fk_category" class="form-select">
+                            <option value="" selected disabled>Seleccione una categoría</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
+                          </select>
+                          {% elif field.name == 'fk_brand' %}
+                          <label for="edit_fk_brand_select">{{ field.label }}</label>
+                          <select id="edit_fk_brand_select" name="fk_brand" class="form-select">
+                            <option value="" selected disabled>Seleccione una marca</option>
+                            {% for brand in brands %}
+                            <option value="{{ brand.id }}">{{ brand.name }}</option>
+                            {% endfor %}
+                          </select>
+                          {% else %}
+                          {{ field|add_class:"form-control" }}
+                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                          {% endif %}
+                        </div>
+                        {% endfor %}
+                        <input type="hidden" name="asset_id" value="{{ asset_id }}">
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                      <button type="submit" form="edit-form" class="btn btn-primary">Guardar</button>
+                    </div>
+                  </div>
                 </div>
-            </div>
-                        
+              </div>
+
 
               <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
                 aria-hidden="true">
@@ -255,28 +271,6 @@
               </div>
 
               <script>
-                $(document).ready(function () {
-                  // Obtén referencias a los campos usando los ids personalizados
-                  const $statusField = $('#status_select');  // Campo de status con id personalizado
-                  const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
-
-                  // Función para mostrar u ocultar el campo de observaciones
-                  function toggleObservationsField() {
-                    if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
-                      $observationsField.show();  // Muestra el campo
-                    } else {  // Si se selecciona "Operativo"
-                      $observationsField.hide();  // Oculta el campo
-                    }
-                  }
-
-                  // Escucha cambios en el campo de status
-                  $statusField.on('change', toggleObservationsField);
-
-                  // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
-                  toggleObservationsField();
-                });
-              </script>
-              <script>
                 {% if messages %}
                 {% for message in messages %}
                 {% if message.tags == 'success' %}
@@ -294,10 +288,11 @@
                 {% endfor %}
                 {% endif %}
               </script>
+
               {% endblock %}
 
               {% block extra_js %}
-              
+
               <script src="{% static 'js/crudassets.js' %}"></script>
               <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
               <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
