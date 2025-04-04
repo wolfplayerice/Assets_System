@@ -10,11 +10,13 @@ import base64
 import hashlib
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 import logging
 from audit.models import AuditLog 
+from django.contrib.auth import logout
 
-
+def is_staff_user(user):
+    return user.is_staff  # Solo permite acceso a staff
 logger = logging.getLogger(__name__)
 
 def get_encryption_key():
@@ -52,6 +54,7 @@ def get_backups_dir():
     return backups_dir
 
 @login_required
+@user_passes_test(is_staff_user, login_url='home:dashboard')
 def backup_list(request):
     return render(request, 'backup.html', {
         'db_name': settings.DATABASES['default']['NAME'],
@@ -59,7 +62,7 @@ def backup_list(request):
     })
 
 @login_required
-@login_required
+@user_passes_test(is_staff_user, login_url='home:dashboard')
 def list_backups(request):
     try:
         all_data = request.GET.get('all', False)
@@ -231,30 +234,30 @@ def create_backup(request):
     
     return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
 
+
 @login_required
 def restore_backup(request):
-    if request.method == 'POST':
+    if request.method != 'POST':
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Método no permitido'
+        }, status=405)
+
+    try:
+        backup_path = request.POST.get('backup_path')
+        if not backup_path or not os.path.exists(backup_path):
+            return JsonResponse({
+                'status': 'error',
+                'message': 'Archivo de respaldo no encontrado'
+            }, status=404)
+
+        db_settings = settings.DATABASES['default']
+        
+        temp_restore_path = None
         try:
-            backup_path = request.POST.get('backup_path')
-            if not backup_path or not os.path.exists(backup_path):
-                return JsonResponse({
-                    'status': 'error',
-                    'message': 'Archivo de respaldo no encontrado'
-                }, status=404)
-            
-            db_settings = settings.DATABASES['default']
-            db_name = db_settings['NAME']
-            db_user = db_settings['USER']
-            db_pass = db_settings['PASSWORD']
-            db_host = db_settings.get('HOST', 'localhost')
-            db_port = db_settings.get('PORT', '3306')
-            
-            backups_dir = get_backups_dir()
-            temp_restore_path = os.path.join(backups_dir, 'temp_restore.sql')
-            
-            is_encrypted = backup_path.endswith('.enc') or backup_path.endswith('.crypt')
-            
+            is_encrypted = backup_path.endswith(('.enc', '.crypt'))
             if is_encrypted:
+                temp_restore_path = os.path.join(get_backups_dir(), 'temp_restore.sql')
                 if not decrypt_file(backup_path, temp_restore_path):
                     return JsonResponse({
                         'status': 'error',
@@ -263,46 +266,45 @@ def restore_backup(request):
                 restore_file = temp_restore_path
             else:
                 restore_file = backup_path
-            
+
             cmd = [
                 'mysql',
-                f'--host={db_host}',
-                f'--port={db_port}',
-                f'--user={db_user}',
-                db_name
+                f'--host={db_settings.get("HOST", "localhost")}',
+                f'--port={db_settings.get("PORT", "3306")}',
+                f'--user={db_settings["USER"]}',
+                db_settings['NAME']
             ]
-            
+
             env = os.environ.copy()
-            env['MYSQL_PWD'] = db_pass
-            
+            env['MYSQL_PWD'] = db_settings['PASSWORD']
+
             with open(restore_file, 'r') as f:
                 subprocess.run(cmd, stdin=f, env=env, check=True)
-            
-            if is_encrypted and os.path.exists(temp_restore_path):
+
+            if temp_restore_path and os.path.exists(temp_restore_path):
                 os.remove(temp_restore_path)
-            
+
+            logout(request)
+
             return JsonResponse({
                 'status': 'success',
-                'message': f'Base de datos restaurada desde: {os.path.basename(backup_path)}'
+                'message': 'Base de datos restaurada exitosamente',
+                'redirect_to_login': True
             })
-            
+
         except subprocess.CalledProcessError as e:
-            logger.error(f"Restore process error: {str(e)}")
-            return JsonResponse({
-                'status': 'error',
-                'message': 'Error al ejecutar mysql'
-            }, status=500)
-            
-        except Exception as e:
-            logger.error(f"Restore error: {str(e)}")
-            if 'temp_restore_path' in locals() and os.path.exists(temp_restore_path):
-                os.remove(temp_restore_path)
-            return JsonResponse({
-                'status': 'error',
-                'message': f'Error al restaurar: {str(e)}'
-            }, status=500)
-    
-    return JsonResponse({'status': 'error', 'message': 'Método no permitido'}, status=405)
+            logger.error(f"Error en proceso de restauración: {str(e)}")
+            raise Exception("Error al ejecutar el comando de restauración")
+
+    except Exception as e:
+        logger.error(f"Error general en restauración: {str(e)}")
+        if 'temp_restore_path' in locals() and temp_restore_path and os.path.exists(temp_restore_path):
+            os.remove(temp_restore_path)
+        
+        return JsonResponse({
+            'status': 'error',
+            'message': f'Error al restaurar: {str(e)}'
+        }, status=500)
 
 @login_required
 def delete_backup(request):
