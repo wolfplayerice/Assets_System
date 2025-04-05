@@ -4,37 +4,40 @@ from django.contrib import messages
 from django.urls import reverse
 from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.contrib.sessions.models import Session
 
 class UserRestrictMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
+        # Excluir el admin de esta verificación
+        if request.path.startswith('/admin/'):
+            return self.get_response(request)
+
+    def __call__(self, request):
+        # Procesar la respuesta primero para asegurar que la sesión esté guardada
         response = self.get_response(request)
         
         if request.user.is_authenticated:
-            cache_key = f"user_{request.user.pk}_active_session"
-            current_session = request.session.session_key
-            stored_session = cache.get(cache_key)
+            current_session_key = request.session.session_key
+            user_sessions = Session.objects.filter(
+                session_data__contains=f'"_auth_user_id":{request.user.pk}'
+            ).exclude(session_key=current_session_key)
             
-            if stored_session and stored_session != current_session:
-                # Preparamos la respuesta para forzar recarga
-                logout(request)
-                messages.error(request, 'Sesión cerrada: Se detectó un nuevo acceso desde otro dispositivo')
+            if user_sessions.exists():
+                # Cerrar otras sesiones
+                for session in user_sessions:
+                    session.delete()
                 
-                # Respuesta especial para recargar
+                # Si hay sesiones previas, cerrar la actual también
+                logout(request)
                 if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-                    # Si es AJAX, devolvemos JSON
                     return JsonResponse({
                         'force_reload': True,
                         'login_url': reverse('login') + '?session_terminated=1'
                     }, status=403)
-                else:
-                    # Si es petición normal, redirigimos directamente
-                    return redirect(reverse('login') + '?session_terminated=1')
-            
-            # Actualizar siempre con la sesión actual
-            cache.set(cache_key, current_session, 900)
+                return redirect(reverse('login') + '?session_terminated=1')
 
         return response
     
