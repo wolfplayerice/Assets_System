@@ -154,7 +154,7 @@ LOGOUT_REDIRECT_URL = 'login'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  
-SESSION_COOKIE_NAME = 'your_app_sessionid' 
+SESSION_COOKIE_NAME = 'app_sessionid' 
 
 CACHES = {
     'default': {
