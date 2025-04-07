@@ -55,7 +55,10 @@
             <i class="fas fa-user-circle fa-2x img-circle elevation-2"></i>
           </div>
           <div class="info">
-            <a href="{% url 'home:user_info' %}" class="d-block user-name">{{ first_name|slice:":1" }}. {{ last_name }}</a>
+            <a href="{% url 'home:user_info' %}" class="d-block user-name">
+              <span class="font-weight-bold">{{ first_name|slice:":1" }}. {{ last_name }}</span>
+              <i class="fas fa-pencil-alt ml-1"></i>
+            </a>
           </div>
         </div>
         <nav class="mt-2">
