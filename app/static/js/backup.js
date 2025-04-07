@@ -242,7 +242,7 @@ $(document).on('click', '.restore-btn', function () {
     Swal.fire({
         title: '¿Restaurar respaldo?',
         html: `Estás a punto de restaurar: <b>${backupName}</b><br><br>
-               <span class="text-danger">¡ADVERTENCIA! Esto sobrescribirá la base de datos actual.</span>`,
+            <span class="text-danger">¡ADVERTENCIA! Esto sobrescribirá la base de datos actual.</span>`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
@@ -258,30 +258,33 @@ $(document).on('click', '.restore-btn', function () {
                 allowOutsideClick: false,
                 didOpen: () => {
                     Swal.showLoading();
-                }
-            });
-
-            $.ajax({
-                url: restoreBackupUrl,
-                type: 'POST',
-                data: {
-                    'backup_path': backupPath,
-                    'csrfmiddlewaretoken': getCookie('csrftoken')
-                },
-                success: (response) => {
-                    Swal.fire({
-                        title: '¡Éxito!',
-                        text: response.message,
-                        icon: 'success'
+                    
+                    $.ajax({
+                        url: restoreBackupUrl,
+                        type: 'POST',
+                        data: {
+                            'backup_path': backupPath,
+                            'csrfmiddlewaretoken': getCookie('csrftoken')
+                        },
+                        success: (response) => {
+                            Swal.fire({
+                                title: '¡Éxito!',
+                                text: 'La base de datos se restauró correctamente. Serás redirigido para iniciar sesión nuevamente.',
+                                icon: 'success'
+                            }).then(() => {
+                                sessionStorage.setItem('restore_success', 'true');
+                                window.location.href = '/login/';
+                            });
+                        },
+                        error: (jqXHR) => {
+                            Swal.hideLoading();
+                            let errorMsg = jqXHR.responseJSON?.message || 'Error al restaurar';
+                            if (jqXHR.status === 400) {
+                                errorMsg = 'Error de desencriptación: ' + errorMsg;
+                            }
+                            Swal.fire('Error', errorMsg, 'error');
+                        }
                     });
-                    dataTableBackups.ajax.reload(null, false);
-                },
-                error: (jqXHR) => {
-                    let errorMsg = jqXHR.responseJSON?.message || 'Error al restaurar';
-                    if (jqXHR.status === 400) {
-                        errorMsg = 'Error de desencriptación: ' + errorMsg;
-                    }
-                    Swal.fire('Error', errorMsg, 'error');
                 }
             });
         }
