@@ -147,7 +147,7 @@ async function generateAssetPDF() {
         const docDefinition = {
             pageSize: 'A4',
             pageOrientation: 'landscape',
-            pageMargins: [40, 80, 40, 40],
+            pageMargins: [40, 80, 40, 120], // Aumenté el margen inferior para espacio de firmas
             header: {
                 columns: [
                     { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
@@ -190,16 +190,42 @@ async function generateAssetPDF() {
             styles: {
                 header: { fontSize: 18, bold: true, color: '#2c3e50' },
                 tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
-                footer: { fontSize: 10, alignment: 'center', color: '#666666' }
+                footer: { fontSize: 10, color: '#666666' },
+                signature: { fontSize: 12, margin: [0, 5, 0, 0] }
             },
             defaultStyle: { fontSize: 12, color: '#2c3e50' },
-            footer: (currentPage, pageCount) => ({
-                text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                style: 'footer',
-                margin: [0, 10, 0, 0]
-            })
+            footer: function(currentPage, pageCount) {
+                return [
+                    {
+                        table: {
+                            widths: ['*', '*'],
+                            body: [
+                                [
+                                    { 
+                                        text: 'De quien es:\n\n\n_________________________\nNombre y Apellido\nCargo', 
+                                        alignment: 'center', 
+                                        style: 'signature'
+                                    },
+                                    { 
+                                        text: 'Nombres y Apellidos:\n\n\n_________________________\nGUSTAVO JOSE DELGADO HERRERA\nJEFE DE LA UNIDAD', 
+                                        alignment: 'center', 
+                                        style: 'signature'
+                                    }
+                                ]
+                            ]
+                        },
+                        layout: 'noBorders',
+                        margin: [0, 0, 0, 0]
+                    },
+                    { 
+                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                        style: 'footer',
+                        alignment: 'center',
+                        margin: [0, 0, 0, 0]
+                    }
+                ];
+            }
         };
-
         // Animación de éxito
         pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
 
