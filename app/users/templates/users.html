@@ -115,53 +115,32 @@
                       <!-- Contenido del modal -->
                       <form action="{% url 'users:create_user' %}" method="post">
                         {% csrf_token %}
+                        {% for field in user_form %}
                         <div class="form-group form-floating mb-3">
-                          <input type="text" class="form-control" id="register-username" name="username" required>
-                          <label for="register-username">Nombre de usuario</label>
-                        </div>
-                        <div class="form-group form-floating mb-3">
-                          <input type="text" class="form-control" id="register-first_name" name="first_name" required>
-                          <label for="register-first_name">Nombre</label>
-                        </div>
-                        <div class="form-group form-floating mb-3">
-                          <input type="text" class="form-control" id="register-last_name" name="last_name" required>
-                          <label for="register-last_name">Apellido</label>
-                        </div>
-                        <div class="form-group form-floating mb-3">
-                          <input type="email" class="form-control" id="register-email" name="email" required>
-                          <label for="register-email">Correo electrónico</label>
-                        </div>
-                        <div class="form-group form-floating mb-3 position-relative">
-                          <input type="password" class="form-control pe-5" id="add-user-password" name="password"
-                            required>
-                          <label for="add-user-password">Contraseña</label>
+                          {% if field.field.widget.input_type == 'text' %}
+                          {{ field|add_class:"form-control" }}
+                          {% elif field.field.widget.input_type == 'password' %}
                           <button type="button"
                             class="btn btn-outline-secondary toggle-password position-absolute top-50 end-0 translate-middle-y"
-                            data-target="#add-user-password" style="border: none; background: none;">
-                            <i class="fas fa-eye"></i>
+                            id="toggle-password" style="border: none; background: none;">
+                            <i class="fas fa-eye" id="password-icon"></i>
                           </button>
+                          {{ field|add_class:"form-control" }}
+                          {% elif field.field.widget.input_type == 'email' %}
+                          {{ field|add_class:"form-control" }}
+                          {% endif %}
+                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         </div>
-                        <div class="form-group form-floating mb-3 position-relative">
-                          <input type="password" class="form-control pe-5" id="add-user-password2" name="password2"
-                            required>
-                          <label for="add-user-password2">Confirmar Contraseña</label>
-                          <button type="button"
-                            class="btn btn-outline-secondary toggle-password position-absolute top-50 end-0 translate-middle-y"
-                            data-target="#add-user-password2" style="border: none; background: none;">
-                            <i class="fas fa-eye"></i>
-                          </button>
-                        </div>
+                        {% endfor %}
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                           <input type="submit" value="Añadir" class="btn btn-primary">
                         </div>
-                      </form>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Modal para mostrar el mensaje
+                <!-- Modal para mostrar el mensaje
               <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -211,13 +190,13 @@
                 {% endfor %}
                 {% endif %}
               </script> -->
-              {% endblock %}
+                {% endblock %}
 
-              {% block extra_js %}
-              <script src="{% static 'js/cruduser.js' %}"></script>
-              <script src="{% static 'js/p.js' %}"></script>
-
-
+                {% block extra_js %}
+                <script src="{% static 'js/cruduser.js' %}"></script>
+                <script src="{% static 'js/p.js' %}"></script>
 
 
-              {% endblock %}
+
+
+                {% endblock %}
