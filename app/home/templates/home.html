@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,20 +17,23 @@
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <link href="{% static 'css/DataTables/datatables.css' %} " rel="stylesheet">
   <link href="{% static 'css/DataTables/datatables.min.css' %} " rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/home.css' %} " rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+    rel="stylesheet" />
 
   {% if request.resolver_match.url_name == "user_info" %}
-   <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
+  <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
   {% endif %}
-  
+
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
   <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
-  
+
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
   <div class="wrapper">
     <nav class="main-header navbar navbar-expand navbar-dark bg-dark">
@@ -39,15 +43,30 @@
         </li>
         <li class="nav-item">
           <button id="dark-mode-toggle" class="btn btn-sm btn-dark">
-              <i class="fas fa-moon"></i>
+            <i class="fas fa-moon"></i>
           </button>
-      </li>
+        </li>
       </ul>
     </nav>
+    <style>
+      .brand-link {
+        height: 56px;
+        /* Tamaño predeterminado */
+        transition: height 0.3s ease;
+      }
+
+      .brand-link.collapsed {
+        height: 40px;
+        /* Tamaño reducido cuando el menú está colapsado */
+      }
+      .brand-icon{
+        margin-left: 5px;
+      }
+    </style>
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <a href="{% url 'home:dashboard' %}" class="brand-link d-flex align-items-center">
-        <img src="{% static 'img/broba_blanco.png' %}" alt="Inventario Logo" class="brand-image img-circle elevation-1" style="opacity: .8">
-        <span class="brand-text font-weight-light ml-2">Inventario_carmbiar_nombre</span>
+        <img src="{% static 'img/icono.png' %}" alt="" width="40" class="brand-icon">
+        <img src="{% static 'img/letra.png' %}" alt="" width="120" class="brand-text">
       </a>
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
@@ -107,7 +126,7 @@
                 <p>Base de datos</p>
               </a>
             </li>
-          {% endif %}
+            {% endif %}
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link" id="nav-cerrar-sesion">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -133,16 +152,18 @@
         </div>
       </section>
 
-  </div>
-  <footer class="main-footer">
-    <strong>Copyright &copy;Inventario_carmbiar_nombre</strong>
-    <div class="float-right d-none d-sm-inline-block"></div>
-  </footer>
+    </div>
+    <footer class="main-footer">
+      <strong>Copyright &copy;Inventario_carmbiar_nombre</strong>
+      <div class="float-right d-none d-sm-inline-block"></div>
+    </footer>
   </div>
 
   <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
   <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
   <script src="{% static 'assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
   <script src="{% static 'assets/dist/js/adminlte.js' %}"></script>
   <script src="{% static 'js/sweetalert2@11.js' %}"></script>
@@ -175,66 +196,94 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const darkModeToggle = document.getElementById("dark-mode-toggle");
-        const body = document.body;
-        const html = document.documentElement;
-        const dataTables = document.querySelectorAll(".dataTable"); // Selecciona todas las tablas con DataTables
+      const darkModeToggle = document.getElementById("dark-mode-toggle");
+      const body = document.body;
+      const html = document.documentElement;
+      const dataTables = document.querySelectorAll(".dataTable"); // Selecciona todas las tablas con DataTables
 
-        function applyDarkMode(enabled) {
-            if (enabled) {
-                body.classList.add("dark-mode");
-                html.classList.add("dark");
-                html.setAttribute("data-bs-theme", "dark");
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                dataTables.forEach(table => table.classList.add("table-dark")); // Aplica estilo oscuro a DataTables
-                localStorage.setItem("dark-mode", "enabled");
-            } else {
-                body.classList.remove("dark-mode");
-                html.classList.remove("dark");
-                html.setAttribute("data-bs-theme", "light");
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                dataTables.forEach(table => table.classList.remove("table-dark")); // Quita el estilo oscuro de DataTables
-                localStorage.setItem("dark-mode", "disabled");
-            }
+      function applyDarkMode(enabled) {
+        if (enabled) {
+          body.classList.add("dark-mode");
+          html.classList.add("dark");
+          html.setAttribute("data-bs-theme", "dark");
+          darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+          dataTables.forEach(table => table.classList.add("table-dark")); // Aplica estilo oscuro a DataTables
+          localStorage.setItem("dark-mode", "enabled");
+        } else {
+          body.classList.remove("dark-mode");
+          html.classList.remove("dark");
+          html.setAttribute("data-bs-theme", "light");
+          darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+          dataTables.forEach(table => table.classList.remove("table-dark")); // Quita el estilo oscuro de DataTables
+          localStorage.setItem("dark-mode", "disabled");
         }
+      }
 
-        // Cargar modo guardado en localStorage
-        const darkModeEnabled = localStorage.getItem("dark-mode") === "enabled";
-        applyDarkMode(darkModeEnabled);
+      // Cargar modo guardado en localStorage
+      const darkModeEnabled = localStorage.getItem("dark-mode") === "enabled";
+      applyDarkMode(darkModeEnabled);
 
-        // Evento de cambio de modo
-        darkModeToggle.addEventListener("click", function () {
-            applyDarkMode(!body.classList.contains("dark-mode"));
-        });
+      // Evento de cambio de modo
+      darkModeToggle.addEventListener("click", function () {
+        applyDarkMode(!body.classList.contains("dark-mode"));
+      });
     });
   </script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Verificar si debemos forzar recarga
-        if (new URLSearchParams(window.location.search).has('session_terminated')) {
-            window.location.href = "{% url 'login' %}?session_terminated=1";
-        }
-        
-        // Manejar respuestas AJAX
-        $(document).ajaxComplete(function(event, xhr) {
-            try {
-                const response = JSON.parse(xhr.responseText);
-                if (response.force_reload) {
-                    window.location.href = response.login_url;
-                }
-            } catch(e) {}
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+      // Verificar si debemos forzar recarga
+      if (new URLSearchParams(window.location.search).has('session_terminated')) {
+        window.location.href = "{% url 'login' %}?session_terminated=1";
+      }
+
+      // Manejar respuestas AJAX
+      $(document).ajaxComplete(function (event, xhr) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.force_reload) {
+            window.location.href = response.login_url;
+          }
+        } catch (e) { }
+      });
     });
   </script>
 
   <script>
-    window.onpageshow = function(event) {
-    if (event.persisted) {
+    window.onpageshow = function (event) {
+      if (event.persisted) {
         window.location.reload();
-    }
-};
+      }
+    };
   </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const collapseButton = document.getElementById('collapse-menu-button');
+      const brandLink = document.querySelector('.brand-link');
+      const brandText = document.querySelector('.brand-text');
 
+      // Escuchar el evento de clic en el botón de colapso
+      collapseButton.addEventListener('click', function () {
+        const sidebar = document.querySelector('.main-sidebar');
+        if (sidebar.classList.contains('sidebar-collapse')) {
+          brandText.style.display = 'none'; // Ocultar la letra
+          brandLink.classList.add('collapsed'); // Reducir el tamaño del contenedor
+        } else {
+          brandText.style.display = 'inline'; // Mostrar la letra
+          brandLink.classList.remove('collapsed'); // Restaurar el tamaño del contenedor
+        }
+      });
+
+      // Configuración inicial al cargar la página
+      const sidebar = document.querySelector('.main-sidebar');
+      if (sidebar.classList.contains('sidebar-collapse')) {
+        brandText.style.display = 'none';
+        brandLink.classList.add('collapsed');
+      } else {
+        brandText.style.display = 'inline';
+        brandLink.classList.remove('collapsed');
+      }
+    });
+  </script>
 </body>
 
 </html>
