@@ -524,7 +524,7 @@ $(document).on('submit', '#register-modal form', function (e) {
     });
 });
 
-window.addEventListener('load', initDataTableCategory);
+window.addEventListener('load', initDataTableuser);
 
 document.addEventListener('DOMContentLoaded', function () {
     // Delegación de eventos para manejar los botones de "mostrar contraseña"

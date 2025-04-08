@@ -1,11 +1,24 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Profile
 
 class CreateUser(UserCreationForm):
     first_name = forms.CharField(max_length=255, required=True, label='Nombre')
     last_name = forms.CharField(max_length=255, required=True, label='Apellido')
     email = forms.EmailField(max_length=255, required=True, label='Correo electrónico')
+    
+    # Campos de seguridad (vinculados al Profile)
+    security_question = forms.ChoiceField(
+        label="Pregunta de seguridad",
+        choices=Profile.SECURITY_QUESTIONS,  # Asegúrate de que esté importado
+        widget=forms.Select(attrs={'class': 'form-control'}),
+    )
+    security_answer = forms.CharField(
+        label="Respuesta",
+        widget=forms.TextInput(attrs={'placeholder': 'Ej: Max'}),
+        strip=True,
+    )
 
     class Meta:
         model = User
@@ -13,25 +26,19 @@ class CreateUser(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        # Establecer valores predeterminados para campos ocultos
-        user.is_active = True  # Por ejemplo, activar el usuario por defecto
-        user.is_staff = False  # No es staff por defecto
-        user.is_superuser = False  # No es superusuario por defecto
+        user.is_active = True
+        user.is_staff = False
+        user.is_superuser = False
+        
         if commit:
             user.save()
+            # Crear y guardar el Profile con los campos de seguridad
+            profile = Profile.objects.create(user=user)
+            profile.security_question = self.cleaned_data['security_question']
+            profile.set_security_answer(self.cleaned_data['security_answer'])
         return user
 
 class EditUser(forms.ModelForm):
-    password = forms.CharField(
-        required=False,
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'id': 'edit-user-password'}),
-        label="Nueva contraseña"
-    )
-    password2 = forms.CharField(
-        required=False,
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'id': 'edit-user-password2'}),
-        label="Confirmar nueva contraseña"
-    )
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
@@ -59,3 +66,17 @@ class EditUser(forms.ModelForm):
         if commit:
             user.save()
         return user
+    
+class EditProfile(forms.ModelForm):  # Nuevo formulario para Profile
+    security_question = forms.ChoiceField(
+        choices=Profile.SECURITY_QUESTIONS,
+        label="Pregunta de seguridad"
+    )
+    security_answer = forms.CharField(
+        label="Respuesta de seguridad",
+        strip=True
+    )
+
+    class Meta:
+        model = Profile
+        fields = ['security_question', 'security_answer']

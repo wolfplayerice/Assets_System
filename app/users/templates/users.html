@@ -68,6 +68,25 @@
                           <label for="edit-user-email">Correo electrónico</label>
                         </div>
                         <div class="form-group form-floating mb-3">
+                          <select class="form-control" id="edit-user-question" name="security_question" required>
+                            <option value="">Seleccione una pregunta</option>
+                            <option value="1">¿Cuál es el nombre de tu primera mascota?</option>
+                            <option value="2">¿En qué ciudad naciste?</option>
+                            <option value="3">¿Cuál es el nombre de tu madre?'</option>
+                            <option value="4">¿Cuál fue tu primer colegio?</option>
+                            <option value="5">¿Cuál es tu comida favorita?</option>
+                            <option value="6">¿Cómo se llama tu mejor amigo de la infancia?</option>
+                            <option value="7">¿Cuál es tu película favorita?</option>
+                            <option value="8">¿Qué deporte practicabas de niño?</option>
+                          </select>
+                          <label for="edit-user-question">Pregunta de seguridad</label>
+                        </div>
+                        
+                        <div class="form-group form-floating mb-3">
+                          <input type="text" class="form-control" id="edit-user-answer" name="security_answer" required placeholder="Ej: Max">
+                          <label for="edit-user-answer">Respuesta de seguridad</label>
+                        </div>
+                        <div class="form-group form-floating mb-3">
                           <div class="form-group form-floating mb-3 position-relative">
                             <input type="password" class="form-control pe-5" id="edit-password" name="password">
                             <label for="edit-password">Nueva contraseña (opcional)</label>
@@ -130,6 +149,25 @@
                         <div class="form-group form-floating mb-3">
                           <input type="email" class="form-control" id="register-email" name="email" required>
                           <label for="register-email">Correo electrónico</label>
+                        </div>
+                        <div class="form-group form-floating mb-3">
+                          <select class="form-control" id="edit-user-question" name="security_question" required>
+                            <option value="">Seleccione una pregunta</option>
+                            <option value="1">¿Cuál es el nombre de tu primera mascota?</option>
+                            <option value="2">¿En qué ciudad naciste?</option>
+                            <option value="3">¿Cuál es el nombre de tu madre?'</option>
+                            <option value="4">¿Cuál fue tu primer colegio?</option>
+                            <option value="5">¿Cuál es tu comida favorita?</option>
+                            <option value="6">¿Cómo se llama tu mejor amigo de la infancia?</option>
+                            <option value="7">¿Cuál es tu película favorita?</option>
+                            <option value="8">¿Qué deporte practicabas de niño?</option>
+                          </select>
+                          <label for="edit-user-question">Pregunta de seguridad</label>
+                        </div>
+                        
+                        <div class="form-group form-floating mb-3">
+                          <input type="text" class="form-control" id="edit-user-answer" name="security_answer" required placeholder="Ej: Max">
+                          <label for="edit-user-answer">Respuesta de seguridad</label>
                         </div>
                         <div class="form-group form-floating mb-3 position-relative">
                           <input type="password" class="form-control pe-5" id="add-user-password" name="password"

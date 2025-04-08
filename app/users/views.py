@@ -118,9 +118,12 @@ def list_users(request):
 def user_create(request):
     if request.method == "POST":
         user_create_form = CreateUser(request.POST)
+
         if user_create_form.is_valid():
             try:
-                user=user_create_form.save()
+                user = user_create_form.save()  # Aquí ya se guarda el perfil también (desde el form)
+
+                # Auditoría
                 AuditLog.objects.create(
                     user=request.user,
                     action="create",
@@ -128,42 +131,35 @@ def user_create(request):
                     object_id=user.id,
                     description=f"Creación de usuario {user.username} (ID: {user.id})"
                 )
+
                 return JsonResponse({'status': 'success', 'message': 'Usuario creado exitosamente.'})
-                # messages.success(request, 'El usuario se ha guardado correctamente.')
-                # return HttpResponseRedirect(reverse('home:users'))
-            
+
             except IntegrityError as e:
                 if 'username' in str(e):
-                    return JsonResponse({'status': 'error', 'message': 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.'})
-                    #messages.error(request, 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.')
+                    return JsonResponse({'status': 'error', 'message': 'El nombre de usuario ya existe.'})
                 else:
-                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.'})
-                    #messages.error(request, 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.')
-            
+                    return JsonResponse({'status': 'error', 'message': 'Error al guardar el usuario.'})
+
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                # Captura cualquier otro error inesperado
-                #messages.error(request, f'Error inesperado: {str(e)}')
-        
+
         else:
+            # Manejo de errores del formulario
             errors = []
             for field, error_list in user_create_form.errors.items():
                 for error in error_list:
                     errors.append(f'Error en el campo {field}: {error}')
-            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
-            # Si el formulario no es válido, muestra errores de validación
-            # for field, errors in user_create_form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f'Error en el campo {field}: {error}')
-    
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+
     else:
         user_create_form = CreateUser()
-    
+
     return render(request, 'users.html', {
         'user_form': user_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        })
+    })
+
 
 @login_required
 def user_edit(request, user_id):
