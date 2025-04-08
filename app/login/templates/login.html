@@ -17,79 +17,87 @@
 </head>
 
 <body class="login">
-<div class="login-box">
-  <div class="login-logo">
-    <img src="{% static 'img/logo_bva.png' %}" class="logo_bva">
-  </div>
-  <div class="card">
-    <div class="card-body">
-        <center><h3>Iniciar Sesión</h3></center>
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-            
-            <!-- Campo de nombre de usuario -->
-            <div class="form-group">
-                <label for="username">Usuario</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+    <div class="login-box">
+        <div class="login-logo">
+            <img src="{% static 'img/logo_bva.png' %}" class="logo_bva">
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <center>
+                    <h3>Iniciar Sesión</h3>
+                </center>
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+
+                    <!-- Campo de nombre de usuario -->
+                    <div class="form-group">
+                        <label for="username">Usuario</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" id="username" name="username" class="form-control"
+                                placeholder="Nombre de usuario" required>
+                        </div>
                     </div>
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Nombre de usuario" required>
-                </div>
+
+                    <!-- Campo de contraseña -->
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Contraseña" required>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" id="toggle-password">
+                                    <i class="fas fa-eye" id="password-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                    <a data-toggle="modal" data-target="#password-reset-modal" class="btn btn-link">¿Olvidaste tu
+                        contraseña?</a>
+                </form>
             </div>
-            
-            <!-- Campo de contraseña -->
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    </div>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" id="toggle-password">
-                            <i class="fas fa-eye" id="password-icon"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-            <a data-toggle="modal" data-target="#password-reset-modal" class="btn btn-link">¿Olvidaste tu contraseña?</a>
-        </form>
-    </div>
-</div>
+        </div>
 
 
-<div class="modal fade" id="password-reset-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <form id="security-form">
-          <div class="modal-header">
-            <h5 class="modal-title">Recuperar contraseña</h5>
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-          </div>
-          <div class="modal-body">
-            <div id="step-username">
-              <input type="text" name="username" class="form-control mb-2" placeholder="Ingresa tu usuario" required>
-              <button type="submit" class="btn btn-primary btn-block">Siguiente</button>
+        <div class="modal fade" id="password-reset-modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form id="security-form">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Recuperar contraseña</h5>
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="step-username">
+                                <input type="text" name="username" class="form-control mb-2"
+                                    placeholder="Ingresa tu usuario" required>
+                                <button type="submit" class="btn btn-primary btn-block">Siguiente</button>
+                            </div>
+                            <div id="step-security" style="display:none;">
+                                <p><strong id="security-question"></strong></p>
+                                <input type="password" name="security_answer" class="form-control mb-2"
+                                    placeholder="Respuesta" required>
+                                <input type="password" name="new_password" class="form-control mb-2"
+                                    placeholder="Nueva contraseña" required>
+                                <button type="submit" class="btn btn-success btn-block">Cambiar contraseña</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div id="step-security" style="display:none;">
-              <p><strong id="security-question"></strong></p>
-              <input type="password" name="security_answer" class="form-control mb-2" placeholder="Respuesta" required>
-              <input type="password" name="new_password" class="form-control mb-2" placeholder="Nueva contraseña" required>
-              <button type="submit" class="btn btn-success btn-block">Cambiar contraseña</button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="{% static 'js/sweetalert2@11.js' %}"></script>
-<script src="{% static 'js/verify_user.js' %}"></script>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="{% static 'js/sweetalert2@11.js' %}"></script>
+        <script src="{% static 'js/verify_user.js' %}"></script>
 
         {% if error_disabled %}
         <script>
@@ -148,96 +156,96 @@
         </script>
         {% endif %}
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("security-form");
-        const stepUsername = document.getElementById("step-username");
-        const stepSecurity = document.getElementById("step-security");
-        const questionText = document.getElementById("security-question");
-    
-        const inputUsername = form.querySelector('[name="username"]');
-        const inputAnswer = form.querySelector('[name="security_answer"]');
-        const inputNewPassword = form.querySelector('[name="new_password"]');
-    
-        let currentUsername = "";
-    
-        // Utilidad para cambiar entre pasos
-        function mostrarPaso2() {
-            stepUsername.style.display = "none";
-            stepSecurity.style.display = "block";
-    
-            inputUsername.required = false;
-            inputAnswer.required = true;
-            inputNewPassword.required = true;
-        }
-    
-        function mostrarPaso1() {
-            stepUsername.style.display = "block";
-            stepSecurity.style.display = "none";
-    
-            inputUsername.required = true;
-            inputAnswer.required = false;
-            inputNewPassword.required = false;
-        }
-    
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const formData = new FormData(form);
-    
-            if (stepUsername.style.display !== "none") {
-                // Paso 1: Obtener pregunta
-                fetch("{% url 'validate_security_question' %}", {
-                    method: "POST",
-                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "ok") {
-                        questionText.innerText = data.question;
-                        currentUsername = inputUsername.value;
-                        mostrarPaso2();
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById("security-form");
+                const stepUsername = document.getElementById("step-username");
+                const stepSecurity = document.getElementById("step-security");
+                const questionText = document.getElementById("security-question");
+
+                const inputUsername = form.querySelector('[name="username"]');
+                const inputAnswer = form.querySelector('[name="security_answer"]');
+                const inputNewPassword = form.querySelector('[name="new_password"]');
+
+                let currentUsername = "";
+
+                // Utilidad para cambiar entre pasos
+                function mostrarPaso2() {
+                    stepUsername.style.display = "none";
+                    stepSecurity.style.display = "block";
+
+                    inputUsername.required = false;
+                    inputAnswer.required = true;
+                    inputNewPassword.required = true;
+                }
+
+                function mostrarPaso1() {
+                    stepUsername.style.display = "block";
+                    stepSecurity.style.display = "none";
+
+                    inputUsername.required = true;
+                    inputAnswer.required = false;
+                    inputNewPassword.required = false;
+                }
+
+                form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+
+                    if (stepUsername.style.display !== "none") {
+                        // Paso 1: Obtener pregunta
+                        fetch("{% url 'validate_security_question' %}", {
+                            method: "POST",
+                            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                            body: formData
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.status === "ok") {
+                                    questionText.innerText = data.question;
+                                    currentUsername = inputUsername.value;
+                                    mostrarPaso2();
+                                } else {
+                                    alert(data.message || "Usuario no válido.");
+                                }
+                            });
                     } else {
-                        alert(data.message || "Usuario no válido.");
+                        // Paso 2: Validar respuesta y cambiar contraseña
+                        const payload = new URLSearchParams({
+                            username: currentUsername,
+                            security_answer: inputAnswer.value,
+                            new_password: inputNewPassword.value
+                        });
+
+                        fetch("{% url 'reset_password' %}", {
+                            method: "POST",
+                            headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                            body: payload
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.status === "ok") {
+                                    alert("¡Contraseña cambiada exitosamente!");
+                                    $('#password-reset-modal').modal('hide');
+                                    form.reset();
+                                    mostrarPaso1();
+                                } else {
+                                    alert(data.message || "Error al cambiar la contraseña.");
+                                }
+                            });
                     }
                 });
-            } else {
-                // Paso 2: Validar respuesta y cambiar contraseña
-                const payload = new URLSearchParams({
-                    username: currentUsername,
-                    security_answer: inputAnswer.value,
-                    new_password: inputNewPassword.value
+
+                // Resetear modal al cerrarlo
+                $('#password-reset-modal').on('hidden.bs.modal', function () {
+                    form.reset();
+                    mostrarPaso1();
                 });
-    
-                fetch("{% url 'reset_password' %}", {
-                    method: "POST",
-                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                    body: payload
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === "ok") {
-                        alert("¡Contraseña cambiada exitosamente!");
-                        $('#password-reset-modal').modal('hide');
-                        form.reset();
-                        mostrarPaso1();
-                    } else {
-                        alert(data.message || "Error al cambiar la contraseña.");
-                    }
-                });
-            }
-        });
-    
-        // Resetear modal al cerrarlo
-        $('#password-reset-modal').on('hidden.bs.modal', function () {
-            form.reset();
-            mostrarPaso1();
-        });
-    
-        // Inicializa visibilidad correctamente por si algo queda mal
-        mostrarPaso1();
-    });
-</script>
+
+                // Inicializa visibilidad correctamente por si algo queda mal
+                mostrarPaso1();
+            });
+        </script>
 </body>
 <footer class="main-footer">
     <strong>Copyright &copy; Derechos reservados a Moon-Team
