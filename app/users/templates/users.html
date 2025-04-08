@@ -92,7 +92,19 @@
                           </div>
                           <label for="edit-user-password2"></label>
                         </div>
-                    </div>
+                        <div class="form-group form-floating mb-3">
+                          <select class="form-select" id="edit-security-question" name="security_question" required>
+                            <option value="">Seleccione una pregunta</option>
+                            {% for value, label in form.fields.security_question.choices %}
+                              <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                          </select>
+                          <label for="edit-security-question">Pregunta de seguridad</label>
+                        </div>
+                        <div class="form-group form-floating mb-3">
+                          <input type="text" class="form-control" id="edit-security-answer" name="security_answer" required>
+                          <label for="edit-security-answer">Respuesta de seguridad</label>
+                        </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                       <button type="submit" class="btn btn-primary">Guardar cambios</button>

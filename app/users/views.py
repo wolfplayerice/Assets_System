@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_exempt
 from audit.models import AuditLog 
 from django.db.models import Q
+from .models import Profile
 
 def is_staff_user(user):
     return user.is_staff  # Solo permite acceso a staff
@@ -118,9 +119,12 @@ def list_users(request):
 def user_create(request):
     if request.method == "POST":
         user_create_form = CreateUser(request.POST)
+
         if user_create_form.is_valid():
             try:
-                user=user_create_form.save()
+                user = user_create_form.save()  # Aquí ya se guarda el perfil también (desde el form)
+
+                # Auditoría
                 AuditLog.objects.create(
                     user=request.user,
                     action="create",
@@ -128,134 +132,101 @@ def user_create(request):
                     object_id=user.id,
                     description=f"Creación de usuario {user.username} (ID: {user.id})"
                 )
+
                 return JsonResponse({'status': 'success', 'message': 'Usuario creado exitosamente.'})
-                # messages.success(request, 'El usuario se ha guardado correctamente.')
-                # return HttpResponseRedirect(reverse('home:users'))
-            
+
             except IntegrityError as e:
                 if 'username' in str(e):
-                    return JsonResponse({'status': 'error', 'message': 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.'})
-                    #messages.error(request, 'Error: El nombre de usuario ya existe. Por favor, ingrese un nombre de usuario único.')
+                    return JsonResponse({'status': 'error', 'message': 'El nombre de usuario ya existe.'})
                 else:
-                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.'})
-                    #messages.error(request, 'Error: Ocurrió un problema al guardar el usuario. Por favor, inténtelo de nuevo.')
-            
+                    return JsonResponse({'status': 'error', 'message': 'Error al guardar el usuario.'})
+
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                # Captura cualquier otro error inesperado
-                #messages.error(request, f'Error inesperado: {str(e)}')
-        
+
         else:
+            # Manejo de errores del formulario
             errors = []
             for field, error_list in user_create_form.errors.items():
                 for error in error_list:
                     errors.append(f'Error en el campo {field}: {error}')
-            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
-            # Si el formulario no es válido, muestra errores de validación
-            # for field, errors in user_create_form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f'Error en el campo {field}: {error}')
-    
+            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+
     else:
         user_create_form = CreateUser()
-    
+
     return render(request, 'users.html', {
         'user_form': user_create_form,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        })
+    })
+
 
 @login_required
+
 def user_edit(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    
-    # Diccionario de traducción de nombres de campos
-    FIELD_NAMES = {
-        'username': 'Usuario',
-        'first_name': 'Nombre',
-        'last_name': 'Apellido',
-        'email': 'Correo electrónico',
-        'is_active': 'Estado'
-    }
+    profile = user.profile
+
     if request.method == "POST":
-        form = EditUser(request.POST, instance=user)
+        form = EditUser(request.POST, instance=user, profile=profile)
         if form.is_valid():
             try:
-                # 1. Crear una copia COMPLETA del objeto ANTES de guardar
                 original_user = User.objects.get(pk=user.id)
-                old_values = {
-                    'username': original_user.username,
-                    'first_name': original_user.first_name,
-                    'last_name': original_user.last_name,
-                    'email': original_user.email,
-                    'is_active': original_user.is_active
-                }
-                
-                # 2. Guardar el formulario
+                original_profile = Profile.objects.get(user=user)
+
                 form.save()
-                
-                # 3. Obtener el objeto ACTUALIZADO directamente desde el formulario
-                updated_user = form.instance
-                new_values = {
-                    'username': updated_user.username,
-                    'first_name': updated_user.first_name,
-                    'last_name': updated_user.last_name,
-                    'email': updated_user.email,
-                    'is_active': updated_user.is_active
+
+                # Auditoría
+                changes = []
+                field_map = {
+                    'username': 'Usuario',
+                    'first_name': 'Nombre',
+                    'last_name': 'Apellido',
+                    'email': 'Correo electrónico',
+                    'security_question': 'Pregunta de seguridad',
+                    'security_answer': 'Respuesta de seguridad'
                 }
 
-                
-                # 5. Detectar cambios REALES
-                changes = []
-                for field in old_values:
-                    old_val = old_values[field]
-                    new_val = new_values[field]
-                    
-                    if str(old_val) != str(new_val):  # Comparación como strings
-                        if field == 'is_active':
-                            action = "Habilitación" if new_val else "Inhabilitación"
-                            changes.append(f"{action} del usuario")
-                        else:
-                            field_name = FIELD_NAMES.get(field, field)
-                            changes.append(f"{field_name}: '{old_val}' cambio a '{new_val}'")
-                
-                # 6. Crear mensaje de auditoría
-                if changes:
-                    changes_str = "; ".join(changes)
-                    audit_message = f"Actualización de usuario {updated_user.username} (ID: {updated_user.id}): {changes_str}"
-                else:
-                    audit_message = f"Usuario {updated_user.username} (ID: {updated_user.id}) editado sin cambios significativos."
-                
-                # 7. Registrar auditoría
+                # Comparar User
+                for field in ['username', 'first_name', 'last_name', 'email']:
+                    old = getattr(original_user, field)
+                    new = getattr(user, field)
+                    if str(old) != str(new):
+                        changes.append(f"{field_map[field]}: '{old}' cambió a '{new}'")
+
+                # Comparar Profile
+                if original_profile.security_question != profile.security_question:
+                    changes.append(f"{field_map['security_question']}: '{original_profile.get_security_question_display()}' cambió a '{profile.get_security_question_display()}'")
+
+                if not profile.check_security_answer(original_profile.security_answer):
+                    changes.append(f"{field_map['security_answer']} fue actualizada")
+
                 AuditLog.objects.create(
                     user=request.user,
                     action="update",
-                    model_name="User",
-                    object_id=updated_user.id,
-                    description=audit_message
+                    model_name="User/Profile",
+                    object_id=user.id,
+                    description="; ".join(changes) or "Edición sin cambios."
                 )
-                return JsonResponse({'status': 'success', 'message': 'El usuario se ha actualizado correctamente.'})
-                #messages.success(request, 'El usuario se ha actualizado correctamente.')
+
+                return JsonResponse({'status': 'success', 'message': 'Usuario actualizado correctamente.'})
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                #messages.error(request, f'Error inesperado: {str(e)}')
         else:
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
                     errors.append(f'Error en el campo {field}: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
-        #     for field, errors in form.errors.items():
-        #         for error in errors:
-        #             messages.error(request, f'Error en el campo {field}: {error}')
-        # return HttpResponseRedirect(reverse('users:users'))
     else:
-        form = EditUser(instance=user)
+        form = EditUser(instance=user, profile=profile)
 
     return render(request, 'users/edit_user.html', {
         'form': form,
         'user_id': user_id
     })
+
     
 @login_required
 @csrf_exempt

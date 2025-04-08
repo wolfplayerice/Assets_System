@@ -5,6 +5,12 @@ from .forms import VerifyUser
 from django.contrib.auth.models import User  # Asegúrate de importar el modelo User
 from django.core.cache import cache
 from django.views.decorators.cache import never_cache
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
+from django.http import JsonResponse
+from users.models import Profile
+from django.views.decorators.csrf import csrf_exempt
 
 
 def login(request):
@@ -65,6 +71,44 @@ def login(request):
             return render(request, 'login.html', {
                 'VerifyUser': VerifyUser_Form
             })
+
+
+@csrf_exempt
+def validate_security_question(request):
+     if request.method == "POST":
+         username = request.POST.get("username", "").strip()
+         try:
+             user = User.objects.get(username=username)
+             profile = user.profile
+             question_dict = dict(Profile.SECURITY_QUESTIONS)
+             question_text = question_dict.get(profile.security_question, "Pregunta no definida")
+ 
+             return JsonResponse({"status": "ok", "question": question_text})
+         except User.DoesNotExist:
+             return JsonResponse({"status": "error", "message": "Usuario no encontrado"})
+         except Profile.DoesNotExist:
+             return JsonResponse({"status": "error", "message": "Este usuario no tiene pregunta de seguridad"})
+         except Exception as e:
+             return JsonResponse({"status": "error", "message": f"Error: {str(e)}"})
+     return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
+ 
+def reset_password(request):
+     if request.method == "POST":
+         username = request.POST.get("username")
+         answer = request.POST.get("security_answer")
+         new_password = request.POST.get("new_password")
+         try:
+             user = User.objects.get(username=username)
+             if user.profile.check_security_answer(answer):
+                 user.set_password(new_password)
+                 user.save()
+                 return JsonResponse({"status": "ok"})
+             else:
+                 return JsonResponse({"status": "error", "message": "Respuesta incorrecta."})
+         except User.DoesNotExist:
+             return JsonResponse({"status": "error", "message": "Usuario no encontrado."})
+     return JsonResponse({"status": "invalid request"})
+
 
 @never_cache
 @login_required
