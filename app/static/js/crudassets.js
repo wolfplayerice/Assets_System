@@ -115,6 +115,21 @@ async function generateAssetPDF() {
     const categories = $('.js-example-basic-multiple').val() || [];
     const brand = $('.brand').val() || [];
 
+    // Obtener datos del receptor
+    const receiverName = $('#receiverName').val();
+    const receiverPosition = $('#receiverPosition').val();
+
+    // Obtener datos del usuario logueado
+    const issuerName = $('#pdfOptionsModal').data('user-name');
+    const issuerPosition = $('#pdfOptionsModal').data('user-position');
+
+    // Validar campos requeridos
+    if (!receiverName || !receiverPosition) {
+        Swal.fire('Error', 'Debe completar todos los datos del receptor', 'error');
+        pdfButton.prop('disabled', false);
+        return;
+    }
+
     // Iniciar animación de carga
     pdfButton.addClass('pdf-button-loading').prop('disabled', true);
 
@@ -145,9 +160,9 @@ async function generateAssetPDF() {
         const formattedDateTime = today.toLocaleString();
 
         const docDefinition = {
-            pageSize: 'A4',
+            pageSize: 'LETTER',
             pageOrientation: 'landscape',
-            pageMargins: [40, 80, 40, 120], // Aumenté el margen inferior para espacio de firmas
+            pageMargins: [40, 80, 40, 130], // Ajustado el margen inferior para más espacio para las firmas
             header: {
                 columns: [
                     { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
@@ -178,61 +193,68 @@ async function generateAssetPDF() {
                                 { text: 'Observación', style: 'tableHeader', alignment: 'center' }
                             ],
                             ...data.map(row => row.map(cell => ({
-                                text: cell,
+                                text: cell != null ? cell.toString() : '', // Asegurarse que sea string
                                 alignment: 'justify',
                                 noWrap: false,
                             })))
                         ]
                     },
-                    layout: 'lightHorizontalLines'
+                    
                 }
             ],
             styles: {
                 header: { fontSize: 18, bold: true, color: '#2c3e50' },
                 tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
                 footer: { fontSize: 10, color: '#666666' },
-                signature: { fontSize: 12, margin: [0, 5, 0, 0] }
+                signature: { fontSize: 12, margin: [0, 20, 0, 0] } // Añadido margen superior a las firmas
             },
             defaultStyle: { fontSize: 12, color: '#2c3e50' },
             footer: function(currentPage, pageCount) {
-                return [
-                    {
-                        table: {
-                            widths: ['*', '*'],
-                            body: [
-                                [
-                                    { 
-                                        text: 'De quien es:\n\n\n_________________________\nNombre y Apellido\nCargo', 
-                                        alignment: 'center', 
-                                        style: 'signature'
-                                    },
-                                    { 
-                                        text: 'Nombres y Apellidos:\n\n\n_________________________\nGUSTAVO JOSE DELGADO HERRERA\nJEFE DE LA UNIDAD', 
-                                        alignment: 'center', 
-                                        style: 'signature'
-                                    }
+                return {
+                    stack: [ // Usar stack para mejor control del espaciado
+                        {
+                            table: {
+                                widths: ['*', '*'],
+                                body: [
+                                    [
+                                        {
+                                            text: `Emitido por:\n\n\n_________________________\n${issuerName.toUpperCase()}\n${issuerPosition.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Recibido por:\n\n\n_________________________\n${receiverName.toUpperCase()}\n${receiverPosition.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        }
+                                    ]
                                 ]
-                            ]
+                            },
+                            layout: 'noBorders',
+                            // Quitar el margen aquí si se maneja en las celdas internas
                         },
-                        layout: 'noBorders',
-                        margin: [0, 0, 0, 0]
-                    },
-                    { 
-                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                        style: 'footer',
-                        alignment: 'center',
-                        margin: [0, 0, 0, 0]
-                    }
-                ];
+                        {
+                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                            style: 'footer',
+                            alignment: 'center',
+                            margin: [0, 5, 0, 0] // Reducir margen superior si es necesario
+                        }
+                    ],
+                    margin: [40, 0, 40, 10] // Margen general del footer: left, top, right, bottom
+                };
             }
         };
+
         // Animación de éxito
         pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
 
-        pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime}.pdf`);
+        pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime.replace(/[/,:]/g, '-')}.pdf`);
 
         setTimeout(() => {
             pdfButton.removeClass('pdf-button-success').prop('disabled', false);
+            $('#pdfOptionsModal').modal('hide');
         }, 2000);
 
     } catch (error) {
@@ -286,9 +308,17 @@ $(document).ready(function () {
     pdfOptionsModal.on('hidden.bs.modal', clearSelects);
 
     // Botón de generación dentro del modal
-    $('#generatePdfButton').on('click', function () {
-        generateAssetPDF();
-        pdfOptionsModal.modal('hide');
+    $('#generatePdfButton').on('click', function (e) {
+        e.preventDefault(); // Previene el comportamiento por defecto
+    
+        const form = document.getElementById('pdfOptionsForm');
+        
+        if (form.checkValidity()) {
+            $('#pdfOptionsModal').modal('hide');
+            generateAssetPDF();
+        } else {
+            form.reportValidity();
+        }
     });
 });
 

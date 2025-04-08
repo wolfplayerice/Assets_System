@@ -2,127 +2,134 @@
 {% load widget_tweaks %}
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Iniciar sesión</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Iniciar sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 </head>
+
 <body class="login">
-<div class="login-box">
-  <div class="login-logo">
-    <img src="{% static 'img/logo_bva.png' %}" class="logo_bva">
-  </div>
-  <div class="card">
-    <div class="card-body">
-        <center><h3>Iniciar Sesión</h3></center>
-        <form method="post" action="{% url 'login' %}">
-            {% csrf_token %}
-            
-            <!-- Campo de nombre de usuario -->
-            <div class="form-group">
-                <label for="username">Usuario</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+    <div class="login-box">
+        <div class="login-logo">
+            <img src="{% static 'img/logo_bva.png' %}" class="logo_bva">
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <center>
+                    <h3>Iniciar Sesión</h3>
+                </center>
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+
+                    <!-- Campo de nombre de usuario -->
+                    <div class="form-group">
+                        <label for="username">Usuario</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" id="username" name="username" class="form-control"
+                                placeholder="Nombre de usuario" required>
+                        </div>
                     </div>
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Nombre de usuario" required>
-                </div>
+
+                    <!-- Campo de contraseña -->
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            </div>
+                            <input type="password" id="password" name="password" class="form-control"
+                                placeholder="Contraseña" required>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" id="toggle-password">
+                                    <i class="fas fa-eye" id="password-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+                </form>
             </div>
-            
-            <!-- Campo de contraseña -->
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                    </div>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Contraseña" required>
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-outline-secondary" id="toggle-password">
-                            <i class="fas fa-eye" id="password-icon"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-        </form>
-    </div>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script src="{% static 'js/sweetalert2@11.js' %}"></script>
-<script src="{% static 'js/verify_user.js' %}"></script>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="{% static 'js/sweetalert2@11.js' %}"></script>
+        <script src="{% static 'js/verify_user.js' %}"></script>
 
-{% if error_disabled %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'error',
-            title: 'Usuario deshabilitado',
-            text: '{{ error_disabled }}',
-            confirmButtonText: 'Aceptar'
-        });
-    });
-</script>
-{% endif %}
+        {% if error_disabled %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Usuario deshabilitado',
+                    text: '{{ error_disabled }}',
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        </script>
+        {% endif %}
 
-{% if error_invalid %}
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        Swal.fire({
-            icon: 'error',
-            title: 'Datos incorrectos',
-            text: '{{ error_invalid }}',
-            confirmButtonText: 'Aceptar'
-        });
-    });
-</script>
-{% endif %}
+        {% if error_invalid %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Datos incorrectos',
+                    text: '{{ error_invalid }}',
+                    confirmButtonText: 'Aceptar'
+                });
+            });
+        </script>
+        {% endif %}
 
-<!-- Funcion para que el ojo posea funcionalidad V.Parra -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-      const togglePassword = document.getElementById('toggle-password');
-      const passwordField = document.getElementById('password');
-      const passwordIcon = document.getElementById('password-icon');
+        <!-- Funcion para que el ojo posea funcionalidad V.Parra -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const togglePassword = document.getElementById('toggle-password');
+                const passwordField = document.getElementById('password');
+                const passwordIcon = document.getElementById('password-icon');
 
-      togglePassword.addEventListener('click', function () {
-          const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-          passwordField.setAttribute('type', type);
-          passwordIcon.classList.toggle('fa-eye');
-          passwordIcon.classList.toggle('fa-eye-slash');
-      });
-  });
-</script>
+                togglePassword.addEventListener('click', function () {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    passwordIcon.classList.toggle('fa-eye');
+                    passwordIcon.classList.toggle('fa-eye-slash');
+                });
+            });
+        </script>
 
-<!-- Fin de la funcionalidad del ojo V.Parra -->
+        <!-- Fin de la funcionalidad del ojo V.Parra -->
 
-{% if session_terminated %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Sesión interrumpida',
-            text: 'Tu sesión fue cerrada porque iniciaste sesión desde otro dispositivo.',
-            confirmButtonText: 'Entendido'
-        });
-    });
-</script>
-{% endif %}
+        {% if session_terminated %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Sesión interrumpida',
+                    text: 'Tu sesión fue cerrada porque iniciaste sesión desde otro dispositivo.',
+                    confirmButtonText: 'Entendido'
+                });
+            });
+        </script>
+        {% endif %}
 
 </body>
 <footer class="main-footer">
-    <strong>Copyright &copy; Derechos reservados a Moon-Team 
+    <strong>Copyright &copy; Derechos reservados a Moon-Team
         <i class="fas fa-moon moon-icon"></i>
     </strong>
 </footer>
+
 </html>
