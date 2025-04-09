@@ -94,33 +94,47 @@
             </div>
 
             <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel"
-              aria-hidden="true" data-user-name="{{ request.user.get_full_name }}"
-              data-user-position="{{ request.user.position }}">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="pdfOptionsForm">
-                      <div class="mb-3">
-                        <label class="form-label">Nombres y Apellidos</label>
-                        <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Cargo</label>
-                        <input class="form-control" type="text" name="receiver_position" id="receiverPosition" required>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
-                  </div>
+            aria-hidden="true" data-user-name="{{ request.user.get_full_name }}"
+            data-user-position="{{ request.user.position }}">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="pdfOptionsForm">
+                    <div class="mb-3">
+                      <h6>Datos del receptor</h6>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Nombres y Apellidos</label>
+                      <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
+                    </div>
+                    <div class="mb-3">
+                      <h6>Datos de Vigilancia</h6>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Nombres y Apellidos</label>
+                      <input class="form-control" type="text" name="receiver_vig" id="receiverVig" required>
+                    </div>
+                    <div class="mb-3">
+                      <h6>Datos de unidad de bienes</h6>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Nombres y Apellidos</label>
+                      <input class="form-control" type="text" name="receiver_asset" id="receiverAsset" required>
+                    </div>
+
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                  <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
                 </div>
               </div>
             </div>
+          </div>
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

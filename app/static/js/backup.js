@@ -77,12 +77,6 @@ const initDataTableBackups = async () => {
                 sSearch: "Buscar:",
                 sProcessing: "Procesando...",
                 emptyTable: "No hay respaldos disponibles",
-                paginate: {
-                    first: "Primero",
-                    last: "Último",
-                    next: "Siguiente",
-                    previous: "Anterior"
-                }
             },
             responsive: true,
             dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
