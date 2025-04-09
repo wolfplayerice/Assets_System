@@ -20,7 +20,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
     # Campo de pregunta (usa choices para el select)
-    security_question = models.CharField(
+    security_question = models.IntegerField(
         max_length=2,
         choices=SECURITY_QUESTIONS,
         verbose_name="Pregunta de seguridad",
