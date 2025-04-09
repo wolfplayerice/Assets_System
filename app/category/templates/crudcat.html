@@ -7,18 +7,17 @@
   <div class="col-md-12">
     <div class="card custom-card-height">
       <div class="card-header">
-        <h5 class="card-title">Tabla de las Categorias</h5>
+        <h5 class="card-title">Categorías</h5>
       </div>
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-
             <div id="data-container" data-list-category-url="{% url 'category:list_category' %}">
               <table id="datatable-cat" class="table">
                 <thead>
                   <div class="flex-row d-flex btn-add-pdf">
                     <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
-                      <i class='fa-solid fa-plus'></i> <strong>Añadir Categoria</strong>
+                      <i class='fa-solid fa-plus'></i> <strong>Añadir Categoría</strong>
                     </button>
                     <button id="external-pdf-button" class="btn btn-danger mb-3">
                       <i class="fas fa-file-pdf"></i> Generar Reporte PDF
@@ -26,23 +25,22 @@
                   </div>
                   <tr>
                     <th class="centered" scope="col">#</th>
-                    <th class="centered" scope="col">Categoria</th>
+                    <th class="centered" scope="col">Categoría</th>
                     <th class="centered" scope="col">Opciones</th>
                   </tr>
                 </thead>
                 <tbody id="tablebody_cat">
-
                 </tbody>
               </table>
-
             </div>
 
+            <!-- Modal para registrar categorías -->
             <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
               aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">Información</h5>
+                    <h5 class="modal-title" id="infoModalLabel">Registro de categorías</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -71,7 +69,7 @@
               </div>
             </div>
 
-            <!-- Modal para editar -->
+            <!-- Modal para editar categorías -->
             <div class="modal fade" id="editCatModal" tabindex="-1" aria-labelledby="editCatModalLabel"
               aria-hidden="true">
               <div class="modal-dialog">
@@ -95,59 +93,6 @@
               </div>
             </div>
 
-            <!-- <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error.</h5>
-                  </div>
-                  <div class="modal-body">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="successModalLabel">Éxito</h5>
-                  </div>
-                  <div class="modal-body">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <script>
-              {% if messages %}
-              {% for message in messages %}
-              {% if message.tags == 'success' %}
-              $(document).ready(function () {
-                $('#successModal').modal('show');
-              });
-              {% elif message.tags == 'error' %}
-
-              $(document).ready(function () {
-
-                $('#errorModal').modal('show');
-
-              });
-              {% endif %}
-              {% endfor %}
-              {% endif %}
-            </script> -->
             {% endblock %}
 
             {% block extra_js %}

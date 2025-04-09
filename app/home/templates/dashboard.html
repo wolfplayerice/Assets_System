@@ -3,17 +3,6 @@
 {% block content %}
 {% load static %}
 
-<style>
-  .btn-circle {
-    width: 20px;
-    height: 20px;
-    padding: 2px 0;
-    border-radius: 50%;
-    text-align: center;
-    font-size: 10px;
-    line-height: 1.42857;
-  }
-</style>
 <div class="row">
   <div class="col-12 col-sm-6 col-md-3">
     <div class="info-box">
@@ -24,11 +13,8 @@
           {{ total_assets }}
         </span>
       </div>
-      <!-- /.info-box-content -->
     </div>
-    <!-- /.info-box -->
   </div>
-  <!-- /.col -->
   <div class="col-12 col-sm-6 col-md-3">
     <div class="info-box mb-3">
       <span class="info-box-icon bg-success elevation-1"><i class="fas fa-desktop"></i><i
@@ -37,34 +23,8 @@
         <span class="info-box-text">Operativos</span>
         <span class="info-box-number">{{ operational_assets }}</span>
       </div>
-      <!-- /.info-box-content -->
-    </div>
-    <!-- /.info-box -->
-  </div>
-  <!-- /.col -->
-  <div class="modal fade" id="inoperativoModal" tabindex="-1" aria-labelledby="inoperativoModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <!-- Encabezado del modal -->
-        <div class="modal-header">
-          <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <!-- Cuerpo del modal -->
-        <div class="modal-body">
-          <p>Aquí va el contenido del modal.</p>
-        </div>
-        <!-- Pie del modal (opcional) -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
-        </div>
-      </div>
     </div>
   </div>
-  <!-- fix for small devices only 
-    <div class="clearfix hidden-md-up"></div>-->
-
   <div class="col-12 col-sm-6 col-md-3">
     <div class="info-box mb-3">
       <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-desktop"></i><i
@@ -74,11 +34,8 @@
         <span class="info-box-text">Inoperativos</span>
         <span class="info-box-number">{{ inoperational_assets }}</span>
       </div>
-      <!-- /.info-box-content -->
     </div>
-    <!-- /.info-box -->
   </div>
-  <!-- /.col -->
   <div class="col-12 col-sm-6 col-md-3">
     <div class="info-box mb-3">
       <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-users"></i></span>
@@ -87,41 +44,34 @@
         <span class="info-box-text">Usuarios</span>
         <span class="info-box-number">{{ total_user }}</span>
       </div>
-      <!-- /.info-box-content -->
     </div>
-    <!-- /.info-box -->
   </div>
-  <!-- /.col -->
 </div>
+
 <!-- Modal para dispositivos inoperativos -->
-<!-- Modal -->
 <div class="modal fade" id="inoperativoModal" tabindex="-1" aria-labelledby="inoperativoModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <!-- Encabezado del modal -->
       <div class="modal-header">
         <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
-      <!-- Cuerpo del modal -->
       <div class="modal-body">
         <p>Aquí va el contenido del modal.</p>
       </div>
-      <!-- Pie del modal (opcional) -->
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-        <button type="button" class="btn btn-primary">Guardar cambios</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
 </div>
+
 <div class="row">
   <div class="col-md-12">
     <div class="card custom-card-height">
       <div class="card-header">
-        <h5 class="card-title">Tabla de los Bienes</h5>
+        <h5 class="card-title">Bienes</h5>
       </div>
-      <!-- /.card-header -->
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
@@ -135,68 +85,72 @@
                   <th class="centered" scope="col">#</th>
                   <th class="centered" scope="col">Marca</th>
                   <th class="centered" scope="col">Modelo</th>
-                  <th class="centered" scope="col">Categoria</th>
+                  <th class="centered" scope="col">Categoría</th>
                   <th class="centered" scope="col">Serial</th>
                   <th class="centered" scope="col">BBVA</th>
-                  <th class="centered" scope="col">Estatus</th>
+                  <th class="centered" scope="col">Estado</th>
                 </tr>
               </thead>
               <tbody id="tablebody_assets">
               </tbody>
             </table>
-            <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel" aria-hidden="true" data-user-name="{{ request.user.get_full_name }}" data-user-position="{{ request.user.position }}">
+            <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel"
+              aria-hidden="true" data-user-name="{{ request.user.get_full_name }}"
+              data-user-position="{{ request.user.position }}">
               <div class="modal-dialog">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <form id="pdfOptionsForm">
-                              <div class="mb-3">
-                                  <label class="form-label">Filtrar por Estado:</label>
-                                  <select class="form-select" name="statusFilter">
-                                      <option value="all">Todos</option>
-                                      <option value="1">Operativos</option>
-                                      <option value="0">Inoperativos</option>
-                                  </select>
-                              </div>
-                              <div class="mb-3">
-                                  <label class="form-label">Filtrar por Categoría:</label>
-                                  <select class="js-example-basic-multiple" name="categories[]" multiple="multiple" style="width: 100%" data-placeholder="Seleccione categorías">
-                                      {% for category in categories %}
-                                      <option value="{{ category.id }}">{{ category.name }}</option>
-                                      {% endfor %}
-                                  </select>
-                              </div>
-                              <div class="mb-3">
-                                  <label class="form-label">Filtrar por Marcas:</label>
-                                  <select class="brand" name="brand[]" multiple="multiple" style="width: 100%" data-placeholder="Seleccione categorías">
-                                      {% for brand in brands %}
-                                      <option value="{{ brand.id }}">{{ brand.name }}</option>
-                                      {% endfor %}
-                                  </select>
-                              </div>
-                              <div class="mb-3">
-                                  <h6>Datos del receptor</h6>
-                              </div>
-                              <div class="mb-3">
-                                  <label class="form-label">Nombres y Apellidos</label>
-                                  <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
-                              </div>
-                              <div class="mb-3">
-                                  <label class="form-label">Cargo</label>
-                                  <input class="form-control" type="text" name="receiver_position" id="receiverPosition" required>
-                              </div>
-                          </form>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                          <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
-                      </div>
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
+                  <div class="modal-body">
+                    <form id="pdfOptionsForm">
+                      <div class="mb-3">
+                        <label class="form-label">Filtrar por Estado:</label>
+                        <select class="form-select" name="statusFilter">
+                          <option value="all">Todos</option>
+                          <option value="1">Operativos</option>
+                          <option value="0">Inoperativos</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Filtrar por Categoría:</label>
+                        <select class="js-example-basic-multiple" name="categories[]" multiple="multiple"
+                          style="width: 100%" data-placeholder="Seleccione categorías">
+                          {% for category in categories %}
+                          <option value="{{ category.id }}">{{ category.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Filtrar por Marcas:</label>
+                        <select class="brand" name="brand[]" multiple="multiple" style="width: 100%"
+                          data-placeholder="Seleccione categorías">
+                          {% for brand in brands %}
+                          <option value="{{ brand.id }}">{{ brand.name }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <h6>Datos del receptor</h6>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Nombres y Apellidos</label>
+                        <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
+                      </div>
+                      <div class="mb-3">
+                        <label class="form-label">Cargo</label>
+                        <input class="form-control" type="text" name="receiver_position" id="receiverPosition" required>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
+                  </div>
+                </div>
               </div>
-          </div>
+            </div>
 
             <script>
               $(document).ready(function () {

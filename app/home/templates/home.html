@@ -21,6 +21,7 @@
     integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/home.css' %} " rel="stylesheet">
+  <link href="{% static 'css/dashboard.css' %} " rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
     rel="stylesheet" />
 
@@ -109,7 +110,7 @@
             <li class="nav-item">
               <a href="{% url 'home:audit' %}" class="nav-link" id="nav-audit">
                 <i class="nav-icon fas fa-file-pen"></i>
-                <p>Auditoría</p>
+                <p>Auditorías</p>
               </a>
             </li>
 
@@ -127,6 +128,12 @@
               </a>
             </li>
             {% endif %}
+            <li class="nav-item">
+              <a href="" class="nav-link" id="nav-audit">
+                <i class="nav-icon fa-solid fa-book-open-reader"></i>
+                <p>Manuales</p>
+              </a>
+            </li>
             <li class="nav-item">
               <a href="{% url 'logout' %}" class="nav-link" id="nav-cerrar-sesion">
                 <i class="nav-icon fas fa-sign-out-alt"></i>
@@ -154,7 +161,7 @@
 
     </div>
     <footer class="main-footer">
-      <strong>Copyright &copy; InvenTrack. Todos los derechos reservados.</strong>
+      <strong>&copy; InvenTrack. Todos los derechos reservados.</strong>
       <div class="float-right d-none d-sm-inline-block"></div>
     </footer>
   </div>

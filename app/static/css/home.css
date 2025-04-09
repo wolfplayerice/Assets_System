@@ -16,15 +16,15 @@
     vertical-align: middle !important;
 }
 
-a{
+a {
     text-decoration: none;
 }
 
-#collapse-menu-button:hover{
+#collapse-menu-button:hover {
     background-color: transparent !important;
 }
 
-aside a i{
+aside a i {
     color: white;
     opacity: .8;
 }
@@ -45,13 +45,13 @@ aside a i{
     border-radius: 6px;
     font-weight: bold;
     border: none;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Efecto hover */
 #external-pdf-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Efecto active */
@@ -72,7 +72,7 @@ aside a i{
     transform: translateY(-50%);
     width: 16px;
     height: 16px;
-    border: 3px solid rgba(255,255,255,0.3);
+    border: 3px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     border-top-color: white;
     animation: spin 1s ease-in-out infinite;
@@ -92,19 +92,37 @@ aside a i{
 
 /* Keyframes para animaciones */
 @keyframes spin {
-    to { transform: translateY(-50%) rotate(360deg); }
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
 }
 
 @keyframes pulseSuccess {
-    0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
 }
 
 @keyframes pulseError {
-    0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); }
-    70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+    0% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+    }
 }
 
 /* Icono de PDF */
@@ -117,7 +135,7 @@ aside a i{
     opacity: 0;
 }
 
-.btn-add-pdf{
+.btn-add-pdf {
     justify-content: space-between;
 }
 
@@ -132,19 +150,19 @@ html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--s
 }
 
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
-	color: #dee2e6 !important;
+    color: #dee2e6 !important;
 }
 
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
-	color: #dee2e6 !important;
+    color: #dee2e6 !important;
 }
 
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__rendered .select2-selection__choice {
-	border: 1px solid var(--bs-gray-600);
+    border: 1px solid var(--bs-gray-600);
 }
 
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered .select2-selection__placeholder {
-	color: #dee2e6 !important;
+    color: #dee2e6 !important;
 }
 
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field {
@@ -155,9 +173,9 @@ html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown .se
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown {
     color: #dee2e6 !important;
     border: 1px solid #495057 !important;
-	background-color: var(--bs-body-bg);
+    background-color: var(--bs-body-bg);
 }
 
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option[role=group] .select2-results__group {
-	color: var(--bs-secondary-color)!important;
+    color: var(--bs-secondary-color) !important;
 }
