@@ -65,10 +65,7 @@ const initDataTablebrand = async () => {
     }
 };
 
-// Evento click para el botón externo de PDF
-$(document).on('click', '#external-pdf-button', function () {
-    generateBrandPDF();
-});
+
 
 async function generateBrandPDF() {
     const pdfButton = $('#external-pdf-button');
