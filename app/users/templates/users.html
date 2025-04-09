@@ -7,9 +7,8 @@
   <div class="col-md-12">
     <div class="card custom-card-height">
       <div class="card-header">
-        <h5 class="card-title">Tabla de Usuarios</h5>
+        <h5 class="card-title">Usuarios</h5>
       </div>
-      <!-- /.card-header -->
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
@@ -26,10 +25,10 @@
                   </div>
                   <tr>
                     <th class="centered" scope="col">#</th>
-                    <th class="centered" scope="col">Username</th>
+                    <th class="centered" scope="col">Usuario</th>
                     <th class="centered" scope="col">Nombre</th>
                     <th class="centered" scope="col">Apellido</th>
-                    <th class="centered" scope="col">Email</th>
+                    <th class="centered" scope="col">Correo</th>
                     <th class="centered" scope="col">Estado</th>
                     <th class="centered" scope="col">Opciones</th>
                   </tr>
@@ -39,6 +38,7 @@
                 </tbody>
               </table>
 
+              <!-- Modal para editar usuarios -->
               <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
@@ -113,9 +113,10 @@
                   </div>
                 </div>
               </div>
-            </div>
+            </div>            
+          </div>
 
-
+              <!-- Modal para registrar usuarios -->
               <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -155,63 +156,13 @@
                     </div>
                   </div>
                 </div>
-              </div>
+              </div>  
 
-              <!-- Modal para mostrar el mensaje
-              <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="successModalLabel">Éxito</h5>
-                    </div>
-                    <div class="modal-body">
-                      {% if messages %}
-                      {% for message in messages %}
-                      <div class="alert alert-success">{{ message }}</div>
-                      {% endfor %}
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="errorModalLabel">Error.</h5>
-                    </div>
-                    <div class="modal-body">
-                      {% if messages %}
-                      {% for message in messages %}
-                      <div class="alert alert-danger">{{ message }}</div>
-                      {% endfor %}
-                      {% endif %}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <script>
-                {% if messages %}
-                {% for message in messages %}
-                {% if message.tags == 'success' %}
-                $('#successModal').modal('show');
-                {% elif message.tags == 'error' %}
-                $(document).ready(function () {
-                  $('#errorModal').modal('show');
-                });
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-              </script> -->
               {% endblock %}
 
               {% block extra_js %}
               <script src="{% static 'js/cruduser.js' %}"></script>
-              <script src="{% static 'js/p.js' %}"></script>
+              <script src="{% static 'js/password-eye.js' %}"></script>
 
 
 
