@@ -34,10 +34,10 @@ const initDataTablebrand = async () => {
                     render: (data, type, row) => `
                             <button class='btn btn-sm btn-primary edit-bra-btn' 
                             data-id='${row.id}'
-                            data-name='${row.name}'>
+                            data-name='${row.name}' title='Editar'>
                                 <i class='fa-solid fa-pencil'></i>
                             </button>
-                        <button class='btn btn-sm btn-danger delete-btn-brand' data-id='${row.id}'>
+                        <button class='btn btn-sm btn-danger delete-btn-brand' data-id='${row.id}' title='Borrar'>
                             <i class='fa-solid fa-trash-can'></i>
                         </button>`,
                 },
@@ -70,13 +70,16 @@ const initDataTablebrand = async () => {
 async function generateBrandPDF() {
     const pdfButton = $('#external-pdf-button');
 
+
     // Obtener datos del receptor
     const receiverName = $('#receiverName').val();
-    const receiverPosition = $('#receiverPosition').val();
 
     // Obtener datos del usuario logueado
     const issuerName = $('#pdfOptionsModal').data('user-name');
-    const issuerPosition = $('#pdfOptionsModal').data('user-position');
+
+    const issuerVig = $('#receiverVig').val();
+    
+    const issuerAsset = $('#receiverAsset').val();
 
 
     // Iniciar animación de carga
@@ -102,7 +105,7 @@ async function generateBrandPDF() {
                 columns: [
                     { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
                     {
-                        text: 'INVENTARIO DE BIENES MUEBLES',
+                        text: 'LISTADO DE MARCAS',
                         style: 'header',
                         alignment: 'center',
                         margin: [0, 20, 0, 20]
@@ -140,20 +143,32 @@ async function generateBrandPDF() {
             defaultStyle: { fontSize: 12, color: '#2c3e50' },
             footer: function(currentPage, pageCount) {
                 return {
-                    stack: [ 
+                    stack: [
                         {
                             table: {
-                                widths: ['*', '*'],
+                                widths: ['*', '*', '*', '*'],
                                 body: [
                                     [
                                         {
-                                            text: `Emitido por:\n\n\n_________________________\n${issuerName.toUpperCase()}\n${issuerPosition.toUpperCase()}`,
+                                            text: `Entregado:\n\n\n_________________________\n${issuerName.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
                                             margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
                                         },
                                         {
-                                            text: `Recibido por:\n\n\n_________________________\n${receiverName.toUpperCase()}\n${receiverPosition.toUpperCase()}`,
+                                            text: `Recibido:\n\n\n_________________________\n${receiverName.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Vigilancia:\n\n\n_________________________\n${issuerVig.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Unidad de bienes:\n\n\n_________________________\n${issuerAsset.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
                                             margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
@@ -161,8 +176,7 @@ async function generateBrandPDF() {
                                     ]
                                 ]
                             },
-                            layout: 'noBorders',
-                            // Quitar el margen aquí si se maneja en las celdas internas
+                            layout: 'Borders',
                         },
                         {
                             text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,

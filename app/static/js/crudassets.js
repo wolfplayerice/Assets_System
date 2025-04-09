@@ -117,18 +117,15 @@ async function generateAssetPDF() {
 
     // Obtener datos del receptor
     const receiverName = $('#receiverName').val();
-    const receiverPosition = $('#receiverPosition').val();
 
     // Obtener datos del usuario logueado
     const issuerName = $('#pdfOptionsModal').data('user-name');
-    const issuerPosition = $('#pdfOptionsModal').data('user-position');
 
-    // Validar campos requeridos
-    if (!receiverName || !receiverPosition) {
-        Swal.fire('Error', 'Debe completar todos los datos del receptor', 'error');
-        pdfButton.prop('disabled', false);
-        return;
-    }
+    const issuerVig = $('#receiverVig').val();
+    
+    const issuerAsset = $('#receiverAsset').val();
+
+
 
     // Iniciar animación de carga
     pdfButton.addClass('pdf-button-loading').prop('disabled', true);
@@ -211,20 +208,32 @@ async function generateAssetPDF() {
             defaultStyle: { fontSize: 12, color: '#2c3e50' },
             footer: function(currentPage, pageCount) {
                 return {
-                    stack: [ // Usar stack para mejor control del espaciado
+                    stack: [
                         {
                             table: {
-                                widths: ['*', '*'],
+                                widths: ['*', '*', '*', '*'],
                                 body: [
                                     [
                                         {
-                                            text: `Emitido por:\n\n\n_________________________\n${issuerName.toUpperCase()}\n${issuerPosition.toUpperCase()}`,
+                                            text: `Entregado:\n\n\n_________________________\n${issuerName.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
                                             margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
                                         },
                                         {
-                                            text: `Recibido por:\n\n\n_________________________\n${receiverName.toUpperCase()}\n${receiverPosition.toUpperCase()}`,
+                                            text: `Recibido:\n\n\n_________________________\n${receiverName.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Vigilancia:\n\n\n_________________________\n${issuerVig.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Unidad de bienes:\n\n\n_________________________\n${issuerAsset.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
                                             margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
@@ -232,8 +241,7 @@ async function generateAssetPDF() {
                                     ]
                                 ]
                             },
-                            layout: 'noBorders',
-                            // Quitar el margen aquí si se maneja en las celdas internas
+                            layout: 'Borders',
                         },
                         {
                             text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
