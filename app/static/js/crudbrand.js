@@ -47,7 +47,7 @@ const initDataTablebrand = async () => {
                 "zeroRecords": "No se encontraron resultados",
                 "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
                 "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-                "infoFiltered": "(filtrado de un total de MAX registros)",
+                "infoFiltered": "(filtrado de un total de _MAX_ registros)",
                 "sSearch": "Buscar:",
                 "sProcessing": "Procesando...",
                 "emptyTable": "No hay datos disponibles en la tabla"
@@ -246,7 +246,8 @@ $(document).on('click', '.delete-btn-brand', function () {
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar!'
+        confirmButtonText: 'Sí, eliminar!',
+        cancelButtonText: 'Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({

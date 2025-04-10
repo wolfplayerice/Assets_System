@@ -68,15 +68,15 @@ const initDataTableBackups = async () => {
                     }
                 }
             ],
-            language: {
-                lengthMenu: "Mostrar _MENU_ registros",
-                zeroRecords: "No se encontraron respaldos",
-                info: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                infoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
-                infoFiltered: "(filtrado de un total de _MAX_ registros)",
-                sSearch: "Buscar:",
-                sProcessing: "Procesando...",
-                emptyTable: "No hay respaldos disponibles",
+            "language": {
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "zeroRecords": "No se encontraron respaldos",
+                "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "infoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar:",
+                "sProcessing": "Procesando...",
+                "emptyTable": "No hay respaldos disponibles"
             },
             responsive: true,
             dom: "<'row'<'col-sm-12 col-md-6'l><'col-sm-12 col-md-6'f>>" +
@@ -295,11 +295,10 @@ $(document).on('click', '.delete-btn', function () {
         html: `Estás a punto de eliminar permanentemente: <b>${backupName}</b>`,
         icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, eliminar',
         cancelButtonText: 'Cancelar',
-        reverseButtons: true
     }).then((result) => {
         if (result.isConfirmed) {
             Swal.fire({

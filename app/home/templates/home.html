@@ -11,7 +11,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>InvenTrack</title>
-
+  <link rel="icon" type="image/png" href="{% static 'img/icono.png' %}">
   <link rel="stylesheet" href="{% static 'assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
@@ -72,7 +72,7 @@
       <div class="sidebar">
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <i class="fas fa-user-circle fa-2x img-circle elevation-2"></i>
+            <img src="{% static 'img/broba_blanco.png' %}" alt="">
           </div>
           <div class="info">
             <a href="{% url 'home:user_info' %}" class="d-block user-name">
@@ -178,6 +178,8 @@
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   <script src="{% static 'js/verify_user.js' %}"></script>
   <script src="{% static 'js/base64.js' %}"></script>
+  <!-- Tema de Bootstrap para Select2 -->
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
   {% block extra_js %}
   {% endblock %}
 
