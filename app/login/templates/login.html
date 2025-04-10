@@ -93,163 +93,163 @@
                 </div>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        <script src="{% static 'js/sweetalert2@11.js' %}"></script>
-        <script src="{% static 'js/verify_user.js' %}"></script>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/sweetalert2@11.js' %}"></script>
+    <script src="{% static 'js/verify_user.js' %}"></script>
 
-        {% if error_disabled %}
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Usuario deshabilitado',
-                    text: '{{ error_disabled }}',
-                    confirmButtonText: 'Aceptar'
-                });
+    {% if error_disabled %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Usuario deshabilitado',
+                text: '{{ error_disabled }}',
+                confirmButtonText: 'Aceptar'
             });
-        </script>
-        {% endif %}
+        });
+    </script>
+    {% endif %}
 
-        {% if error_invalid %}
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Datos incorrectos',
-                    text: '{{ error_invalid }}',
-                    confirmButtonText: 'Aceptar'
-                });
+    {% if error_invalid %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Datos incorrectos',
+                text: '{{ error_invalid }}',
+                confirmButtonText: 'Aceptar'
             });
-        </script>
-        {% endif %}
+        });
+    </script>
+    {% endif %}
 
-        <!-- Funcion para que el ojo posea funcionalidad V.Parra -->
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const togglePassword = document.getElementById('toggle-password');
-                const passwordField = document.getElementById('password');
-                const passwordIcon = document.getElementById('password-icon');
+    <!-- Funcion para que el ojo posea funcionalidad V.Parra -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordField = document.getElementById('password');
+            const passwordIcon = document.getElementById('password-icon');
 
-                togglePassword.addEventListener('click', function () {
-                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                    passwordField.setAttribute('type', type);
-                    passwordIcon.classList.toggle('fa-eye');
-                    passwordIcon.classList.toggle('fa-eye-slash');
-                });
+            togglePassword.addEventListener('click', function () {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                passwordIcon.classList.toggle('fa-eye');
+                passwordIcon.classList.toggle('fa-eye-slash');
             });
-        </script>
+        });
+    </script>
 
-        <!-- Fin de la funcionalidad del ojo V.Parra -->
+    <!-- Fin de la funcionalidad del ojo V.Parra -->
 
-        {% if session_terminated %}
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Sesión interrumpida',
-                    text: 'Tu sesión fue cerrada porque iniciaste sesión desde otro dispositivo.',
-                    confirmButtonText: 'Entendido'
-                });
+    {% if session_terminated %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Sesión interrumpida',
+                text: 'Tu sesión fue cerrada porque iniciaste sesión desde otro dispositivo.',
+                confirmButtonText: 'Entendido'
             });
-        </script>
-        {% endif %}
+        });
+    </script>
+    {% endif %}
 
-        <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const form = document.getElementById("security-form");
-                const stepUsername = document.getElementById("step-username");
-                const stepSecurity = document.getElementById("step-security");
-                const questionText = document.getElementById("security-question");
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("security-form");
+            const stepUsername = document.getElementById("step-username");
+            const stepSecurity = document.getElementById("step-security");
+            const questionText = document.getElementById("security-question");
 
-                const inputUsername = form.querySelector('[name="username"]');
-                const inputAnswer = form.querySelector('[name="security_answer"]');
-                const inputNewPassword = form.querySelector('[name="new_password"]');
+            const inputUsername = form.querySelector('[name="username"]');
+            const inputAnswer = form.querySelector('[name="security_answer"]');
+            const inputNewPassword = form.querySelector('[name="new_password"]');
 
-                let currentUsername = "";
+            let currentUsername = "";
 
-                // Utilidad para cambiar entre pasos
-                function mostrarPaso2() {
-                    stepUsername.style.display = "none";
-                    stepSecurity.style.display = "block";
+            // Utilidad para cambiar entre pasos
+            function mostrarPaso2() {
+                stepUsername.style.display = "none";
+                stepSecurity.style.display = "block";
 
-                    inputUsername.required = false;
-                    inputAnswer.required = true;
-                    inputNewPassword.required = true;
-                }
+                inputUsername.required = false;
+                inputAnswer.required = true;
+                inputNewPassword.required = true;
+            }
 
-                function mostrarPaso1() {
-                    stepUsername.style.display = "block";
-                    stepSecurity.style.display = "none";
+            function mostrarPaso1() {
+                stepUsername.style.display = "block";
+                stepSecurity.style.display = "none";
 
-                    inputUsername.required = true;
-                    inputAnswer.required = false;
-                    inputNewPassword.required = false;
-                }
+                inputUsername.required = true;
+                inputAnswer.required = false;
+                inputNewPassword.required = false;
+            }
 
-                form.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    const formData = new FormData(form);
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const formData = new FormData(form);
 
-                    if (stepUsername.style.display !== "none") {
-                        // Paso 1: Obtener pregunta
-                        fetch("{% url 'validate_security_question' %}", {
-                            method: "POST",
-                            headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                            body: formData
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.status === "ok") {
-                                    questionText.innerText = data.question;
-                                    currentUsername = inputUsername.value;
-                                    mostrarPaso2();
-                                } else {
-                                    alert(data.message || "Usuario no válido.");
-                                }
-                            });
-                    } else {
-                        // Paso 2: Validar respuesta y cambiar contraseña
-                        const payload = new URLSearchParams({
-                            username: currentUsername,
-                            security_answer: inputAnswer.value,
-                            new_password: inputNewPassword.value
+                if (stepUsername.style.display !== "none") {
+                    // Paso 1: Obtener pregunta
+                    fetch("{% url 'validate_security_question' %}", {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                        body: formData
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === "ok") {
+                                questionText.innerText = data.question;
+                                currentUsername = inputUsername.value;
+                                mostrarPaso2();
+                            } else {
+                                alert(data.message || "Usuario no válido.");
+                            }
                         });
+                } else {
+                    // Paso 2: Validar respuesta y cambiar contraseña
+                    const payload = new URLSearchParams({
+                        username: currentUsername,
+                        security_answer: inputAnswer.value,
+                        new_password: inputNewPassword.value
+                    });
 
-                        fetch("{% url 'reset_password' %}", {
-                            method: "POST",
-                            headers: { "X-CSRFToken": "{{ csrf_token }}" },
-                            body: payload
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.status === "ok") {
-                                    alert("¡Contraseña cambiada exitosamente!");
-                                    $('#password-reset-modal').modal('hide');
-                                    form.reset();
-                                    mostrarPaso1();
-                                } else {
-                                    alert(data.message || "Error al cambiar la contraseña.");
-                                }
-                            });
-                    }
-                });
+                    fetch("{% url 'reset_password' %}", {
+                        method: "POST",
+                        headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                        body: payload
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.status === "ok") {
+                                alert("¡Contraseña cambiada exitosamente!");
+                                $('#password-reset-modal').modal('hide');
+                                form.reset();
+                                mostrarPaso1();
+                            } else {
+                                alert(data.message || "Error al cambiar la contraseña.");
+                            }
+                        });
+                }
+            });
 
-                // Resetear modal al cerrarlo
-                $('#password-reset-modal').on('hidden.bs.modal', function () {
-                    form.reset();
-                    mostrarPaso1();
-                });
-
-                // Inicializa visibilidad correctamente por si algo queda mal
+            // Resetear modal al cerrarlo
+            $('#password-reset-modal').on('hidden.bs.modal', function () {
+                form.reset();
                 mostrarPaso1();
             });
-        </script>
+
+            // Inicializa visibilidad correctamente por si algo queda mal
+            mostrarPaso1();
+        });
+    </script>
 </body>
 <footer class="main-footer">
-    <strong>Copyright &copy; Derechos reservados a Moon-Team
-        <i class="fas fa-moon moon-icon"></i>
+    <strong>&copy; InvenTrack. Todos los derechos reservados.
     </strong>
 </footer>
 
