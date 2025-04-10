@@ -1,11 +1,9 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
-from django.http.response import JsonResponse, HttpResponse
+from django.http.response import JsonResponse
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect
 from .forms import CreateUser, EditUser
 from django.urls import reverse
-from django.contrib import messages
 from django.db import IntegrityError
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -149,7 +147,7 @@ def user_create(request):
             errors = []
             for field, error_list in user_create_form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo {field}: {error}')
+                    errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
 
     else:
@@ -217,7 +215,7 @@ def user_edit(request, user_id):
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo {field}: {error}')
+                    errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
     else:
         form = EditUser(instance=user, profile=profile)

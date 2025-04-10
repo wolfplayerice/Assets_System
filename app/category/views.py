@@ -2,12 +2,9 @@ from django.shortcuts import render, get_object_or_404
 from django.http.response import JsonResponse, HttpResponse
 from .models import Category
 from .forms import Create_category, Edit_category
-from django.contrib import messages
-from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from audit.models import AuditLog 
-from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Q
 
@@ -49,12 +46,9 @@ def category_create(request):
                     description=f"Categoría creada: {category.name} (ID: {category.id})"
                 )
                 return JsonResponse({'status': 'success', 'message': 'Categoría creada exitosamente.'})
-                #messages.success(request, 'La categoría se ha guardado correctamente.')
-                #return HttpResponseRedirect(reverse('home:category'))
             
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                #messages.error(request, f'Error inesperado: {str(e)}')
     
     return render(request, 'crudcat.html', {
         'cat_form': Create_category(),
@@ -205,24 +199,16 @@ def category_edit(request, cat_id):
                     description=audit_message
                 )
                 return JsonResponse({'status': 'success', 'message': 'La categoría se ha actualizado correctamente.'})
-                #messages.success(request, 'La categoría se ha actualizado correctamente.')
             
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                #messages.error(request, f'Error inesperado: {str(e)}')
         
         else:
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo {field}: {error}')
+                    errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
-            # for field, errors in form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f'Error en el campo {field}: {error}')
-        
-        #return HttpResponseRedirect(reverse('category:category'))
-    
     else:
         form = Edit_category(instance=category)
     

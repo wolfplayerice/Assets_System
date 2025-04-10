@@ -1,13 +1,8 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.http import JsonResponse
-from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from .forms import EditUserInfo
-from audit.models import AuditLog 
-from .forms import SecurityQuestionForm  # Importa el formulario
+from .forms import EditUserInfo, SecurityQuestionForm
 
 @login_required
 def user_info(request): 
@@ -53,7 +48,7 @@ def user_edit(request, user_id):
             for form in [user_form, security_form]:
                 for field, error_list in form.errors.items():
                     for error in error_list:
-                        errors.append(f'Error en el campo {field}: {error}')
+                        errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
     else:
         # Carga los formularios con los datos actuales

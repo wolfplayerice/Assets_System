@@ -3,10 +3,8 @@ from django.http.response import JsonResponse, HttpResponse
 from .models import Asset
 from brand.models import Brand
 from category.models import Category
-from django.http import HttpResponseRedirect
 from .forms import AssetCreate, AssetEdit
 from django.urls import reverse
-from django.contrib import messages
 from django.db import IntegrityError
 from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
@@ -156,34 +154,22 @@ def asset_create(request):
                     description=f"Activo creado (ID: {assets.id}): {assets.fk_brand.name} {assets.model} {assets.serial_number}"
                 )
                 return JsonResponse({'status': 'success', 'message': 'El activo se ha guardado correctamente.'})
-                # messages.success(request, 'El activo se ha guardado correctamente.')
-                # return HttpResponseRedirect(reverse('home:inventory'))
             
             except IntegrityError as e:
                 if 'serial_number' in str(e):
                     return JsonResponse({'status': 'error', 'message': 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'})
-                    # messages.error(request, 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.')
-                    # return HttpResponseRedirect(reverse('home:inventory'))
                 else:
                     return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al guardar el activo. Por favor, inténtelo de nuevo.'})
-                    # messages.error(request, 'Error: Ocurrió un problema al guardar el activo. Por favor, inténtelo de nuevo.')
-                    # return HttpResponseRedirect(reverse('home:inventory'))
             
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
-                # messages.error(request, f'Error inesperado: {str(e)}')
-                # return HttpResponseRedirect(reverse('home:inventory'))
         
         else:
             errors = []
             for field, error_list in asset_create_form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo {field}: {error}')
+                    errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
-            # for field, errors in asset_create_form.errors.items():
-            #     for error in errors:
-            #         messages.error(request, f'Error en el campo {field}: {error}')
-            #         return HttpResponseRedirect(reverse('home:inventory'))
     
     else:
         asset_create_form = AssetCreate()
@@ -324,7 +310,7 @@ def asset_edit(request, asset_id):
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo {field}: {error}')
+                    errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
     
     else:
