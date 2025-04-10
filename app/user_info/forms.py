@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password  # Importa para encriptar contraseñas
+from users.models import Profile  # Cambia la ruta de importación al archivo correcto
 
 
 class EditUserInfo(forms.ModelForm):
@@ -56,3 +57,24 @@ class EditUserInfo(forms.ModelForm):
         if commit:
             user.save()  # Guarda los cambios en la base de datos
         return user
+
+
+class SecurityQuestionForm(forms.ModelForm):
+    security_answer = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'id': 'security_answer'}),
+        required=False,  # Aquí defines que no sea requerido
+        label="Respuesta de seguridad"
+    )
+
+    class Meta:
+        model = Profile
+        fields = ['security_question', 'security_answer']
+        widgets = {
+            'security_question': forms.Select(attrs={'class': 'form-control', 'id': 'security_question'}),
+        }
+        labels = {
+            'security_question': 'Pregunta de seguridad',
+        }
+        help_texts = {
+            'security_answer': 'Este campo solo será requerido si cambias la pregunta de seguridad.',
+        }

@@ -41,3 +41,9 @@ class Profile(models.Model):
     def check_security_answer(self, raw_answer):
         """Verifica si la respuesta coincide."""
         return check_password(raw_answer.lower().strip(), self.security_answer)
+
+    def save(self, *args, **kwargs):
+        # Solo hashea la respuesta si ha cambiado
+        if self.security_answer and not self._state.adding:
+            self.security_answer = make_password(self.security_answer.lower().strip())
+        super().save(*args, **kwargs)
