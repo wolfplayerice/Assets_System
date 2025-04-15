@@ -1,0 +1,302 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>InvenTrack</title>
+  <link rel="icon" type="image/png" href="{% static 'img/icono.png' %}">
+  <link rel="stylesheet" href="{% static 'assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link href="{% static 'css/DataTables/datatables.css' %} " rel="stylesheet">
+  <link href="{% static 'css/DataTables/datatables.min.css' %} " rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
+  <link href="{% static 'css/home.css' %} " rel="stylesheet">
+  <link href="{% static 'css/dashboard.css' %} " rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"
+    rel="stylesheet" />
+
+  {% if request.resolver_match.url_name == "user_info" %}
+  <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
+  {% endif %}
+
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+  <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+  <div class="wrapper">
+    <nav class="main-header navbar navbar-expand navbar-dark bg-dark">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" id="collapse-menu-button" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item">
+          <button id="dark-mode-toggle" class="btn btn-sm btn-dark">
+            <i class="fas fa-moon"></i>
+          </button>
+        </li>
+      </ul>
+    </nav>
+    <style>
+      .brand-link {
+        height: 56px;
+        /* Tamaño predeterminado */
+        transition: height 0.3s ease;
+      }
+
+      .brand-link.collapsed {
+        height: 40px;
+        /* Tamaño reducido cuando el menú está colapsado */
+      }
+
+      .brand-icon {
+        margin-left: 5px;
+      }
+    </style>
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+      <a href="{% url 'home:dashboard' %}" class="brand-link d-flex align-items-center">
+        <img src="{% static 'img/icono.png' %}" alt="" width="40" class="brand-icon">
+        <img src="{% static 'img/letra.png' %}" alt="" width="120" class="brand-text">
+      </a>
+      <div class="sidebar">
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image">
+            <img src="{% static 'img/broba_blanco.png' %}" alt="">
+          </div>
+          <div class="info">
+            <a href="{% url 'home:user_info' %}" class="d-block user-name">
+              <span class="font-weight-bold">{{ first_name|slice:":1" }}. {{ last_name }}</span>
+              <i class="fas fa-pencil-alt ml-1"></i>
+            </a>
+          </div>
+        </div>
+        <nav class="mt-2">
+          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item">
+              <a href="{% url 'home:dashboard' %}" class="nav-link" id="nav-dashboard">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>Dashboard</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home:inventory' %}" class="nav-link" id="nav-bienes">
+                <i class="nav-icon fas fa-tools"></i>
+                <p>Bienes</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home:category' %}" class="nav-link" id="nav-categorias">
+                <i class="nav-icon fas fa-microchip"></i>
+                <p>Categorías</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home:brand' %}" class="nav-link" id="nav-marcas">
+                <i class="nav-icon fas fa-laptop"></i>
+                <p>Marcas</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home:audit' %}" class="nav-link" id="nav-audit">
+                <i class="nav-icon fas fa-file-pen"></i>
+                <p>Auditorías</p>
+              </a>
+            </li>
+
+            {% if request.user.is_staff %}
+            <li class="nav-item">
+              <a href="{% url 'home:users' %}" class="nav-link" id="nav-usuarios">
+                <i class="nav-icon fas fa-users"></i>
+                <p>Usuarios</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'home:backup' %}" class="nav-link" id="nav-audit">
+                <i class="nav-icon fas fa-database"></i>
+                <p>Base de datos</p>
+              </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a href="" class="nav-link" id="nav-audit">
+                <i class="nav-icon fa-solid fa-book-open-reader"></i>
+                <p>Manuales</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'logout' %}" class="nav-link" id="nav-cerrar-sesion">
+                <i class="nav-icon fas fa-sign-out-alt"></i>
+                <p>Cerrar Sesión</p>
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </aside>
+    <div class="content-wrapper">
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+          </div>
+        </div>
+      </div>
+      <section class="content">
+        <div class="container-fluid">
+          {% block content %}
+          <div class="container mt-5">
+            <h1>{{ message }}</h1>
+          </div>
+          {% endblock %}
+        </div>
+      </section>
+
+    </div>
+    <footer class="main-footer">
+      <strong>&copy; InvenTrack. Todos los derechos reservados.</strong>
+      <div class="float-right d-none d-sm-inline-block"></div>
+    </footer>
+  </div>
+
+  <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+  <script src="{% static 'assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+  <script src="{% static 'assets/dist/js/adminlte.js' %}"></script>
+  <script src="{% static 'js/sweetalert2@11.js' %}"></script>
+  <script src="{% static 'js/DataTables/datatables.min.js' %}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="{% static 'js/verify_user.js' %}"></script>
+  <script src="{% static 'js/base64.js' %}"></script>
+  <!-- Tema de Bootstrap para Select2 -->
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css"
+    rel="stylesheet" />
+  {% block extra_js %}
+  {% endblock %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const currentPath = window.location.pathname;
+      const navLinks = document.querySelectorAll('.nav-link');
+
+      navLinks.forEach(link => {
+        if (link.id === 'collapse-menu-button') {
+          return;
+        }
+
+        const linkPath = new URL(link.href).pathname;
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+    });
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const darkModeToggle = document.getElementById("dark-mode-toggle");
+      const body = document.body;
+      const html = document.documentElement;
+      const dataTables = document.querySelectorAll(".dataTable"); // Selecciona todas las tablas con DataTables
+
+      function applyDarkMode(enabled) {
+        if (enabled) {
+          body.classList.add("dark-mode");
+          html.classList.add("dark");
+          html.setAttribute("data-bs-theme", "dark");
+          darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+          dataTables.forEach(table => table.classList.add("table-dark")); // Aplica estilo oscuro a DataTables
+          localStorage.setItem("dark-mode", "enabled");
+        } else {
+          body.classList.remove("dark-mode");
+          html.classList.remove("dark");
+          html.setAttribute("data-bs-theme", "light");
+          darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+          dataTables.forEach(table => table.classList.remove("table-dark")); // Quita el estilo oscuro de DataTables
+          localStorage.setItem("dark-mode", "disabled");
+        }
+      }
+
+      // Cargar modo guardado en localStorage
+      const darkModeEnabled = localStorage.getItem("dark-mode") === "enabled";
+      applyDarkMode(darkModeEnabled);
+
+      // Evento de cambio de modo
+      darkModeToggle.addEventListener("click", function () {
+        applyDarkMode(!body.classList.contains("dark-mode"));
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Verificar si debemos forzar recarga
+      if (new URLSearchParams(window.location.search).has('session_terminated')) {
+        window.location.href = "{% url 'login' %}?session_terminated=1";
+      }
+
+      // Manejar respuestas AJAX
+      $(document).ajaxComplete(function (event, xhr) {
+        try {
+          const response = JSON.parse(xhr.responseText);
+          if (response.force_reload) {
+            window.location.href = response.login_url;
+          }
+        } catch (e) { }
+      });
+    });
+  </script>
+
+  <script>
+    window.onpageshow = function (event) {
+      if (event.persisted) {
+        window.location.reload();
+      }
+    };
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const collapseButton = document.getElementById('collapse-menu-button');
+      const brandLink = document.querySelector('.brand-link');
+      const brandText = document.querySelector('.brand-text');
+
+      // Escuchar el evento de clic en el botón de colapso
+      collapseButton.addEventListener('click', function () {
+        const sidebar = document.querySelector('.main-sidebar');
+        if (sidebar.classList.contains('sidebar-collapse')) {
+          brandText.style.display = 'none'; // Ocultar la letra
+          brandLink.classList.add('collapsed'); // Reducir el tamaño del contenedor
+        } else {
+          brandText.style.display = 'inline'; // Mostrar la letra
+          brandLink.classList.remove('collapsed'); // Restaurar el tamaño del contenedor
+        }
+      });
+
+      // Configuración inicial al cargar la página
+      const sidebar = document.querySelector('.main-sidebar');
+      if (sidebar.classList.contains('sidebar-collapse')) {
+        brandText.style.display = 'none';
+        brandLink.classList.add('collapsed');
+      } else {
+        brandText.style.display = 'inline';
+        brandLink.classList.remove('collapsed');
+      }
+    });
+  </script>
+</body>
+
+</html>
