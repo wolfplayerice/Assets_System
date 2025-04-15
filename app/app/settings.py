@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'inventory',
     'category',
     'login',
+    'manuals',
     'brand',
     'widget_tweaks',
     'users',

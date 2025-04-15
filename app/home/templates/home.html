@@ -60,7 +60,8 @@
         height: 40px;
         /* Tamaño reducido cuando el menú está colapsado */
       }
-      .brand-icon{
+
+      .brand-icon {
         margin-left: 5px;
       }
     </style>
@@ -129,7 +130,7 @@
             </li>
             {% endif %}
             <li class="nav-item">
-              <a href="" class="nav-link" id="nav-audit">
+              <a href="{% url 'manuals' %}" class="nav-link" id="nav-manuales">
                 <i class="nav-icon fa-solid fa-book-open-reader"></i>
                 <p>Manuales</p>
               </a>
@@ -179,7 +180,8 @@
   <script src="{% static 'js/verify_user.js' %}"></script>
   <script src="{% static 'js/base64.js' %}"></script>
   <!-- Tema de Bootstrap para Select2 -->
-  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css"
+    rel="stylesheet" />
   {% block extra_js %}
   {% endblock %}
 
