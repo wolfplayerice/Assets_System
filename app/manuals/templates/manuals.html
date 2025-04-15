@@ -130,7 +130,7 @@
             </li>
             {% endif %}
             <li class="nav-item">
-              <a href="" class="nav-link" id="nav-audit">
+              <a href="{% url 'manuals' %}" class="nav-link" id="nav-manuales">
                 <i class="nav-icon fa-solid fa-book-open-reader"></i>
                 <p>Manuales</p>
               </a>
@@ -152,12 +152,113 @@
           </div>
         </div>
       </div>
+      <style>
+        /* Contenedor de las carpetas */
+        .cards {
+          display: flex;
+          flex-direction: column; /* Apilar verticalmente */
+          align-items: center; /* Centrar horizontalmente */
+          gap: 20px; /* Espaciado entre las carpetas */
+        }
+        
+        /* Estilo de las carpetas */
+        .cards .card {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          text-align: center;
+          height: 150px; /* Altura de la carpeta */
+          width: 300px; /* Ancho de la carpeta */
+          border-radius: 15px 15px 0 0; /* Bordes superiores redondeados */
+          color: white; /* Color del texto */
+          cursor: pointer;
+          transition: 400ms;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra inicial */
+          position: relative;
+        }
+        
+        /* Colores de las carpetas */
+        .cards .red {
+          background-color: #f43f5e; /* Rojo */
+          gradient: linear-gradient(to right, #f43f5e, #f87171); /* Gradiente de rojo a rosa */
+        }
+        
+        .cards .blue {
+          background-color: #3b82f6; /* Azul */
+          gradient: linear-gradient(to right, #3b82f6, #60a5fa); /* Gradiente de azul a celeste */
+        }
+        
+        .cards .yellow {
+          background-color: #f0c20a; /* Amarillo */
+          gradient: linear-gradient(to right, #facc15, #fde047); /* Gradiente de amarillo a dorado */
+        }
+        
+        /* Pestaña superior de la carpeta */
+        .cards .card::before {
+          content: '';
+          position: absolute;
+          top: -10px;
+          left: 20px;
+          width: 80px;
+          height: 20px;
+          background-color: rgba(0, 0, 0, 0.1); /* Color de la pestaña */
+          border-radius: 5px 5px 0 0; /* Bordes redondeados de la pestaña */
+        }
+        
+        /* Texto principal */
+        .cards .card p.tip {
+          font-size: 1.3em; /* Texto un poco más grande */
+          font-weight: bold; /* Negrillas */
+        }
+        
+        /* Texto secundario */
+        .cards .card p.second-text {
+          font-size: 1.1em; /* Texto un poco más grande */
+          font-weight: bold; /* Negrillas */
+        }
+        
+        /* Efecto al pasar el mouse */
+        .cards .card:hover {
+          transform: scale(1.1, 1.1); /* Aumentar tamaño */
+          box-shadow: 0 0 15px 5px currentColor; /* Luz neón del mismo color */
+          color: black; /* Cambiar el color del texto a negro */
+        }
+        
+        /* Oscurecer las carpetas no seleccionadas */
+        .cards:hover > .card:not(:hover) {
+          filter: brightness(0.7); /* Oscurecer las carpetas no seleccionadas */
+          transform: scale(0.9, 0.9); /* Reducir tamaño de las carpetas no seleccionadas */
+        }
+        
+        /* Responsividad */
+        @media (max-width: 768px) {
+          .cards .card {
+            width: 90%; /* Usar casi todo el ancho disponible en pantallas pequeñas */
+            height: 120px; /* Reducir altura en pantallas pequeñas */
+          }
+        }
+        </style>
       <section class="content">
         <div class="container-fluid">
           {% block content %}
-          <div class="container mt-5">
-            <h1>{{ message }}</h1>
+          <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; padding-top: 20px;">
+            <div class="cards">
+              <div class="card yellow">
+                <p class="tip">Manual 1</p>
+                <p class="second-text">Ver contenido</p>
+              </div>
+              <div class="card blue">
+                <p class="tip">Manual 2</p>
+                <p class="second-text">Ver contenido</p>
+              </div>
+              <div class="card red">
+                <p class="tip">Manual 3</p>
+                <p class="second-text">Ver contenido</p>
+              </div>
+            </div>
           </div>
+          
           {% endblock %}
         </div>
       </section>
