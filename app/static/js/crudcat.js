@@ -104,101 +104,172 @@ const initDataTableCategory = (() => {
     };
 })();
 
-function generateBrandsPDF() {
+async function generateCatPDF() {
     const pdfButton = $('#external-pdf-button');
-    
 
-    pdfButton.addClass('pdf-button-loading');
-    pdfButton.prop('disabled', true);
-    
-    $.ajax({
-        url: '/category/list_category/?all=true',
-        type: 'GET',
-        success: (response) => {
-            const data = response.Category.map(category => [category.id, category.name]);
-            const today = new Date();
-            const formattedDateTime = today.toLocaleString();
 
-            const docDefinition = {
-                pageSize: 'LETTER',
-                pageMargins: [40, 80, 40, 40],
-                header: {
-                    columns: [
-                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
-                        {
-                            text: 'LISTA DE CATEGORIAS',
-                            style: 'header',
-                            alignment: 'center',
-                            margin: [10, 20, 0, 20]
-                        },
-                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 10, 10] }
-                    ],
-                    columnGap: 10,
-                },
-                content: [
+    // Obtener datos del receptor
+    const receiverName = $('#receiverName').val();
+
+    // Obtener datos del usuario logueado
+    const issuerName = $('#pdfOptionsModal').data('user-name');
+
+    const issuerVig = $('#receiverVig').val();
+    
+    const issuerAsset = $('#receiverAsset').val();
+
+
+    // Iniciar animación de carga
+    pdfButton.addClass('pdf-button-loading').prop('disabled', true);
+
+    try {
+        const response = await $.ajax({
+            url: '/category/list_category/?all=true',
+            type: 'GET',
+        });
+
+        const data = response.Category.map(category => [category.id, category.name]);
+
+
+        const today = new Date();
+        const formattedDateTime = today.toLocaleString();
+
+        const docDefinition = {
+            pageSize: 'LETTER',
+            pageOrientation: 'landscape',
+            pageMargins: [40, 80, 40, 130], // Ajustado el margen inferior para más espacio para las firmas
+            header: {
+                columns: [
+                    { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
                     {
-                        table: {
-                            headerRows: 1,
-                            widths: ['auto', '*'],
-                            body: [
-                                [
-                                    { text: 'ID', style: 'tableHeader', alignment: 'center' },
-                                    { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
-                                ],
-                                ...data.map(row => row.map(cell => ({
-                                    text: cell,
-                                    alignment: 'center',
-                                    noWrap: false,
-                                })))
-                            ]
-                        },
-                        layout: 'lightHorizontalLines'
-                    }
+                        text: 'LISTADO DE CATEGORIAS',
+                        style: 'header',
+                        alignment: 'center',
+                        margin: [0, 20, 0, 20]
+                    },
+                    { image: logo, width: 60, alignment: 'right', margin: [10, 10, 20, 10] }
                 ],
-                styles: {
-                    header: { fontSize: 18, bold: true, color: '#2c3e50' },
-                    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
-                    footer: { fontSize: 10, alignment: 'center', color: '#666666' }
-                },
-                defaultStyle: {
-                    fontSize: 12,
-                    color: '#2c3e50'
-                },
-                footer: (currentPage, pageCount) => ({
-                    text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                    style: 'footer',
-                    margin: [0, 10, 0, 0]
-                })
-            };
+                columnGap: 10,
+            },
+            content: [
+                {
+                    table: {
+                        headerRows: 1,
+                        widths: ['auto', '*'],
+                        body: [
+                            [
+                                { text: 'ID', style: 'tableHeader', alignment: 'center' },
+                                { text: 'Nombre', style: 'tableHeader', alignment: 'center' },
+                            ],
+                            ...data.map(row => row.map(cell => ({
+                                text: cell != null ? cell.toString() : '', // Asegurarse que sea string
+                                alignment: 'center',
+                                noWrap: false,
+                            })))
+                        ]
+                    },
+                    
+                }
+            ],
+            styles: {
+                header: { fontSize: 18, bold: true, color: '#2c3e50' },
+                tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
+                footer: { fontSize: 10, color: '#666666' },
+                signature: { fontSize: 12, margin: [0, 20, 0, 0] } // Añadido margen superior a las firmas
+            },
+            defaultStyle: { fontSize: 12, color: '#2c3e50' },
+            footer: function(currentPage, pageCount) {
+                return {
+                    stack: [
+                        {
+                            table: {
+                                widths: ['*', '*', '*', '*'],
+                                body: [
+                                    [
+                                        {
+                                            text: `Entregado:\n\n\n_________________________\n${issuerName.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Recibido:\n\n\n_________________________\n${receiverName.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Vigilancia:\n\n\n_________________________\n${issuerVig.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        },
+                                        {
+                                            text: `Unidad de bienes:\n\n\n_________________________\n${issuerAsset.toUpperCase()}`,
+                                            alignment: 'center',
+                                            style: 'signature',
+                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                        }
+                                    ]
+                                ]
+                            },
+                            layout: 'Borders',
+                        },
+                        {
+                            text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                            style: 'footer',
+                            alignment: 'center',
+                            margin: [0, 5, 0, 0] // Reducir margen superior si es necesario
+                        }
+                    ],
+                    margin: [40, 0, 40, 10] // Margen general del footer: left, top, right, bottom
+                };
+            }
+        };
 
+        // Animación de éxito
+        pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
 
-            const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-            pdfDocGenerator.getBlob((blob) => {
-                // Animación de éxito
-                pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
-                setTimeout(() => {
-                    pdfButton.removeClass('pdf-button-success');
-                    pdfButton.prop('disabled', false);
-                }, 2000);
-                saveAs(blob, `Lista_de_Categorias_${formattedDateTime}.pdf`);
-            });
-        },
-        error: (jqXHR, textStatus, errorThrown) => {
-            console.error('Error fetching all data:', textStatus, errorThrown);
-            // Animación de error
-            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
-            setTimeout(() => {
-                pdfButton.removeClass('pdf-button-error');
-                pdfButton.prop('disabled', false);
-            }, 2000);
-            
-            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
-        },
-    });
+        pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime.replace(/[/,:]/g, '-')}.pdf`);
+
+        setTimeout(() => {
+            pdfButton.removeClass('pdf-button-success').prop('disabled', false);
+            $('#pdfOptionsModal').modal('hide');
+        }, 2000);
+
+    } catch (error) {
+        console.error('Error generando PDF:', error);
+
+        // Animación de error
+        pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+        setTimeout(() => {
+            pdfButton.removeClass('pdf-button-error').prop('disabled', false);
+        }, 2000);
+
+        Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+    }
 }
 
-$(document).on('click', '#external-pdf-button', function() {
-    generateBrandsPDF();
+$(document).ready(function () {
+
+    $('#external-pdf-button').on('click', function () {
+        if ($(this).hasClass('pdf-button-loading')) return;
+        $('#pdfOptionsModal').modal('show');
+    });
+
+    // Botón de generación dentro del modal
+    $('#generatePdfButton').on('click', function (e) {
+        e.preventDefault(); // Previene el comportamiento por defecto
+    
+        const form = document.getElementById('pdfOptionsForm');
+        
+        if (form.checkValidity()) {
+            $('#pdfOptionsModal').modal('hide');
+            generateCatPDF();
+        } else {
+            form.reportValidity();
+        }
+    });
 });
 
 $(document).on('click', '.edit-cat-btn', function () {

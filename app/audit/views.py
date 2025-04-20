@@ -46,13 +46,13 @@ def logs_list(request):
             order_field = f'-{order_field}'
 
         logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User'])
-
+        reverse_action_translation = {v.lower(): k for k, v in action_translation.items()}
+        search_value_action = reverse_action_translation.get(search_value.lower(), search_value)
         if search_value:
             logs = logs.filter(
                 Q(username__icontains=search_value) |
-                Q(action__icontains=search_value) |
+                Q(action__icontains=search_value_action) |
                 Q(description__icontains=search_value) |
-                Q(model_name__icontains=search_value) |
                 Q(timestamp__icontains=search_value)
             )
 
