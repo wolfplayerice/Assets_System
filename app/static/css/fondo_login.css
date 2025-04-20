@@ -77,51 +77,16 @@
   border-radius: 0.25rem;
 }
 
-/* Estilos responsivos */
-@media (max-width: 768px) {
-  .login-box {
-    width: 90%;
-  }
-
-  .main-footer {
-    max-width: 90%;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-box {
-    width: 100%;
-  }
-
-  .main-footer {
-    max-width: 100%;
-    padding: 8px 0;
-    /* Reduce el espaciado vertical */
-  }
-}
-
-/* Footer en la esquina inferior derecha */
 .main-footer {
-  position: fixed; /* Fija el footer en la pantalla */
-  bottom: 10px; /* Espaciado desde la parte inferior */
-  right: 10px; /* Espaciado desde la parte derecha */
-  background-color:white; /* Fondo transparente */
-  border-radius: 20px;
-  text-align: right; /* Alinea el texto a la derecha */
-  font-family: 'Arial', sans-serif; /* Fuente minimalista */
-  font-size: 14px; /* Tamaño de fuente */
-  color: #000000; /* Letras oscuras que resalten */
-  z-index: 10; /* Asegura que el footer esté por encima de otros elementos */
-  margin: 0; /* Elimina márgenes no deseados */
-  padding: 0; /* Elimina padding no deseado */
-}
-
-.main-footer strong {
-  font-weight: bold; /* Negrita para el texto principal */
-}
-
-.main-footer .moon-icon {
-  margin-left: 5px; /* Espaciado entre el texto y el ícono */
-  color: #000000; /* Gris oscuro para el ícono */
-  font-size: 16px; /* Tamaño del ícono */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  text-align: center;
+  color: #000000;
+  z-index: 10;
+  padding: 0.5rem;
+  margin-left: 0 !important;
+  opacity: .6;
 }

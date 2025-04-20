@@ -1,9 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http.response import JsonResponse, HttpResponse
 from .models import Brand
-from .forms import Create_brand,Edit_brand
-from django.contrib import messages
-from django.http import HttpResponseRedirect
+from .forms import Create_brand, Edit_brand
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -191,7 +189,7 @@ def brand_edit(request, bra_id):
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo {field}: {error}')
+                    errors.append(f'Error en el campo: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})  
 
     else:  

@@ -1,5 +1,4 @@
-from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.shortcuts import render
 import subprocess
 import os
 from datetime import datetime
@@ -9,7 +8,6 @@ from cryptography.fernet import Fernet
 import base64
 import hashlib
 from django.http import JsonResponse
-from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required, user_passes_test
 import logging
 from audit.models import AuditLog 

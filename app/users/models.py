@@ -7,21 +7,20 @@ from django.contrib.auth.hashers import make_password, check_password  # Para ha
 class Profile(models.Model):
     # Preguntas predeterminadas (valor, texto)
     SECURITY_QUESTIONS = [
-        ('1', '¿Cuál es el nombre de tu primera mascota?'),
-        ('2', '¿En qué ciudad naciste?'),
-        ('3', '¿Cuál es el nombre de tu madre?'),
-        ('4', '¿Cuál fue tu primer colegio?'),
-        ('5', '¿Cuál es tu comida favorita?'),
-        ('6', '¿Cómo se llama tu mejor amigo de la infancia?'),
-        ('7', '¿Cuál es tu película favorita?'),
-        ('8', '¿Qué deporte practicabas de niño?'),
+        (1, '¿Cuál es el nombre de tu primera mascota?'),
+        (2, '¿En qué ciudad naciste?'),
+        (3, '¿Cuál es el nombre de tu madre?'),
+        (4, '¿Cuál fue tu primer colegio?'),
+        (5, '¿Cuál es tu comida favorita?'),
+        (6, '¿Cómo se llama tu mejor amigo de la infancia?'),
+        (7, '¿Cuál es tu película favorita?'),
+        (8, '¿Qué deporte practicabas de niño?'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
     # Campo de pregunta (usa choices para el select)
     security_question = models.IntegerField(
-        max_length=2,
         choices=SECURITY_QUESTIONS,
         verbose_name="Pregunta de seguridad",
     )
@@ -43,9 +42,8 @@ class Profile(models.Model):
         """Verifica si la respuesta coincide."""
         return check_password(raw_answer.lower().strip(), self.security_answer)
 
-# Señal para crear/actualizar el perfil automáticamente
-@receiver(post_save, sender=User)
-def handle_user_save(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-    instance.profile.save()
+    def save(self, *args, **kwargs):
+        # Solo hashea la respuesta si ha cambiado
+        if self.security_answer and not self._state.adding:
+            self.security_answer = make_password(self.security_answer.lower().strip())
+        super().save(*args, **kwargs)

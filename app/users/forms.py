@@ -16,7 +16,6 @@ class CreateUser(UserCreationForm):
     )
     security_answer = forms.CharField(
         label="Respuesta",
-        widget=forms.TextInput(attrs={'placeholder': 'Ej: Max'}),
         strip=True,
     )
 
@@ -32,11 +31,12 @@ class CreateUser(UserCreationForm):
         
         if commit:
             user.save()
-            # Crear y guardar el Profile con los campos de seguridad
-            profile = user.profile
+            print("Usuario guardado:", user)
+            profile = Profile(user=user)
             profile.security_question = self.cleaned_data['security_question']
             profile.set_security_answer(self.cleaned_data['security_answer'])
             profile.save()
+            print("Perfil guardado:", profile)
         return user
 
 class EditUser(forms.ModelForm):

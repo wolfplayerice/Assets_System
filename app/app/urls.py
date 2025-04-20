@@ -33,6 +33,7 @@ urlpatterns = [
     path("user_info/", include("user_info.urls")),
     path("audit/", include("audit.urls")),
     path("backup/", include("bdbackups.urls")),
+    path("manuals/", include("manuals.urls")),
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT})
 
 ] 
