@@ -55,7 +55,8 @@ def list_users(request):
         if order_direction == 'desc':
             order_field = f'-{order_field}'
 
-        users = User.objects.filter(is_staff=False).order_by(order_field)
+        # users = User.objects.filter(is_staff=False).order_by(order_field)
+        users = User.objects.filter(is_staff=False).select_related('profile').order_by(order_field)
 
         if search_value:
             users = users.filter(
@@ -74,6 +75,7 @@ def list_users(request):
                 'last_name': user.last_name,
                 'email': user.email,
                 'is_active': user.is_active,
+                'security_question': user.profile.security_question if hasattr(user, 'profile') else None,
             } for user in users]
             
             response_data = {
@@ -99,6 +101,7 @@ def list_users(request):
             'last_name': user.last_name,
             'email': user.email,
             'is_active': user.is_active,
+            'security_question': user.profile.security_question if hasattr(user, 'profile') else None,
         } for user in user_page]
 
         response_data = {
@@ -220,9 +223,11 @@ def user_edit(request, user_id):
     else:
         form = EditUser(instance=user, profile=profile)
 
-    return render(request, 'users/edit_user.html', {
+    return render(request, 'users.html', {
         'form': form,
-        'user_id': user_id
+        'user_id': user_id,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
     })
 
     

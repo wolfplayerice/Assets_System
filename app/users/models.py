@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.hashers import make_password, check_password  # Para hashear respuestas
+from django.contrib.auth.hashers import make_password, check_password, is_password_usable  # Para hashear respuestas
 
 class Profile(models.Model):
     # Preguntas predeterminadas (valor, texto)
@@ -45,5 +45,9 @@ class Profile(models.Model):
     def save(self, *args, **kwargs):
         # Solo hashea la respuesta si ha cambiado
         if self.security_answer and not self._state.adding:
+            self.security_answer = make_password(self.security_answer.lower().strip())
+        super().save(*args, **kwargs)
+        # Solo hashea la respuesta si no está encriptada
+        if self.security_answer and not is_password_usable(self.security_answer):
             self.security_answer = make_password(self.security_answer.lower().strip())
         super().save(*args, **kwargs)
