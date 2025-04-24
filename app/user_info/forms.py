@@ -16,6 +16,16 @@ class EditUserInfo(forms.ModelForm):
         label="Confirmar contraseña",
         required=False
     )
+    security_question = forms.ChoiceField(
+        choices=Profile.SECURITY_QUESTIONS,
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'security_question'}),
+        label="Pregunta de seguridad"
+    )
+    security_answer = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'form-control', 'id': 'security_answer'}),
+        label="Respuesta de seguridad",
+        required=False
+    )
 
     class Meta: 
         model = User
@@ -78,3 +88,22 @@ class SecurityQuestionForm(forms.ModelForm):
         help_texts = {
             'security_answer': 'Este campo solo será requerido si cambias la pregunta de seguridad.',
         }
+    def clean(self):
+        cleaned_data = super().clean()
+        new_question = cleaned_data.get('security_question')
+        answer = cleaned_data.get('security_answer')
+
+
+        return cleaned_data
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+
+        answer = self.cleaned_data.get('security_answer')
+        if answer:
+            profile.set_security_answer(answer)
+
+        if commit:
+            profile.save()
+
+        return profile
