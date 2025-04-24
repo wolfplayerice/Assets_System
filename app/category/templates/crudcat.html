@@ -16,7 +16,7 @@
               <table id="datatable-cat" class="table">
                 <thead>
                   <div class="flex-row d-flex btn-add-pdf">
-                    <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
+                    <button class='btn btn-md btn-primary me-2 mb-2' data-bs-toggle="modal" data-bs-target="#register-modal">
                       <i class='fa-solid fa-plus'></i> <strong>Añadir Categoría</strong>
                     </button>
                     <button id="external-pdf-button" class="btn btn-danger mb-3">
@@ -41,7 +41,7 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="infoModalLabel">Registro de categorías</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
@@ -60,7 +60,7 @@
                       </div>
                       {% endfor %}
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         <input type="submit" value="Guardar" class="btn btn-primary">
                       </div>
                     </form>

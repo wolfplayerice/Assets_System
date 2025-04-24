@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="{% static 'bootstrap-5.3.5-dist/css/bootstrap.min.css' %} " rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -23,9 +23,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <center>
-                    <h3>Iniciar Sesión</h3>
-                </center>
+                <h3>Iniciar Sesión</h3>
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
 
@@ -59,46 +57,46 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
-                    <a data-toggle="modal" data-target="#password-reset-modal" class="btn btn-link">¿Olvidaste tu
+                    <a data-bs-toggle="modal" data-bs-target="#password-reset-modal" class="btn btn-link">¿Olvidaste tu
                         contraseña?</a>
                 </form>
             </div>
         </div>
 
 
-        <div class="modal fade" id="password-reset-modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
+        <div class="modal fade" id="password-reset-modal" tabindex="-1" aria-labelledby="password-reset-modal-label"
+            aria-hidden="true">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <form id="security-form">
                         <div class="modal-header">
-                            <h5 class="modal-title">Recuperar contraseña</h5>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h5 class="modal-title" id="password-reset-modal-label">Recuperar contraseña</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             <div id="step-username">
-                                <input type="text" name="username" class="form-control mb-2"
+                                <input type="text" name="username" class="form-control mb-3"
                                     placeholder="Ingresa tu usuario" required>
-                                <button type="submit" class="btn btn-primary btn-block">Siguiente</button>
+                                <button type="submit" class="btn btn-primary w-100">Siguiente</button>
                             </div>
                             <div id="step-security" style="display:none;">
                                 <p><strong id="security-question"></strong></p>
-                                <div class="input-group mb-2">
-                                    <input type="password" name="security_answer" class="form-control" placeholder="Respuesta" required>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary toggle-visibility">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
+                                <div class="input-group mb-3">
+                                    <input type="password" name="security_answer" class="form-control"
+                                        placeholder="Respuesta" required>
+                                    <button type="button" class="btn btn-outline-secondary toggle-visibility">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
-                                <div class="input-group mb-2">
-                                    <input type="password" name="new_password" class="form-control" placeholder="Nueva contraseña" required>
-                                    <div class="input-group-append">
-                                        <button type="button" class="btn btn-outline-secondary toggle-visibility">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                    </div>
+                                <div class="input-group mb-3">
+                                    <input type="password" name="new_password" class="form-control"
+                                        placeholder="Nueva contraseña" required>
+                                    <button type="button" class="btn btn-outline-secondary toggle-visibility">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                 </div>
-                                <button type="submit" class="btn btn-success btn-block">Cambiar contraseña</button>
+                                <button type="submit" class="btn btn-success w-100">Cambiar contraseña</button>
                             </div>
                         </div>
                     </form>
@@ -106,9 +104,8 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="{% static 'bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/sweetalert2@11.js' %}"></script>
     <script src="{% static 'js/verify_user.js' %}"></script>
 
@@ -118,12 +115,12 @@
         document.addEventListener('DOMContentLoaded', function () {
             // Selecciona todos los botones de "toggle-visibility"
             const toggleButtons = document.querySelectorAll('.toggle-visibility');
-    
+
             toggleButtons.forEach(button => {
                 button.addEventListener('click', function () {
                     const input = this.parentElement.previousElementSibling;
                     const icon = this.querySelector('i');
-    
+
                     // Alterna entre mostrar y ocultar el texto
                     if (input.type === 'password') {
                         input.type = 'text';

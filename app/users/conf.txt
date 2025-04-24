@@ -1,0 +1,166 @@
+<VirtualHost *:9678>
+    # Dominio
+    ServerName 
+    DocumentRoot /Assets_System/app
+
+    # Configuración WSGI
+    WSGIDaemonProcess Assets_System \
+        python-home=/Assets_System/venv \
+        python-path=/Assets_System/app \
+        user=www-data \
+        group=www-data \
+        threads=5
+    
+    WSGIProcessGroup Assets_System
+    WSGIScriptAlias / /Assets_System/app/app/wsgi.py \
+        process-group=Assets_System \
+        application-group=%{GLOBAL}
+
+    # Archivos estáticos
+    Alias /static/ /Assets_System/app/static/
+    <Directory /Assets_System/app/static/>
+        Options -Indexes
+        Require all granted
+    </Directory>
+
+    # Archivos media
+    Alias /media/ /Assets_System/app/media/
+    <Directory /Assets_System/app/media/>
+        Options -Indexes
+        Require all granted
+    </Directory>
+
+    # Permisos para la aplicación
+    <Directory /Assets_System/app/app>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    # Configuración adicional
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+
+    ServerName 45.173.197.83
+
+    DocumentRoot /Assets_System/app
+
+    # Mejores prácticas de seguridad
+    ServerSignature Off
+    TraceEnable Off
+    FileETag None
+
+    # Configuración WSGI optimizada
+    WSGIDaemonProcess Assets_System \
+        python-home=/Assets_System/venv \
+        python-path=/Assets_System/app \
+        user=www-data \
+        group=www-data \
+        threads=5 \
+        processes=2 \
+        display-name=%{GROUP}
+
+    WSGIProcessGroup Assets_System
+    WSGIScriptAlias / /Assets_System/app/app/wsgi.py \
+        process-group=Assets_System \
+        application-group=%{GLOBAL}
+
+    # Archivos estáticos con caché y protección
+    Alias /static/ /Assets_System/app/static/
+    <Directory /Assets_System/app/static/>
+        Options -Indexes -FollowSymLinks +MultiViews
+        Require all granted
+        Header set Cache-Control "max-age=604800, public"
+        
+        # Protección contra hotlinking
+        RewriteEngine On
+        RewriteCond %{HTTP_REFERER} !^$
+        RewriteCond %{HTTP_REFERER} !^https?://(www\.)?tu.dominio [NC]
+        RewriteRule \.(jpg|jpeg|png|gif|css|js)$ - [NC,F,L]
+    </Directory>
+
+    # Archivos media con restricciones
+    Alias /media/ /Assets_System/app/media/
+    <Directory /Assets_System/app/media/>
+        Options -Indexes -FollowSymLinks +MultiViews
+        Require all granted
+        SetEnvIf Request_URI "\.(pdf|docx|zip)$" block_these
+        <FilesMatch "\.(pdf|docx|zip)$">
+            Require all denied
+            Require ip 192.168.0.0/16
+        </FilesMatch>
+    </Directory>
+
+    # Permisos para la aplicación
+    <Directory /Assets_System/app/app>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+        
+        # Restricción de métodos HTTP
+        <LimitExcept GET POST HEAD>
+            Require all denied
+        </LimitExcept>
+    </Directory>
+
+    # Logs detallados
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    LogLevel warn
+
+    # Redirección a HTTPS (recomendado)
+    # Redirect permanent / https://tu.ip.publica/
+</VirtualHost>
+
+
+<VirtualHost *:80>
+    # Usa tu IP pública o dominio (no la IP local)
+    ServerName 45.173.197.83
+
+    
+    DocumentRoot /Assets_System/app
+
+    # Configuración WSGI (asegúrate de que las rutas sean correctas)
+    WSGIDaemonProcess Assets_System \
+        python-home=/Assets_System/venv \
+        python-path=/Assets_System/app \
+        user=www-data \
+        group=www-data \
+        threads=5
+    
+    WSGIProcessGroup Assets_System
+    WSGIScriptAlias / /Assets_System/app/app/wsgi.py \
+        process-group=Assets_System \
+        application-group=%{GLOBAL}
+
+    # Archivos estáticos
+    Alias /static/ /Assets_System/app/static/
+    <Directory /Assets_System/app/static/>
+        Options -Indexes  # Evita listado de archivos
+        Require all granted
+    </Directory>
+
+    # Archivos media
+    Alias /media/ /Assets_System/app/media/
+    <Directory /Assets_System/app/media/>
+        Options -Indexes
+        Require all granted
+    </Directory>
+
+    # Permisos para la aplicación
+    <Directory /Assets_System/app/app>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    # Logs (útil para depurar)
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    # Opcional: Redirección HTTP → HTTPS (recomendado para producción)
+    # Redirect permanent / https://tu-ip-publica/
+</VirtualHost>
