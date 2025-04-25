@@ -132,7 +132,7 @@ async function generateAssetPDF() {
 
     try {
         const response = await $.ajax({
-            url: '/inventory/list_assets/',
+            url: '/invtrack/inventory/list_assets/',
             type: 'GET',
             data: {
                 status: statusFilter,
