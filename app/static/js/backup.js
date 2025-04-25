@@ -1,10 +1,9 @@
 let dataTableBackups;
 let dataTableIsInitializedBackups = false;
-
-const listBackupsUrl = "/backup/list/";
-const createBackupUrl = "/backup/create/";
-const restoreBackupUrl = "/backup/restore/";
-const deleteBackupUrl = "/backup/delete/";
+const listBackupsUrl = "/invtrack/backup/list/";
+const createBackupUrl = "/invtrack/backup/create/";
+const restoreBackupUrl = "/invtrack/backup/restore/";
+const deleteBackupUrl = "/invtrack/backup/delete/";
 
 const initDataTableBackups = async () => {
     try {

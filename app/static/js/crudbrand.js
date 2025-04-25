@@ -87,7 +87,7 @@ async function generateBrandPDF() {
 
     try {
         const response = await $.ajax({
-            url: '/brand/list_brand/?all=true',
+            url: '/invtrack/brand/list_brand/?all=true',
             type: 'GET',
         });
 
@@ -251,7 +251,7 @@ $(document).on('click', '.delete-btn-brand', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `http://127.0.0.1:8000/brand/delete_brand/${brandId}/`,
+                url: `/invtrack/brand/delete_brand/${brandId}/`,
                 type: 'DELETE',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {

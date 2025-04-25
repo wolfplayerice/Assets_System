@@ -24,7 +24,7 @@ const initDataTableCategory = (() => {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/category/delete_category/${categoryId}/`,
+                    url: `/invtrack/category/delete_category/${categoryId}/`,
                     type: 'DELETE',
                     headers: { "X-CSRFToken": getCookie("csrftoken") },
                     success: (response) => {
@@ -125,7 +125,7 @@ async function generateCatPDF() {
 
     try {
         const response = await $.ajax({
-            url: '/category/list_category/?all=true',
+            url: '/invtrack/category/list_category/?all=true',
             type: 'GET',
         });
 

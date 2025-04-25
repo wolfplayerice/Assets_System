@@ -65,7 +65,7 @@ function generateAuditPDF() {
     pdfButton.prop('disabled', true);
 
     $.ajax({
-        url: '/audit/logs_list/?all=true',
+        url: '/invtrack/audit/logs_list/?all=true',
         type: 'GET',
         success: (response) => {
             const data = response.data.map(audit => [audit.user, audit.action, audit.description, audit.timestamp]);

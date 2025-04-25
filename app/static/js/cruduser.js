@@ -93,7 +93,7 @@ function generateUserPDF() {
     pdfButton.prop('disabled', true);
 
     $.ajax({
-        url: '/users/list_users/?all=true',
+        url: '/invtrack/users/list_users/?all=true',
         type: 'GET',
         success: (response) => {
             const data = response.users.map(user => [user.id, user.username, user.name, user.last_name,
@@ -206,7 +206,7 @@ $(document).on('click', '.disable-user-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/users/disable_user/${userId}/`,
+                url: `/invtrack/users/disable_user/${userId}/`,
                 type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -235,7 +235,7 @@ $(document).on('click', '.enable-user-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/users/enable_user/${userId}/`,
+                url: `/invtrack/users/enable_user/${userId}/`,
                 type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
