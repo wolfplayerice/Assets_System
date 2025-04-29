@@ -191,7 +191,6 @@
                           <label class="form-label">Filtrar por Marcas:</label>
                           <select class="brand" name="brand[]" multiple="multiple" style="width: 100%"
                             data-placeholder="Seleccione categorías">
-                            <option value="all">Todas las marcas</option>
                             {% for brand in brands %}
                             <option value="{{ brand.id }}">{{ brand.name }}</option>
                             {% endfor %}

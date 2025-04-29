@@ -1,3 +1,6 @@
+const listCategoryUrl = document.getElementById('data-container').getAttribute('data-list-category-url');
+
+
 const initDataTableCategory = (() => {
     let dataTableCategory;
     let dataTableIsInitializedCategory = false;
@@ -45,7 +48,6 @@ const initDataTableCategory = (() => {
                 dataTableCategory.destroy();
             }
 
-            const listCategoryUrl = document.getElementById('data-container').dataset.listCategoryUrl;
 
             dataTableCategory = $datatableCat.DataTable({
                 serverSide: true,
@@ -115,7 +117,7 @@ async function generateCatPDF() {
     const issuerName = $('#pdfOptionsModal').data('user-name');
 
     const issuerVig = $('#receiverVig').val();
-    
+
     const issuerAsset = $('#receiverAsset').val();
 
 
@@ -168,7 +170,7 @@ async function generateCatPDF() {
                             })))
                         ]
                     },
-                    
+
                 }
             ],
             styles: {
@@ -178,7 +180,7 @@ async function generateCatPDF() {
                 signature: { fontSize: 12, margin: [0, 20, 0, 0] } // Añadido margen superior a las firmas
             },
             defaultStyle: { fontSize: 12, color: '#2c3e50' },
-            footer: function(currentPage, pageCount) {
+            footer: function (currentPage, pageCount) {
                 return {
                     stack: [
                         {
@@ -260,9 +262,9 @@ $(document).ready(function () {
     // Botón de generación dentro del modal
     $('#generatePdfButton').on('click', function (e) {
         e.preventDefault(); // Previene el comportamiento por defecto
-    
+
         const form = document.getElementById('pdfOptionsForm');
-        
+
         if (form.checkValidity()) {
             $('#pdfOptionsModal').modal('hide');
             generateCatPDF();
