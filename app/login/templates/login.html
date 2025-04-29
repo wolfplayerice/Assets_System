@@ -72,7 +72,8 @@
                     <form id="security-form">
                         <div class="modal-header">
                             <h5 class="modal-title" id="password-reset-modal-label">Recuperar contraseña</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             <div id="step-username">
@@ -233,7 +234,12 @@
                                 currentUsername = inputUsername.value;
                                 mostrarPaso2();
                             } else {
-                                alert(data.message || "Usuario no válido.");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Usuario no válido",
+                                    text: data.message || "El usuario ingresado no es válido.",
+                                    confirmButtonText: "Aceptar"
+                                });
                             }
                         });
                 } else {
@@ -252,13 +258,34 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.status === "ok") {
-                                alert("¡Contraseña cambiada exitosamente!");
-                                const modal = new bootstrap.Modal(document.getElementById('password-reset-modal'));
-                                modal.hide();
-                                form.reset();
-                                mostrarPaso1();
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "<strong>¡Contraseña cambiada exitosamente!</strong>",
+                                    html: "Tu contraseña ha sido actualizada correctamente.",
+                                    confirmButtonText: "Aceptar",
+                                    customClass: {
+                                        title: "swal-title",
+                                        htmlContainer: "swal-text",
+                                        confirmButton: "swal-button"
+                                    }
+                                }).then(() => {
+                                    const modal = bootstrap.Modal.getInstance(document.getElementById('password-reset-modal'));
+                                    modal.hide();
+                                    form.reset();
+                                    mostrarPaso1();
+                                });
                             } else {
-                                alert(data.message || "Error al cambiar la contraseña.");
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "<strong>Respuesta incorrecta</strong>",
+                                    html: data.message || "La respuesta ingresada no es correcta.",
+                                    confirmButtonText: "Aceptar",
+                                    customClass: {
+                                        title: "swal-title",
+                                        htmlContainer: "swal-text",
+                                        confirmButton: "swal-button"
+                                    }
+                                });
                             }
                         });
                 }
@@ -277,6 +304,34 @@
             mostrarPaso1();
         });
     </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("security-form");
+        const inputNewPassword = form.querySelector('[name="new_password"]');
+
+        // Función para validar la contraseña
+        function validarContrasena(password) {
+            const tieneLongitud = password.length >= 8;
+            const tieneNumero = /\d/.test(password);
+            const tieneEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            return tieneLongitud && tieneNumero && tieneEspecial;
+        }
+
+        form.addEventListener("submit", function (e) {
+            const nuevaContrasena = inputNewPassword.value;
+
+            // Validar la contraseña antes de enviar el formulario
+            if (!validarContrasena(nuevaContrasena)) {
+                e.preventDefault(); // Evita que el formulario se envíe
+                // SweetAlert eliminado
+            }
+        });
+    });
+</script>
+
 </body>
 <footer class="main-footer">
     <strong>&copy; InvenTrack. Todos los derechos reservados.

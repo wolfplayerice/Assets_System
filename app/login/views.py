@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from users.models import Profile
 from django.views.decorators.csrf import csrf_exempt
+import re
+
 
 
 def login(request):
@@ -92,21 +94,26 @@ def validate_security_question(request):
      return JsonResponse({"status": "error", "message": "Método no permitido"}, status=405)
  
 def reset_password(request):
-     if request.method == "POST":
-         username = request.POST.get("username")
-         answer = request.POST.get("security_answer")
-         new_password = request.POST.get("new_password")
-         try:
-             user = User.objects.get(username=username)
-             if user.profile.check_security_answer(answer):
-                 user.set_password(new_password)
-                 user.save()
-                 return JsonResponse({"status": "ok"})
-             else:
-                 return JsonResponse({"status": "error", "message": "Respuesta incorrecta."})
-         except User.DoesNotExist:
-             return JsonResponse({"status": "error", "message": "Usuario no encontrado."})
-     return JsonResponse({"status": "invalid request"})
+    if request.method == "POST":
+        username = request.POST.get("username")
+        answer = request.POST.get("security_answer")
+        new_password = request.POST.get("new_password")
+
+        # Validar la contraseña
+        if len(new_password) < 8 or not re.search(r"\d", new_password) or not re.search(r"[!@#$%^&*(),.?\":{}|<>]", new_password):
+            return JsonResponse({"status": "error", "message": "La contraseña debe tener al menos 8 caracteres, incluir un número y un carácter especial."})
+
+        try:
+            user = User.objects.get(username=username)
+            if user.profile.check_security_answer(answer):
+                user.set_password(new_password)
+                user.save()
+                return JsonResponse({"status": "ok"})
+            else:
+                return JsonResponse({"status": "error", "message": "Respuesta incorrecta."})
+        except User.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Usuario no encontrado."})
+    return JsonResponse({"status": "invalid request"})
 
 
 @never_cache
