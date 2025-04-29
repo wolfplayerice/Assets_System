@@ -1,6 +1,5 @@
-let dataTable = {}; // Inicializamos dataTable como un objeto
-
-var listAssetsUrl = document.getElementById('data-container').getAttribute('data-list-assets-url');
+let dataTable = {};
+const listAssetsUrl = document.getElementById('data-container').getAttribute('data-list-assets-url');
 
 function getDataTableConfig(includeActions = true, tableId = "datatable-assets") {
     const baseConfig = {
@@ -132,7 +131,7 @@ async function generateAssetPDF() {
 
     try {
         const response = await $.ajax({
-            url: '/invtrack/inventory/list_assets/',
+            url: listAssetsUrl,
             type: 'GET',
             data: {
                 status: statusFilter,
@@ -347,7 +346,7 @@ $(document).on('click', '.delete-asset-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/invtrack/inventory/delete_asset/${assetId}/`,
+                url: deleteAssetUrl.replace('0', assetId), // Reemplaza el placeholder con el assetId
                 type: 'DELETE',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -415,7 +414,7 @@ $(document).on('click', '.btn-edit', function () {
     const statusValue = assetData.status ? 'True' : 'False';
     $('[name="status"], #id_status').val(statusValue).trigger('change');
 
-    $('#edit-form').attr('action', `/invtrack/inventory/asset_edit/${assetId}/`);
+    $('#edit-form').attr('action', editAssetUrl.replace('0', assetId));
     $('#editModal').modal('show');
 });
 

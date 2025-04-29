@@ -4,9 +4,9 @@
 
 <div class="card">
     <div class="card-body">
-        <center>
-            <h3>Editar Información del Usuario</h3>
-        </center>
+
+        <h3>Editar Información del Usuario</h3>
+
         <form method="post" action="{% url 'user_info:user_edit' request.user.id %}" id="edit-form">
             {% csrf_token %}
 
@@ -108,48 +108,18 @@
     </div>
 </div>
 
-<!-- comentado no me odies gordo  -->
 
 <script>
+    const editUserUrl = "{% url 'user_info:user_edit' 0 %}"; // 0 es un placeholder
+
     document.addEventListener('DOMContentLoaded', function () {
         const userId = "{{ request.user.id }}"; // Obtén el ID del usuario autenticado desde el contexto de Django
 
         // Cambia dinámicamente el atributo 'action' del formulario
-        document.getElementById('edit-form').setAttribute('action', `/user_info/user_edit/${userId}/`);
+        document.getElementById('edit-form').setAttribute('action', editUserUrl.replace('0', userId));
     });
 </script>
-<!--
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('edit-form');
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // Evita el envío inmediato del formulario
-
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Deseas guardar los cambios realizados?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, guardar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        '¡Guardado!',
-                        'La información del usuario se ha actualizado correctamente.',
-                        'success'
-                    ).then(() => {
-                        form.submit(); // Envía el formulario después de la confirmación
-                    });
-                }
-            });
-        });
-    });
-</script> -->
-<!-- script funcionalidad del ojo V.Parra -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const togglePassword = document.getElementById('toggle-password');
@@ -176,182 +146,7 @@
     });
 </script>
 
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('edit-form');
-        const passwordField = document.getElementById('edit_password');
-        const confirmPasswordField = document.getElementById('edit_password2');
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault(); // Evita el envío inmediato del formulario
-
-            // Verifica si las contraseñas coinciden
-            if (passwordField.value !== confirmPasswordField.value) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Error!',
-                    text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
-                    confirmButtonText: 'Aceptar'
-                });
-                return; // Detiene el proceso de envío
-            }
-
-            // Si las contraseñas coinciden, muestra el mensaje de confirmación
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Deseas guardar los cambios realizados?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, guardar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        '¡Guardado!',
-                        'La información del usuario se ha actualizado correctamente.',
-                        'success'
-                    ).then(() => {
-                        form.submit(); // Envía el formulario después de la confirmación
-                    });
-                }
-            });
-        });
-    });
-</script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('edit-form');
-        const passwordField = document.getElementById('edit_password');
-        const confirmPasswordField = document.getElementById('edit_password2');
-        const usernameField = document.getElementById('edit_username');
-        const firstNameField = document.getElementById('edit_first_name');
-        const lastNameField = document.getElementById('edit_last_name');
-
-        // Guarda los valores iniciales de los campos
-        const initialValues = {
-            username: usernameField.value.trim(),
-            firstName: firstNameField.value.trim(),
-            lastName: lastNameField.value.trim()
-        };
-
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            const password = passwordField.value.trim();
-            const confirmPassword = confirmPasswordField.value.trim();
-            const username = usernameField.value.trim();
-            const firstName = firstNameField.value.trim();
-            const lastName = lastNameField.value.trim();
-
-            // Verifica si los campos de contraseña están vacíos
-            if (password === '' && confirmPassword === '') {
-                // Verifica si otros campos han cambiado
-                if (
-                    username !== initialValues.username ||
-                    firstName !== initialValues.firstName ||
-                    lastName !== initialValues.lastName
-                ) {
-                    Swal.fire({
-                        title: '¿Estás seguro?',
-                        text: "¿Deseas guardar los cambios realizados?",
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Sí, guardar',
-                        cancelButtonText: 'Cancelar'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            Swal.fire(
-                                '¡Guardado!',
-                                'La información del usuario se ha actualizado correctamente.',
-                                'success'
-                            ).then(() => {
-                                form.submit(); // Envía el formulario después de la confirmación
-                            });
-                        }
-                    });
-                } else {
-                    Swal.fire({
-                        icon: 'info',
-                        title: 'Sin cambios',
-                        text: 'No se detectaron cambios en los campos.',
-                        confirmButtonText: 'Aceptar'
-                    });
-                }
-                return;
-            }
-
-            // Valida la contraseña solo si se ha proporcionado
-            const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
-            if (password !== '' && !passwordRegex.test(password)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Error!',
-                    text: 'La contraseña debe tener al menos 8 caracteres y un carácter especial.',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            // Verifica si las contraseñas coinciden
-            if (password !== confirmPassword) {
-                Swal.fire({
-                    icon: 'error',
-                    title: '¡Error!',
-                    text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
-                    confirmButtonText: 'Aceptar'
-                });
-                return;
-            }
-
-            // Si todo está correcto, muestra la confirmación
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Deseas guardar los cambios realizados?",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, guardar',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    Swal.fire(
-                        '¡Guardado!',
-                        'La información del usuario se ha actualizado correctamente.',
-                        'success'
-                    ).then(() => {
-                        form.submit();
-                    });
-                }
-            });
-        });
-    });
-</script> -->
-<!-- <script>
-    $(document).on('submit', '#edit-form', function (e) {
-        e.preventDefault();
-        const form = $(this);
-        const url = form.attr('action');
-        const data = form.serialize();
-
-        $.post(url, data, function (response) {
-            if (response.status === 'success') {
-                Swal.fire('Éxito', response.message, 'success').then(() => {
-                    location.reload();
-                    clearEditForm();
-                });
-            } else {
-                Swal.fire('Error', response.message, 'error');
-            }
-        }).fail(function () {
-            Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
-        });
-    });
-</script> -->
 <script>
     $(document).on('submit', '#edit-form', function (e) {
         e.preventDefault(); // Evita el envío inmediato del formulario

@@ -16,7 +16,8 @@
               <table id="datatable-users" class="table">
                 <thead>
                   <div class="flex-row d-flex btn-add-pdf">
-                    <button class='btn btn-md btn-primary me-2 mb-2' data-bs-toggle="modal" data-bs-target="#register-modal">
+                    <button class='btn btn-md btn-primary me-2 mb-2' data-bs-toggle="modal"
+                      data-bs-target="#register-modal">
                       <i class='fa-solid fa-plus'></i> <strong>Añadir Usuario</strong>
                     </button>
                     <button id="external-pdf-button" class="btn btn-danger mb-3">
@@ -117,9 +118,11 @@
                         <div class="form-group form-floating mb-3">
                           <select class="form-select" id="security_question" name="security_question" required>
                             {% for value, label in edit_user_form.fields.security_question.choices %}
-                              <option value="{{ value }}" {% if edit_user_form.security_question.value|default:'' == value|stringformat:"s" %}selected{% endif %}>
-                                {{ label }}
-                              </option>
+                            <option value="{{ value }}" {% if
+                              edit_user_form.security_question.value|default:''==value|stringformat:"s" %}selected{%
+                              endif %}>
+                              {{ label }}
+                            </option>
                             {% endfor %}
                           </select>
                           <label for="security_question">Pregunta de seguridad</label>
@@ -202,10 +205,12 @@
             {% endblock %}
 
             {% block extra_js %}
+            <script>
+              const disableUserUrl = "{% url 'users:disable_user' 0 %}"; 
+              const enableUserUrl = "{% url 'users:enable_user' 0 %}"; // 0 es un placeholder
+              const editUserUrl = "{% url 'users:user_edit' 0 %}";
+            </script>
             <script src="{% static 'js/cruduser.js' %}"></script>
             <script src="{% static 'js/password-eye.js' %}"></script>
-
-
-
 
             {% endblock %}

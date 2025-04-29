@@ -1,9 +1,9 @@
 let dataTableBackups;
 let dataTableIsInitializedBackups = false;
-const listBackupsUrl = "/invtrack/backup/list/";
-const createBackupUrl = "/invtrack/backup/create/";
-const restoreBackupUrl = "/invtrack/backup/restore/";
-const deleteBackupUrl = "/invtrack/backup/delete/";
+const listBackupsUrl = document.getElementById('datatable-backups').getAttribute('data-list-backup-url');
+const createBackupUrl = document.getElementById('datatable-backups').getAttribute('data-create-backup-url');
+const restoreBackupUrl = document.getElementById('datatable-backups').getAttribute('data-restore-backup-url');
+const deleteBackupUrl = document.getElementById('datatable-backups').getAttribute('data-delete-backup-url');
 
 const initDataTableBackups = async () => {
     try {

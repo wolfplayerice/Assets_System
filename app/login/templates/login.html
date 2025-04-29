@@ -1,16 +1,17 @@
 {% load static %}
 {% load widget_tweaks %}
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Iniciar sesión</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
-    <link href="{% static 'bootstrap-5.3.5-dist/css/bootstrap.min.css' %} " rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
@@ -23,13 +24,14 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <h3>Iniciar Sesión</h3>
+                <center>
+                    <h3>Iniciar Sesión</h3>
+                </center>
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
 
-                    <!-- Campo de nombre de usuario -->
-                    <div class="form-group">
-                        <label for="username">Usuario</label>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Usuario</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -39,9 +41,8 @@
                         </div>
                     </div>
 
-                    <!-- Campo de contraseña -->
-                    <div class="form-group">
-                        <label for="password">Contraseña</label>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña</label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -64,39 +65,42 @@
         </div>
 
 
-        <div class="modal fade" id="password-reset-modal" tabindex="-1" aria-labelledby="password-reset-modal-label"
-            aria-hidden="true">
-            <div class="modal-dialog">
+        <div class="modal fade" id="password-reset-modal" tabindex="-1" role="dialog"
+            aria-labelledby="password-reset-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <form id="security-form">
                         <div class="modal-header">
                             <h5 class="modal-title" id="password-reset-modal-label">Recuperar contraseña</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Cerrar"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
                             <div id="step-username">
-                                <input type="text" name="username" class="form-control mb-3"
+                                <input type="text" name="username" class="form-control mb-2"
                                     placeholder="Ingresa tu usuario" required>
-                                <button type="submit" class="btn btn-primary w-100">Siguiente</button>
+                                <button type="submit" class="btn btn-primary btn-block">Siguiente</button>
                             </div>
                             <div id="step-security" style="display:none;">
                                 <p><strong id="security-question"></strong></p>
-                                <div class="input-group mb-3">
+                                <div class="input-group mb-2">
                                     <input type="password" name="security_answer" class="form-control"
                                         placeholder="Respuesta" required>
-                                    <button type="button" class="btn btn-outline-secondary toggle-visibility">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary toggle-visibility">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="input-group mb-3">
+                                <div class="input-group mb-2">
                                     <input type="password" name="new_password" class="form-control"
                                         placeholder="Nueva contraseña" required>
-                                    <button type="button" class="btn btn-outline-secondary toggle-visibility">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-outline-secondary toggle-visibility">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <button type="submit" class="btn btn-success w-100">Cambiar contraseña</button>
+                                <button type="submit" class="btn btn-success btn-block">Cambiar contraseña</button>
                             </div>
                         </div>
                     </form>
@@ -104,37 +108,17 @@
             </div>
         </div>
     </div>
-
-    <script src="{% static 'bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
     <script src="{% static 'js/sweetalert2@11.js' %}"></script>
     <script src="{% static 'js/verify_user.js' %}"></script>
 
     {% if error_disabled %}
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Selecciona todos los botones de "toggle-visibility"
-            const toggleButtons = document.querySelectorAll('.toggle-visibility');
-
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const input = this.parentElement.previousElementSibling;
-                    const icon = this.querySelector('i');
-
-                    // Alterna entre mostrar y ocultar el texto
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                    }
-                });
-            });
-        });
-    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             Swal.fire({
@@ -160,7 +144,6 @@
     </script>
     {% endif %}
 
-    <!-- Funcion para que el ojo posea funcionalidad V.Parra -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const togglePassword = document.getElementById('toggle-password');
@@ -186,8 +169,6 @@
             });
         });
     </script>
-
-    <!-- Fin de la funcionalidad del ojo V.Parra -->
 
     {% if session_terminated %}
     <script>
@@ -272,7 +253,8 @@
                         .then(data => {
                             if (data.status === "ok") {
                                 alert("¡Contraseña cambiada exitosamente!");
-                                $('#password-reset-modal').modal('hide');
+                                const modal = new bootstrap.Modal(document.getElementById('password-reset-modal'));
+                                modal.hide();
                                 form.reset();
                                 mostrarPaso1();
                             } else {
@@ -283,10 +265,13 @@
             });
 
             // Resetear modal al cerrarlo
-            $('#password-reset-modal').on('hidden.bs.modal', function () {
-                form.reset();
-                mostrarPaso1();
-            });
+            const passwordResetModal = document.getElementById('password-reset-modal');
+            if (passwordResetModal) {
+                passwordResetModal.addEventListener('hidden.bs.modal', function () {
+                    form.reset();
+                    mostrarPaso1();
+                });
+            }
 
             // Inicializa visibilidad correctamente por si algo queda mal
             mostrarPaso1();

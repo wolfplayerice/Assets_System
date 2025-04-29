@@ -93,7 +93,7 @@ function generateUserPDF() {
     pdfButton.prop('disabled', true);
 
     $.ajax({
-        url: '/invtrack/users/list_users/?all=true',
+        url: `${listUsersUrl}?all=true`,
         type: 'GET',
         success: (response) => {
             const data = response.users.map(user => [user.id, user.username, user.name, user.last_name,
@@ -206,7 +206,7 @@ $(document).on('click', '.disable-user-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/invtrack/users/disable_user/${userId}/`,
+                url: disableUserUrl.replace('0', userId),
                 type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -235,7 +235,7 @@ $(document).on('click', '.enable-user-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/invtrack/users/enable_user/${userId}/`,
+                url: enableUserUrl.replace('0', userId),
                 type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -265,7 +265,7 @@ $(document).on('click', '.edit-user-btn', function () {
     $('#edit-user-email').val(email);
     $('#security_question').val(securityQuestion).trigger('change');
 
-    $('#edit-user-form').attr('action', `/users/user_edit/${userId}/`);
+    $('#edit-user-form').attr('action', editUserUrl.replace('0', userId));
 
     $('#editUserModal').modal('show');
 });

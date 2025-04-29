@@ -1,7 +1,6 @@
 const initDataTableCategory = (() => {
     let dataTableCategory;
     let dataTableIsInitializedCategory = false;
-    const $loadingIndicator = $("#loading-indicator");
     const $datatableCat = $("#datatable-cat");
 
     const getCookie = name => {
@@ -24,7 +23,7 @@ const initDataTableCategory = (() => {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: `/invtrack/category/delete_category/${categoryId}/`,
+                    url: deleteCatUrl.replace('0', categoryId),
                     type: 'DELETE',
                     headers: { "X-CSRFToken": getCookie("csrftoken") },
                     success: (response) => {
@@ -125,7 +124,7 @@ async function generateCatPDF() {
 
     try {
         const response = await $.ajax({
-            url: '/invtrack/category/list_category/?all=true',
+            url: `${listCategoryUrl}?all=true`,
             type: 'GET',
         });
 
@@ -280,7 +279,7 @@ $(document).on('click', '.edit-cat-btn', function () {
     $('#edit-cat-id').val(catId);
     $('#edit-cat-name').val(catName);
 
-    $('#edit-cat-form').attr('action', `/category/category_edit/${catId}/`);
+    $('#edit-cat-form').attr('action', editCatUrl.replace('0', catId));
 
     $('#editCatModal').modal('show');
 });

@@ -232,7 +232,10 @@
               {% endblock %}
 
               {% block extra_js %}
-
+              <script>
+                const deleteAssetUrl = "{% url 'inventory:delete_asset' 0 %}"; // 0 es un placeholder
+                const editAssetUrl = "{% url 'inventory:asset_edit' 0 %}"; // 0 es un placeholder
+              </script>
               <script src="{% static 'js/crudassets.js' %}"></script>
 
               {% endblock %}
