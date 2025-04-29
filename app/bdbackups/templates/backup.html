@@ -24,7 +24,11 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table id="datatable-backups" class="table table-hover" style="width:100%">
+                            <table id="datatable-backups" data-list-backup-url="{% url 'backup:list_backups' %}"
+                            data-create-backup-url="{% url 'backup:create_backup' %}"
+                            data-delete-backup-url="{% url 'backup:delete_backup' %}"
+                            data-restore-backup-url="{% url 'backup:restore_backup' %}"
+                                class="table table-hover" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th class="text-center">Nombre del Respaldo</th>
@@ -40,13 +44,14 @@
                     </div>
                 </div>
             </div>
-            </div>
         </div>
     </div>
+</div>
 </div>
 
 {% endblock %}
 
 {% block extra_js %}
+
 <script src="{% static 'js/backup.js' %}"></script>
 {% endblock %}

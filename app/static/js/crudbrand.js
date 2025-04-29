@@ -87,7 +87,7 @@ async function generateBrandPDF() {
 
     try {
         const response = await $.ajax({
-            url: '/brand/list_brand/?all=true',
+            url: `${listBrandsUrl}?all=true`,
             type: 'GET',
         });
 
@@ -251,7 +251,7 @@ $(document).on('click', '.delete-btn-brand', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `http://127.0.0.1:8000/brand/delete_brand/${brandId}/`,
+                url: deleteBrandUrl.replace('0', brandId),
                 type: 'DELETE',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -293,7 +293,7 @@ $(document).on('click', '.edit-bra-btn', function () {
     $('#edit-bra-name').val(brandName);
 
     // Establecer la acción del formulario dinámicamente
-    $('#edit-bra-form').attr('action', `/brand/brand_edit/${brandId}/`);
+    $('#edit-bra-form').attr('action', editBrandUrl.replace('0', brandId));
 
     $('#editBraModal').modal('show');
 });

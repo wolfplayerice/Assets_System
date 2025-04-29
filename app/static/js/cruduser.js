@@ -93,7 +93,7 @@ function generateUserPDF() {
     pdfButton.prop('disabled', true);
 
     $.ajax({
-        url: 'http://127.0.0.1:8000/users/list_users/?all=true',
+        url: `${listUsersUrl}?all=true`,
         type: 'GET',
         success: (response) => {
             const data = response.users.map(user => [user.id, user.username, user.name, user.last_name,
@@ -140,7 +140,7 @@ function generateUserPDF() {
                             ],
 
                         },
-                        layout: 'lightHorizontalLines'
+                        layout: 'Borders'
                     }
                 ],
                 styles: {
@@ -206,7 +206,7 @@ $(document).on('click', '.disable-user-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/users/disable_user/${userId}/`,
+                url: disableUserUrl.replace('0', userId),
                 type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -235,7 +235,7 @@ $(document).on('click', '.enable-user-btn', function () {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: `/users/enable_user/${userId}/`,
+                url: enableUserUrl.replace('0', userId),
                 type: 'POST',
                 headers: { "X-CSRFToken": getCookie("csrftoken") },
                 success: (response) => {
@@ -265,7 +265,7 @@ $(document).on('click', '.edit-user-btn', function () {
     $('#edit-user-email').val(email);
     $('#security_question').val(securityQuestion).trigger('change');
 
-    $('#edit-user-form').attr('action', `/users/user_edit/${userId}/`);
+    $('#edit-user-form').attr('action', editUserUrl.replace('0', userId));
 
     $('#editUserModal').modal('show');
 });
@@ -399,86 +399,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     const form = document.getElementById('edit-user-form');
-//     const passwordField = document.getElementById('edit-user-password');
-//     const confirmPasswordField = document.getElementById('edit-user-password2');
-
-//     form.addEventListener('submit', function (event) {
-//         event.preventDefault();
-
-//         // Verifica si las contraseñas coinciden
-//         if (passwordField.value !== confirmPasswordField.value) {
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: '¡Error!',
-//                 text: 'Las contraseñas no coinciden. Por favor, verifica e inténtalo de nuevo.',
-//                 confirmButtonText: 'Aceptar'
-//             });
-//             return;
-//         }
-
-//         // Valida la contraseña
-//         const passwordRegex = /^(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{8,}$/;
-//         if (passwordField.value && !passwordRegex.test(passwordField.value)) {
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: '¡Error!',
-//                 text: 'La contraseña debe tener al menos 8 caracteres y un carácter especial.',
-//                 confirmButtonText: 'Aceptar'
-//             });
-//             return;
-//         }
-
-//         // Si todo está bien, muestra el mensaje de confirmación
-//         Swal.fire({
-//             title: '¿Estás seguro?',
-//             text: "¿Deseas guardar los cambios realizados?",
-//             icon: 'question',
-//             showCancelButton: true,
-//             confirmButtonColor: '#3085d6',
-//             cancelButtonColor: '#d33',
-//             confirmButtonText: 'Sí, guardar',
-//             cancelButtonText: 'Cancelar'
-//         }).then((result) => {
-//             if (result.isConfirmed) {
-//                 // Si el usuario confirma, envía el formulario
-//                 const formData = new FormData(form);
-//                 fetch(form.action, {
-//                     method: 'POST',
-//                     body: formData,
-//                     headers: {
-//                         'X-CSRFToken': getCookie('csrftoken')
-//                     }
-//                 })
-//                     .then(response => response.json())
-//                     .then(data => {
-//                         if (data.status === 'success') {
-//                             Swal.fire(
-//                                 '¡Guardado!', 
-//                                 data.message, 
-//                                 'success'
-//                             ).then(() => {
-//                                 location.reload();
-//                             });
-//                         } else if (data.status === 'no_changes') {
-//                             Swal.fire(
-//                                 'Sin cambios', 
-//                                 data.message, 
-//                                 'info'
-//                             );
-//                         } else {
-//                             Swal.fire('Error', data.message, 'error');
-//                         }
-//                     })
-//                     .catch(error => {
-//                         console.error('Error:', error);
-//                         Swal.fire('Error', 'Ocurrió un error al procesar la solicitud.', 'error');
-//                     });
-//             }
-//         });
-//     });
-// });
 
 $(document).on('submit', '#register-modal form', function (e) {
     e.preventDefault();
@@ -501,30 +421,7 @@ $(document).on('submit', '#register-modal form', function (e) {
 
 window.addEventListener('load', initDataTableuser);
 
-// document.addEventListener('DOMContentLoaded', function () {
-//     // Delegación de eventos para manejar los botones de "mostrar contraseña"
-//     document.body.addEventListener('click', function (event) {
-//         // Verifica si el elemento clicado tiene la clase 'toggle-password'
-//         if (event.target.closest('.toggle-password')) {
-//             const toggleButton = event.target.closest('.toggle-password');
-//             const targetSelector = toggleButton.getAttribute('data-target');
-//             const passwordField = document.querySelector(targetSelector);
 
-//             if (passwordField) {
-//                 // Alterna entre 'password' y 'text'
-//                 const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-//                 passwordField.setAttribute('type', type);
-
-//                 // Cambia el ícono del botón
-//                 const icon = toggleButton.querySelector('i');
-//                 if (icon) {
-//                     icon.classList.toggle('fa-eye');
-//                     icon.classList.toggle('fa-eye-slash');
-//                 }
-//             }
-//         }
-//     });
-// });
 document.addEventListener('DOMContentLoaded', function () {
     const securityQuestionField = document.getElementById('security_question');
     const securityAnswerField = document.getElementById('security_answer');

@@ -16,7 +16,8 @@
               <table id="datatable-assets" class="table responsive">
                 <thead>
                   <div class="flex-row d-flex btn-add-pdf">
-                    <button class='btn btn-md btn-primary me-2 mb-2' data-toggle="modal" data-target="#register-modal">
+                    <button class='btn btn-md btn-primary me-2 mb-2' data-bs-toggle="modal"
+                      data-bs-target="#register-modal">
                       <i class='fa-solid fa-plus'></i> <strong>Añadir Bien</strong>
                     </button>
                     <button id="external-pdf-button" class="btn btn-danger mb-3 ">
@@ -47,7 +48,7 @@
                   <div class="modal-content">
                     <div class="modal-header">
                       <h5 class="modal-title" id="infoModalLabel">Registro de bienes</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                       </button>
                     </div>
@@ -83,7 +84,7 @@
                         </div>
                         {% endfor %}
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                           <input type="submit" value="Guardar" class="btn btn-primary">
                         </div>
                       </form>
@@ -190,7 +191,6 @@
                           <label class="form-label">Filtrar por Marcas:</label>
                           <select class="brand" name="brand[]" multiple="multiple" style="width: 100%"
                             data-placeholder="Seleccione categorías">
-                            <option value="all">Todas las marcas</option>
                             {% for brand in brands %}
                             <option value="{{ brand.id }}">{{ brand.name }}</option>
                             {% endfor %}
@@ -231,7 +231,10 @@
               {% endblock %}
 
               {% block extra_js %}
-
+              <script>
+                const deleteAssetUrl = "{% url 'inventory:delete_asset' 0 %}"; // 0 es un placeholder
+                const editAssetUrl = "{% url 'inventory:asset_edit' 0 %}"; // 0 es un placeholder
+              </script>
               <script src="{% static 'js/crudassets.js' %}"></script>
 
               {% endblock %}

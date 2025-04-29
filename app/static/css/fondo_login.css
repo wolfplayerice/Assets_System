@@ -1,6 +1,6 @@
 /* Centrar el contenedor del login y el footer */
 .login {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/fondo_login.jpg') no-repeat center center fixed;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../img/fondo_login.webp') no-repeat center center fixed;
   background-size: cover;
   display: flex;
   flex-direction: column;
