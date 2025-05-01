@@ -5,6 +5,7 @@ from audit.models import AuditLog
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Q
+from datetime import datetime, timedelta
 
 @login_required
 def audit_log_view(request):
@@ -24,13 +25,18 @@ def logs_list(request):
             "update": "Actualizar"
         }
 
+        # Parámetros de DataTables
         draw = int(request.GET.get('draw', 0))
         start = int(request.GET.get('start', 0))
         length = int(request.GET.get('length', 10))
         search_value = request.GET.get('search[value]', '').strip()
-        all_data = request.GET.get('all', 'false').lower() == 'true'
-
         
+        # Parámetros para exportación PDF
+        all_data = request.GET.get('all', 'false').lower() == 'true'
+        start_date = request.GET.get('start_date')
+        end_date = request.GET.get('end_date')
+
+        # Parámetros de ordenamiento
         order_column_index = request.GET.get('order[0][column]', '0')
         order_direction = request.GET.get('order[0][dir]', 'desc')  # Por defecto orden descendente
 
@@ -45,7 +51,21 @@ def logs_list(request):
         if order_direction == 'desc':
             order_field = f'-{order_field}'
 
+        # Consulta base
         logs = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User'])
+
+        # Filtrar por rango de fechas si se proporcionan ambas
+        if start_date and end_date:
+            try:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+                # Ajustar end_date para incluir todo el día
+                end_date = end_date + timedelta(days=1)
+                logs = logs.filter(timestamp__range=[start_date, end_date])
+            except ValueError:
+                pass  # Si hay error en el formato de fecha, ignorar el filtro
+
+        # Búsqueda
         reverse_action_translation = {v.lower(): k for k, v in action_translation.items()}
         search_value_action = reverse_action_translation.get(search_value.lower(), search_value)
         if search_value:
@@ -56,8 +76,10 @@ def logs_list(request):
                 Q(timestamp__icontains=search_value)
             )
 
+        # Ordenamiento
         logs = logs.order_by(order_field)
 
+        # Exportación completa para PDF
         if all_data:
             data = [
                 {
@@ -70,6 +92,7 @@ def logs_list(request):
             ]
             return JsonResponse({"data": data}, json_dumps_params={'ensure_ascii': False})
 
+        # Paginación para DataTables
         total_records = AuditLog.objects.filter(model_name__in=['Category', 'Brand', 'Asset', 'User']).count()
         filtered_records = logs.count()
 
