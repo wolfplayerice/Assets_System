@@ -119,12 +119,8 @@ async function generateAssetPDF() {
 
     // Obtener datos del usuario logueado
     const issuerName = $('#pdfOptionsModal').data('user-name');
-
     const issuerVig = $('#receiverVig').val();
-    
     const issuerAsset = $('#receiverAsset').val();
-
-
 
     // Iniciar animación de carga
     pdfButton.addClass('pdf-button-loading').prop('disabled', true);
@@ -140,6 +136,18 @@ async function generateAssetPDF() {
                 all: true
             }
         });
+
+        // Verificar si hay activos en la respuesta
+        if (!response.Asset || response.Asset.length === 0) {
+            // Animación de error
+            pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
+            setTimeout(() => {
+                pdfButton.removeClass('pdf-button-error').prop('disabled', false);
+            }, 2000);
+            
+            Swal.fire('Advertencia!', 'No se encontraron bienes con los filtros seleccionados.', 'warning');
+            return; // Salir de la función
+        }
 
         const data = response.Asset.map(asset => [
             asset.id,

@@ -66,7 +66,7 @@ function generateAuditPDF(startDate = null, endDate = null) {
     pdfButton.prop('disabled', true);
 
     // Construir la URL con los parámetros
-    let url = '/audit/logs_list/?all=true';
+    let url = `${listAuditUrl}?all=true`;
     if (startDate && endDate) {
         url += `&start_date=${startDate}&end_date=${endDate}`;
     }
