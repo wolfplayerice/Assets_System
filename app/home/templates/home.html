@@ -12,7 +12,6 @@
   <meta http-equiv="Expires" content="0">
   <title>InvenTrack</title>
   <link rel="icon" type="image/png" href="{% static 'img/icono.png' %}">
-  <link rel="stylesheet" href="{% static 'assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
   <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
   <link href="{% static 'css/DataTables/datatables.min.css' %} " rel="stylesheet">
@@ -27,9 +26,9 @@
   {% if request.resolver_match.url_name == "user_info" %}
   <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
   {% endif %}
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
 
 
-  <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
 
 </head>
 
@@ -170,9 +169,7 @@
     </footer>
   </div>
 
-  <script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
   <script src="{% static 'bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
   <script src="{% static 'assets/dist/js/adminlte.js' %}"></script>
   <script src="{% static 'js/sweetalert2@11.js' %}"></script>
   <script src="{% static 'js/DataTables/datatables.min.js' %}"></script>
