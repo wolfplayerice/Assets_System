@@ -12,7 +12,7 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-12">
-            <button id="external-pdf-button" class="btn btn-danger mb-3">
+            <button id="external-pdf-button" class="btn btn-danger mb-3 ">
               <i class="fas fa-file-pdf"></i> Generar Reporte PDF
             </button>
             <div id="data-container" data-list-audit-url="{% url 'audit:logs_list' %}">
@@ -29,9 +29,36 @@
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-
-            {% endblock %}
-            {% block extra_js %}
-            <script src="{% static 'js/audit.js' %}"></script>
-            {% endblock %}
+<div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="pdfOptionsForm">
+          <label for="startDate" class="form-label">Desde:</label>
+          <input type="date" name="startDate" class="form-control" id="startDate">
+          <label for="endDate" class="form-label">Hasta:</label>
+          <input type="date" name="endDate" class="form-control" id="endDate">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'js/audit.js' %}"></script>
+{% endblock %}

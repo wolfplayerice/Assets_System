@@ -57,23 +57,49 @@ const initDataTableAudit = async () => {
 };
 
 
-function generateAuditPDF() {
+// Función para generar el PDF de auditorías con opción de filtrado por fechas
+function generateAuditPDF(startDate = null, endDate = null) {
     const pdfButton = $('#external-pdf-button');
-
-
+    
+    // Mostrar estado de carga
     pdfButton.addClass('pdf-button-loading');
     pdfButton.prop('disabled', true);
 
+    // Construir la URL con los parámetros
+    let url = '/audit/logs_list/?all=true';
+    if (startDate && endDate) {
+        url += `&start_date=${startDate}&end_date=${endDate}`;
+    }
+
     $.ajax({
-        url: '/invtrack/audit/logs_list/?all=true',
+        url: url,
         type: 'GET',
         success: (response) => {
-            const data = response.data.map(audit => [audit.user, audit.action, audit.description, audit.timestamp]);
+            // Verificar si hay datos
+            if (!response.data || response.data.length === 0) {
+                Swal.fire('Información', 'No hay registros para el rango de fechas seleccionado.', 'info');
+                pdfButton.removeClass('pdf-button-loading');
+                pdfButton.prop('disabled', false);
+                return;
+            }
 
+            // Formatear los datos para la tabla PDF
+            const data = response.data.map(audit => [
+                audit.user || 'N/A',
+                audit.action || 'N/A',
+                audit.description || 'N/A',
+                audit.timestamp || 'N/A'
+            ]);
 
+            // Configuración del documento PDF
             const today = new Date();
-
             const formattedDateTime = today.toLocaleString();
+            
+            // Título basado en si hay filtro de fechas
+            const titleText = startDate && endDate 
+                ? `LISTADO DE AUDITORIAS (${startDate} al ${endDate})` 
+                : 'LISTADO DE AUDITORIAS (Todos los registros)';
+
             const docDefinition = {
                 pageSize: 'LETTER',
                 pageMargins: [40, 80, 40, 40],
@@ -81,7 +107,7 @@ function generateAuditPDF() {
                     columns: [
                         { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 0, 10] },
                         {
-                            text: 'LISTADO DE AUDITORIAS',
+                            text: titleText,
                             style: 'header',
                             alignment: 'center',
                             margin: [10, 20, 0, 20]
@@ -96,10 +122,11 @@ function generateAuditPDF() {
                             headerRows: 1,
                             widths: ['auto', 'auto', '*', 'auto'],
                             body: [
-                                [{ text: 'Usuario', style: 'tableHeader', alignment: 'center' },
-                                { text: 'Acción', style: 'tableHeader', alignment: 'center' },
-                                { text: 'Descripción', style: 'tableHeader', alignment: 'center' },
-                                { text: 'Fecha y hora', style: 'tableHeader', alignment: 'center' }
+                                [
+                                    { text: 'Usuario', style: 'tableHeader', alignment: 'center' },
+                                    { text: 'Acción', style: 'tableHeader', alignment: 'center' },
+                                    { text: 'Descripción', style: 'tableHeader', alignment: 'center' },
+                                    { text: 'Fecha y hora', style: 'tableHeader', alignment: 'center' }
                                 ],
                                 ...data.map(row => row.map(cell => ({
                                     text: cell,
@@ -107,7 +134,6 @@ function generateAuditPDF() {
                                     noWrap: false,
                                 })))
                             ],
-
                         },
                         layout: 'Borders'
                     }
@@ -116,7 +142,6 @@ function generateAuditPDF() {
                     header: { fontSize: 18, bold: true, color: '#2c3e50' },
                     tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
                     footer: { fontSize: 10, alignment: 'center', color: '#666666' }
-
                 },
                 defaultStyle: {
                     fontSize: 12,
@@ -131,34 +156,101 @@ function generateAuditPDF() {
                 }
             };
 
+            // Generar el PDF
             const pdfDocGenerator = pdfMake.createPdf(docDefinition);
             pdfDocGenerator.getBlob((blob) => {
+                // Mostrar estado de éxito
                 pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
                 setTimeout(() => {
                     pdfButton.removeClass('pdf-button-success');
                     pdfButton.prop('disabled', false);
                 }, 2000);
 
-                saveAs(blob, `Usuarios_${formattedDateTime}.pdf`);
+                // Descargar el PDF
+                const fileName = startDate && endDate 
+                    ? `Auditoria_${startDate}_a_${endDate}.pdf` 
+                    : `Auditoria_Completa_${formattedDateTime}.pdf`;
+                
+                saveAs(blob, fileName);
             });
         },
         error: (jqXHR, textStatus, errorThrown) => {
-            console.error('Error fetching all data:', textStatus, errorThrown);
-            // Animación de error
+            console.error('Error al obtener datos:', textStatus, errorThrown);
+            // Mostrar estado de error
             pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-error');
             setTimeout(() => {
                 pdfButton.removeClass('pdf-button-error');
                 pdfButton.prop('disabled', false);
             }, 2000);
 
-            Swal.fire('Error!', 'Error al generar el PDF.', 'error');
+            Swal.fire('Error!', 'Ocurrió un error al generar el PDF.', 'error');
         },
     });
 }
 
-// Evento click para el botón externo de PDF
-$(document).on('click', '#external-pdf-button', function () {
-    generateAuditPDF();
+// Evento para abrir el modal de opciones PDF
+$(document).on('click', '#external-pdf-button', function() {
+    if ($(this).hasClass('pdf-button-loading')) return;
+    
+    // Resetear los campos de fecha al abrir el modal
+    $('#startDate').val('');
+    $('#endDate').val('');
+    
+    $('#pdfOptionsModal').modal('show');
+});
+
+// Evento para generar PDF desde el modal
+$('#generatePdfButton').on('click', function(e) {
+    e.preventDefault();
+    
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    
+    // Validación de fechas
+    if ((startDate && !endDate) || (!startDate && endDate)) {
+        Swal.fire('Advertencia', 'Debes seleccionar ambas fechas o ninguna para filtrar.', 'warning');
+        return;
+    }
+    
+    // Validar que la fecha de inicio no sea mayor a la de fin
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+        Swal.fire('Error', 'La fecha de inicio no puede ser mayor a la fecha final.', 'error');
+        return;
+    }
+    
+    $('#pdfOptionsModal').modal('hide');
+    
+    // Mostrar mensaje informativo si no hay filtro
+    if (!startDate && !endDate) {
+        Swal.fire({
+            title: 'Generar reporte completo',
+            text: 'Se generará un PDF con todos los registros de auditoría.',
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Continuar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                generateAuditPDF();
+            }
+        });
+    } else {
+        generateAuditPDF(startDate, endDate);
+    }
+});
+
+// Inicializar datepickers con opciones (opcional)
+$(function() {
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    
+    $('#startDate').attr('max', today.toISOString().split('T')[0]);
+    $('#endDate').attr('max', today.toISOString().split('T')[0]);
+    
+    // Opcional: establecer valores por defecto (último mes)
+    // $('#startDate').val(oneMonthAgo.toISOString().split('T')[0]);
+    // $('#endDate').val(today.toISOString().split('T')[0]);
 });
 
 window.addEventListener('load', async () => {

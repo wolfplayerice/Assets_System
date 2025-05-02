@@ -25,9 +25,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                <center>
                     <h3>Iniciar Sesión</h3>
-                </center>
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
 
@@ -278,7 +276,7 @@
                             } else {
                                 Swal.fire({
                                     icon: "error",
-                                    title: "<strong>Respuesta incorrecta</strong>",
+                                    title: "<strong>Error</strong>",
                                     html: data.message || "La respuesta ingresada no es correcta.",
                                     confirmButtonText: "Aceptar",
                                     customClass: {
