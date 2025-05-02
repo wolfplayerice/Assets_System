@@ -13,7 +13,7 @@
         </div>
         <div class="back-side cover"></div>
       </div>
-      <div class="folder-title">Manual 1</div>
+      <div class="folder-title">Manual de Usuario</div>
     </div>
     <div class="folder-container">
       <div class="folder">
@@ -23,7 +23,7 @@
         </div>
         <div class="back-side cover"></div>
       </div>
-      <div class="folder-title">Manual 2</div>
+      <div class="folder-title">Manual de Instalación</div>
     </div>
   </div>
 </div>
@@ -33,19 +33,19 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    gap: 20px;
+    gap: 30px;
     height: 10vh;
-    padding-top: 50px;
   }
 
   .title {
     font-size: 2rem;
     margin-bottom: 20px;
+    transition: color 0.3s ease;
   }
 
   .folders {
     display: flex;
-    gap: 40px;
+    gap: 160px;
     justify-content: center;
     align-items: center;
     margin-top: auto;
@@ -132,13 +132,14 @@
   }
 
   .folder-title {
-    font-size: 1rem;
+    font-size: 1.1rem;
     text-align: center;
     background: rgba(0, 0, 0, 0.1);
     padding: 5px 10px;
     border-radius: 5px;
     color: #333;
     width: fit-content;
+    transition: color 0.3s ease, background 0.3s ease;
   }
 
   @keyframes float {
@@ -152,6 +153,54 @@
 
     100% {
       transform: translateY(0px);
+    }
+  }
+
+  /* Estilos para modo oscuro */
+  body.dark-mode .title {
+    color: #fff;
+    /* Cambia el color del título en modo oscuro */
+  }
+
+  body.dark-mode .folder-title {
+    color: #fff;
+    /* Cambia el color del texto de las carpetas en modo oscuro */
+    background: rgba(255, 255, 255, 0.1);
+    /* Ajusta el fondo en modo oscuro */
+  }
+
+  /* Estilos responsivos para pantallas pequeñas */
+  @media (max-width: 768px) {
+    .folders {
+      flex-direction: column;
+      /* Cambia la dirección a columna */
+      gap: 30px;
+      /* Aumenta el espacio vertical entre las carpetas */
+    }
+
+    .folder-container {
+      align-items: center;
+      /* Asegura que los títulos estén centrados */
+    }
+
+    .folder {
+      --folder-W: 150px;
+      /* Reduce el ancho de las carpetas */
+      --folder-H: 100px;
+      /* Reduce la altura de las carpetas */
+      width: var(--folder-W);
+      height: var(--folder-H);
+    }
+
+    .folder .tip {
+      width: 100px;
+      /* Ajusta el tamaño de la "punta" */
+      height: 30px;
+    }
+
+    .folder-title {
+      font-size: 0.9rem;
+      /* Reduce el tamaño del texto */
     }
   }
 </style>
