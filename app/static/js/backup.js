@@ -114,17 +114,19 @@ function generateBackupsPDF() {
                 pageSize: 'LETTER',
                 pageMargins: [40, 80, 40, 40],
                 header: {
-                    text: 'REPORTE DE RESPALDOS',
-                    style: 'header',
-                    alignment: 'center',
-                    margin: [0, 20, 0, 20]
+                    columns: [
+                        { image: gobernacion, width: 60, alignment: 'left', margin: [20, 10, 10, 10] },
+                        {
+                            text: `Base de datos: ${response.db_name || 'Desconocida'}`,
+                            style: 'header',
+                            alignment: 'center',
+                            margin: [0, 20, 0, 20]
+                        },
+                        { image: logo, width: 60, alignment: 'right', margin: [10, 10, 20, 10] }
+                    ],
+                    columnGap: 10,
                 },
                 content: [
-                    {
-                        text: `Base de datos: ${response.db_name || 'Desconocida'}`,
-                        style: 'subheader',
-                        margin: [0, 0, 0, 10]
-                    },
                     {
                         table: {
                             headerRows: 1,
@@ -136,27 +138,32 @@ function generateBackupsPDF() {
                                     { text: 'Fecha', style: 'tableHeader' },
                                     { text: 'Encriptado', style: 'tableHeader' }
                                 ],
-                                ...data
+                                ...data.map(row => row.map(cell => ({
+                                    text: cell != null ? cell.toString() : '', // Asegurarse que sea string
+                                    alignment: 'justify',
+                                    noWrap: false,
+                                })))
                             ]
                         },
-                        layout: 'lightHorizontalLines'
+                        layout: 'Borders'
                     }
                 ],
                 styles: {
                     header: { fontSize: 18, bold: true, color: '#2c3e50' },
-                    subheader: { fontSize: 14, bold: false, color: '#34495e' },
-                    tableHeader: { bold: true, fontSize: 12, color: '#34495e' },
+                    tableHeader: { bold: true, fontSize: 13, color: '#34495e' },
                     footer: { fontSize: 10, alignment: 'center', color: '#666666' }
                 },
                 defaultStyle: {
-                    fontSize: 11,
+                    fontSize: 12,
                     color: '#2c3e50'
                 },
-                footer: (currentPage, pageCount) => ({
-                    text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
-                    style: 'footer',
-                    margin: [0, 10, 0, 0]
-                })
+                footer: (currentPage, pageCount) => {
+                    return {
+                        text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
+                        style: 'footer',
+                        margin: [0, 10, 0, 0]
+                    };
+                }
             };
 
             const pdfDocGenerator = pdfMake.createPdf(docDefinition);
