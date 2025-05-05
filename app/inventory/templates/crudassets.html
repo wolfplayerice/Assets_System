@@ -39,201 +39,206 @@
 
                 </tbody>
               </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-              <!-- Modal para registrar bienes -->
-              <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="infoModalLabel">Registro de bienes</h5>
-                      <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                    </div>
-                    <div class="modal-body">
-                      <!-- Contenido del modal -->
-                      <form action="{% url 'inventory:asset_create' %}" method="post">
-                        {% csrf_token %}
-                        {% for field in form %}
-                        <div class="form-group form-floating mb-3">
-                          {% if field.name == 'fk_category' %}
-                          <!-- Campo de categoría con Select2 -->
-                          <label for="fk_category_select">{{ field.label }}</label>
-                          <select id="fk_category_select" name="fk_category" class="form-select">
-                            <option value="" selected disabled>Seleccione una categoría</option>
-                            {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
-                          </select>
-                          {% elif field.name == 'fk_brand' %}
-                          <!-- Campo de marca con Select2 -->
-                          <label for="fk_brand_select">{{ field.label }}</label>
-                          <select id="fk_brand_select" name="fk_brand" class="form-select">
-                            <option value="" selected disabled>Seleccione una marca</option>
-                            {% for brand in brands %}
-                            <option value="{{ brand.id }}">{{ brand.name }}</option>
-                            {% endfor %}
-                          </select>
-                          {% else %}
-                          <!-- Otros campos -->
-                          {{ field|add_class:"form-control" }}
-                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                          {% endif %}
-                        </div>
-                        {% endfor %}
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                          <input type="submit" value="Guardar" class="btn btn-primary">
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<!-- Modal para registrar bienes -->
+<div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">Registro de bienes</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Contenido del modal -->
+        <form action="{% url 'inventory:asset_create' %}" method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="form-group form-floating mb-3">
+            {% if field.name == 'fk_category' %}
+            <!-- Campo de categoría con Select2 -->
+            <label for="fk_category_select">{{ field.label }}</label>
+            <select id="fk_category_select" name="fk_category" class="form-select">
+              <option value="" selected disabled>Seleccione una categoría</option>
+              {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+            {% elif field.name == 'fk_brand' %}
+            <!-- Campo de marca con Select2 -->
+            <label for="fk_brand_select">{{ field.label }}</label>
+            <select id="fk_brand_select" name="fk_brand" class="form-select">
+              <option value="" selected disabled>Seleccione una marca</option>
+              {% for brand in brands %}
+              <option value="{{ brand.id }}">{{ brand.name }}</option>
+              {% endfor %}
+            </select>
+            {% else %}
+            <!-- Otros campos -->
+            {{ field|add_class:"form-control" }}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <input type="submit" value="Guardar" class="btn btn-primary">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-              <!-- Modal para dispositivos inoperativos -->
-              <div class="modal fade" id="inoperativoModal" tabindex="-1" aria-labelledby="inoperativoModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                      <p>Aquí va el contenido del modal.</p>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<!-- Modal para dispositivos inoperativos -->
+<div class="modal fade" id="inoperativoModal" tabindex="-1" aria-labelledby="inoperativoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="inoperativoModalLabel">Información del Dispositivo Inoperativo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p>Aquí va el contenido del modal.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-              <!-- Modal editar bienes -->
-              <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title">Editar Bien</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <form id="edit-form" method="post">
-                        {% csrf_token %}
-                        {% for field in form %}
-                        <div class="form-group form-floating mb-3">
-                          {% if field.name == 'fk_category' %}
-                          <label for="edit_fk_category_select">{{ field.label }}</label>
-                          <select id="edit_fk_category_select" name="fk_category" class="form-select">
-                            <option value="" selected disabled>Seleccione una categoría</option>
-                            {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
-                          </select>
-                          {% elif field.name == 'fk_brand' %}
-                          <label for="edit_fk_brand_select">{{ field.label }}</label>
-                          <select id="edit_fk_brand_select" name="fk_brand" class="form-select">
-                            <option value="" selected disabled>Seleccione una marca</option>
-                            {% for brand in brands %}
-                            <option value="{{ brand.id }}">{{ brand.name }}</option>
-                            {% endfor %}
-                          </select>
-                          {% else %}
-                          {{ field|add_class:"form-control" }}
-                          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                          {% endif %}
-                        </div>
-                        {% endfor %}
-                        <input type="hidden" name="asset_id" value="{{ asset_id }}">
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                      <button type="submit" form="edit-form" class="btn btn-primary">Guardar</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+<!-- Modal editar bienes -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Bien</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-form" method="post">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="form-group form-floating mb-3">
+            {% if field.name == 'fk_category' %}
+            <label for="edit_fk_category_select">{{ field.label }}</label>
+            <select id="edit_fk_category_select" name="fk_category" class="form-select">
+              <option value="" selected disabled>Seleccione una categoría</option>
+              {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+            {% elif field.name == 'fk_brand' %}
+            <label for="edit_fk_brand_select">{{ field.label }}</label>
+            <select id="edit_fk_brand_select" name="fk_brand" class="form-select">
+              <option value="" selected disabled>Seleccione una marca</option>
+              {% for brand in brands %}
+              <option value="{{ brand.id }}">{{ brand.name }}</option>
+              {% endfor %}
+            </select>
+            {% else %}
+            {{ field|add_class:"form-control" }}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% endif %}
+          </div>
+          {% endfor %}
+          <input type="hidden" name="asset_id" value="{{ asset_id }}">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" form="edit-form" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-              <!-- Modal para opciones de PDF -->
-              <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel"
-                aria-hidden="true" data-user-name="{{ request.user.get_full_name }}"
-                data-user-position="{{ request.user.position }}">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <form id="pdfOptionsForm">
-                        <div class="mb-3">
-                          <label class="form-label">Filtrar por Estado:</label>
-                          <select class="form-select" name="statusFilter">
-                            <option value="all">Todos</option>
-                            <option value="1">Operativos</option>
-                            <option value="0">Inoperativos</option>
-                          </select>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Filtrar por Categoría:</label>
-                          <select class="js-example-basic-multiple" name="categories[]" multiple="multiple"
-                            style="width: 100%" data-placeholder="Seleccione categorías">
-                            {% for category in categories %}
-                            <option value="{{ category.id }}">{{ category.name }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Filtrar por Marcas:</label>
-                          <select class="brand" name="brand[]" multiple="multiple" style="width: 100%"
-                            data-placeholder="Seleccione categorías">
-                            {% for brand in brands %}
-                            <option value="{{ brand.id }}">{{ brand.name }}</option>
-                            {% endfor %}
-                          </select>
-                        </div>
-                        <div class="mb-3">
-                          <h6>Datos del receptor</h6>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Nombres y Apellidos</label>
-                          <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
-                        </div>
-                        <div class="mb-3">
-                          <h6>Datos de Vigilancia</h6>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Nombres y Apellidos</label>
-                          <input class="form-control" type="text" name="receiver_vig" id="receiverVig" required>
-                        </div>
-                        <div class="mb-3">
-                          <h6>Datos de unidad de bienes</h6>
-                        </div>
-                        <div class="mb-3">
-                          <label class="form-label">Nombres y Apellidos</label>
-                          <input class="form-control" type="text" name="receiver_asset" id="receiverAsset" required>
-                        </div>
+<!-- Modal para opciones de PDF -->
+<div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel" aria-hidden="true"
+  data-user-name="{{ request.user.get_full_name }}" data-user-position="{{ request.user.position }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="pdfOptionsForm">
+          <div class="mb-3">
+            <label class="form-label">Filtrar por Estado:</label>
+            <select class="form-select" name="statusFilter">
+              <option value="all">Todos</option>
+              <option value="1">Operativos</option>
+              <option value="0">Inoperativos</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Filtrar por Categoría:</label>
+            <select class="js-example-basic-multiple" name="categories[]" multiple="multiple" style="width: 100%"
+              data-placeholder="Seleccione categorías">
+              {% for category in categories %}
+              <option value="{{ category.id }}">{{ category.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Filtrar por Marcas:</label>
+            <select class="brand" name="brand[]" multiple="multiple" style="width: 100%"
+              data-placeholder="Seleccione categorías">
+              {% for brand in brands %}
+              <option value="{{ brand.id }}">{{ brand.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <h6>Datos del receptor</h6>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombres y Apellidos</label>
+            <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
+          </div>
+          <div class="mb-3">
+            <h6>Datos de Vigilancia</h6>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombres y Apellidos</label>
+            <input class="form-control" type="text" name="receiver_vig" id="receiverVig" required>
+          </div>
+          <div class="mb-3">
+            <h6>Datos de unidad de bienes</h6>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombres y Apellidos</label>
+            <input class="form-control" type="text" name="receiver_asset" id="receiverAsset" required>
+          </div>
 
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                      <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-              {% endblock %}
+{% endblock %}
 
-              {% block extra_js %}
-              <script>
-                const deleteAssetUrl = "{% url 'inventory:delete_asset' 0 %}"; // 0 es un placeholder
-                const editAssetUrl = "{% url 'inventory:asset_edit' 0 %}"; // 0 es un placeholder
-              </script>
-              <script src="{% static 'js/crudassets.js' %}"></script>
+{% block extra_js %}
+<script>
+  const deleteAssetUrl = "{% url 'inventory:delete_asset' 0 %}"; // 0 es un placeholder
+  const editAssetUrl = "{% url 'inventory:asset_edit' 0 %}"; // 0 es un placeholder
+</script>
+<script src="{% static 'js/crudassets.js' %}"></script>
 
-              {% endblock %}
+{% endblock %}

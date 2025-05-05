@@ -9,13 +9,10 @@
     <title>Iniciar sesión</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="{% static 'img/icono.png' %}">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="{% static 'bootstrap-5.3.5-dist/css/bootstrap.min.css' %} " rel="stylesheet">
     <link rel="stylesheet" href="{% static 'assets/dist/css/adminlte.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/fondo_login.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
 </head>
 
 <body class="login">
@@ -25,7 +22,7 @@
         </div>
         <div class="card">
             <div class="card-body">
-                    <h3>Iniciar Sesión</h3>
+                <h3>Iniciar Sesión</h3>
                 <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
 
@@ -62,7 +59,6 @@
                 </form>
             </div>
         </div>
-
 
         <div class="modal fade" id="password-reset-modal" tabindex="-1" role="dialog"
             aria-labelledby="password-reset-modal-label" aria-hidden="true">
@@ -108,13 +104,9 @@
             </div>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-        crossorigin="anonymous"></script>
+    <script src="{% static 'js/jquery.slim.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/sweetalert2@11.js' %}"></script>
     <script src="{% static 'js/verify_user.js' %}"></script>
 
@@ -305,31 +297,31 @@
     </script>
 
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("security-form");
-        const inputNewPassword = form.querySelector('[name="new_password"]');
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("security-form");
+            const inputNewPassword = form.querySelector('[name="new_password"]');
 
-        // Función para validar la contraseña
-        function validarContrasena(password) {
-            const tieneLongitud = password.length >= 8;
-            const tieneNumero = /\d/.test(password);
-            const tieneEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            // Función para validar la contraseña
+            function validarContrasena(password) {
+                const tieneLongitud = password.length >= 8;
+                const tieneNumero = /\d/.test(password);
+                const tieneEspecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-            return tieneLongitud && tieneNumero && tieneEspecial;
-        }
-
-        form.addEventListener("submit", function (e) {
-            const nuevaContrasena = inputNewPassword.value;
-
-            // Validar la contraseña antes de enviar el formulario
-            if (!validarContrasena(nuevaContrasena)) {
-                e.preventDefault(); // Evita que el formulario se envíe
-                // SweetAlert eliminado
+                return tieneLongitud && tieneNumero && tieneEspecial;
             }
+
+            form.addEventListener("submit", function (e) {
+                const nuevaContrasena = inputNewPassword.value;
+
+                // Validar la contraseña antes de enviar el formulario
+                if (!validarContrasena(nuevaContrasena)) {
+                    e.preventDefault(); // Evita que el formulario se envíe
+                    // SweetAlert eliminado
+                }
+            });
         });
-    });
-</script>
+    </script>
 
 </body>
 <footer class="main-footer">

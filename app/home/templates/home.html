@@ -19,16 +19,13 @@
   <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/home.css' %} " rel="stylesheet">
   <link href="{% static 'css/dashboard.css' %} " rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'select2/dist/css/select2.min.css' %}">
-  <link rel="stylesheet" href="{% static 'select2-bootstrap/select2-bootstrap-5-theme.min.css' %}">
-  <link rel="stylesheet" href="{% static 'select2-bootstrap/select2-bootstrap-5-theme.rtl.min.css' %}">
+  <link href="{% static 'select2/dist/css/select2.min.css' %} " rel="stylesheet">
+  <link href="{% static 'select2-bootstrap/select2-bootstrap-5-theme.min.css' %} " rel="stylesheet">
 
   {% if request.resolver_match.url_name == "user_info" %}
   <link href="{% static 'css/user_info.css' %}" rel="stylesheet">
   {% endif %}
-  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
-
-
+  <script src="{% static 'js/jquery.slim.min.js' %}"></script>
 
 </head>
 
@@ -171,11 +168,14 @@
 
   <script src="{% static 'bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js' %}"></script>
   <script src="{% static 'assets/dist/js/adminlte.js' %}"></script>
+
   <script src="{% static 'js/sweetalert2@11.js' %}"></script>
+
   <script src="{% static 'js/DataTables/datatables.min.js' %}"></script>
-  <script src="{% static 'select2/dist/js/select2.full.min.js' %}"></script>
   <script src="{% static 'js/verify_user.js' %}"></script>
   <script src="{% static 'js/base64.js' %}"></script>
+  <script src="{% static 'select2/dist/js/select2.min.js' %}"></script>
+
   {% block extra_js %}
   {% endblock %}
 

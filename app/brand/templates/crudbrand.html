@@ -34,114 +34,118 @@
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <!-- Modal para registrar marcas -->
-            <div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="infoModalLabel">Registro de Marcas</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    <!-- Contenido del modal -->
-                    <form action="{% url 'brand:create_brand' %}" method="post">
-                      {% csrf_token %}
-                      {% for field in brand_form %}
-                      <!-- se usa django-widget_tweaks -->
-                      <div class="form-group form-floating mb-3">
-                        {% if field.field.widget.input_type == 'text' %}
-                        <!-- Campos de tipo select -->
-                        {{ field|add_class:"form-control" }}
-                        {% endif %}
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                      </div>
-                      {% endfor %}
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <input type="submit" value="Guardar" class="btn btn-primary">
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
+<!-- Modal para registrar marcas -->
+<div class="modal fade" id="register-modal" tabindex="-1" role="dialog" aria-labelledby="infoModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="infoModalLabel">Registro de Marcas</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Contenido del modal -->
+        <form action="{% url 'brand:create_brand' %}" method="post">
+          {% csrf_token %}
+          {% for field in brand_form %}
+          <!-- se usa django-widget_tweaks -->
+          <div class="form-group form-floating mb-3">
+            {% if field.field.widget.input_type == 'text' %}
+            <!-- Campos de tipo select -->
+            {{ field|add_class:"form-control" }}
+            {% endif %}
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          </div>
+          {% endfor %}
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <input type="submit" value="Guardar" class="btn btn-primary">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
-            <!-- Modal para editar marcas -->
-            <div class="modal fade" id="editBraModal" tabindex="-1" aria-labelledby="editBraModalLabel"
-              aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="editBraModalLabel">Editar Marcas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="edit-bra-form" action="{% url 'brand:brand_edit' 0 %}" method="post">
-                      {% csrf_token %}
-                      {{ edit_bra_form }}
-                      <input type="hidden" id="edit-bra-id" name="id">
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
-                  </div>
-                  </form>
-                </div>
-              </div>
-            </div>
+<!-- Modal para editar marcas -->
+<div class="modal fade" id="editBraModal" tabindex="-1" aria-labelledby="editBraModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editBraModalLabel">Editar Marcas</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-bra-form" action="{% url 'brand:brand_edit' 0 %}" method="post">
+          {% csrf_token %}
+          {{ edit_bra_form }}
+          <input type="hidden" id="edit-bra-id" name="id">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="save-changes">Guardar cambios</button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-            <div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel"
-              aria-hidden="true" data-user-name="{{ request.user.get_full_name }}"
-              data-user-position="{{ request.user.position }}">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <form id="pdfOptionsForm">
-                      <div class="mb-3">
-                        <h6>Datos del receptor</h6>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Nombres y Apellidos</label>
-                        <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
-                      </div>
-                      <div class="mb-3">
-                        <h6>Datos de Vigilancia</h6>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Nombres y Apellidos</label>
-                        <input class="form-control" type="text" name="receiver_vig" id="receiverVig" required>
-                      </div>
-                      <div class="mb-3">
-                        <h6>Datos de unidad de bienes</h6>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Nombres y Apellidos</label>
-                        <input class="form-control" type="text" name="receiver_asset" id="receiverAsset" required>
-                      </div>
+<div class="modal fade" id="pdfOptionsModal" tabindex="-1" aria-labelledby="pdfOptionsModalLabel" aria-hidden="true"
+  data-user-name="{{ request.user.get_full_name }}" data-user-position="{{ request.user.position }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pdfOptionsModalLabel">Opciones de Exportación a PDF</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="pdfOptionsForm">
+          <div class="mb-3">
+            <h6>Datos del receptor</h6>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombres y Apellidos</label>
+            <input class="form-control" type="text" name="receiver_name" id="receiverName" required>
+          </div>
+          <div class="mb-3">
+            <h6>Datos de Vigilancia</h6>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombres y Apellidos</label>
+            <input class="form-control" type="text" name="receiver_vig" id="receiverVig" required>
+          </div>
+          <div class="mb-3">
+            <h6>Datos de unidad de bienes</h6>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombres y Apellidos</label>
+            <input class="form-control" type="text" name="receiver_asset" id="receiverAsset" required>
+          </div>
 
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
-                  </div>
-                </div>
-              </div>
-            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="generatePdfButton">Generar PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-            {% endblock %}
-            {% block extra_js %}
-            <script>
-              const deleteBrandUrl = "{% url 'brand:delete_brand' 0 %}"; // 0 es un placeholder
-              const editBrandUrl = "{% url 'brand:brand_edit' 0 %}"; // 0 es un placeholder
-            </script>
-            <script src="{% static 'js/crudbrand.js' %}"></script>
-            {% endblock %}
+{% endblock %}
+{% block extra_js %}
+<script>
+  const deleteBrandUrl = "{% url 'brand:delete_brand' 0 %}"; // 0 es un placeholder
+  const editBrandUrl = "{% url 'brand:brand_edit' 0 %}"; // 0 es un placeholder
+</script>
+<script src="{% static 'js/crudbrand.js' %}"></script>
+{% endblock %}

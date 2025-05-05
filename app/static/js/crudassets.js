@@ -496,6 +496,7 @@ $(document).ready(function () {
         placeholder: "Seleccione una categoría", // Placeholder para categoría
         theme: 'bootstrap-5',
         allowClear: true // Permite limpiar la selección
+        
     });
 
     $('#fk_brand_select').select2({

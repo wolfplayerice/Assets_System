@@ -52,6 +52,8 @@
 {% endblock %}
 
 {% block extra_js %}
-
+<script>
+    const login = "{% url 'login' %}";
+</script>
 <script src="{% static 'js/backup.js' %}"></script>
 {% endblock %}
