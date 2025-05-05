@@ -69,7 +69,7 @@ MIDDLEWARE = [
     'django_session_timeout.middleware.SessionTimeoutMiddleware',
 ]
 
-SESSION_EXPIRE_SECONDS = 60  # 1 hora
+SESSION_EXPIRE_SECONDS = 3600  # 1 hora
 SESSION_TIMEOUT_REDIRECT = 'login'
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 

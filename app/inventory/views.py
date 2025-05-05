@@ -130,55 +130,88 @@ def asset_create(request):
         asset_create_form = AssetCreate(request.POST)
         if asset_create_form.is_valid():
             try:
-                prefix = asset_create_form.cleaned_data['prefix']
-                state_asset = asset_create_form.cleaned_data['state_asset']
-                full_st = f"{prefix}{state_asset}"
-                state_asset = full_st
-
-                assets = Asset(
+                prefix = asset_create_form.cleaned_data['prefix'].rstrip('-')
+                state_num = asset_create_form.cleaned_data['state_asset'].strip()
+                full_st = f"{prefix}-{state_num}"
+                
+                # Validación explícita de state_asset
+                if Asset.objects.filter(state_asset=full_st).exists():
+                    return JsonResponse({
+                        'status': 'error', 
+                        'message': f'El bien de estado {full_st} ya existe.'
+                    })
+                
+                # Validación de serial_number
+                serial = asset_create_form.cleaned_data['serial_number'].strip()
+                if Asset.objects.filter(serial_number=serial).exists():
+                    return JsonResponse({
+                        'status': 'error', 
+                        'message': f'El número de serie {serial} ya existe.'
+                    })
+                
+                # Crear el activo
+                asset = Asset(
                     model=asset_create_form.cleaned_data['model'],
-                    serial_number=asset_create_form.cleaned_data['serial_number'],
+                    serial_number=serial,
                     state_asset=full_st,
                     status=asset_create_form.cleaned_data['status'],
                     observation=asset_create_form.cleaned_data['observation'],
                     fk_category=asset_create_form.cleaned_data['fk_category'],
                     fk_brand=asset_create_form.cleaned_data['fk_brand'],
+                    modified_by=request.user
                 )
-                assets.save()
+                asset.save()
+                
                 AuditLog.objects.create(
                     user=request.user,
                     action='create',
-                    username=request.user.username,  
+                    username=request.user.username,
                     model_name='Asset',
-                    object_id=assets.id,
-                    description=f"Activo creado (ID: {assets.id}): {assets.fk_brand.name} {assets.model} {assets.serial_number}"
+                    object_id=asset.id,
+                    description=f"Activo creado: {asset.state_asset} (ID: {asset.id})"
                 )
-                return JsonResponse({'status': 'success', 'message': 'El activo se ha guardado correctamente.'})
-            
+                
+                return JsonResponse({
+                    'status': 'success', 
+                    'message': 'Activo creado correctamente.'
+                })
+                
             except IntegrityError as e:
-                if 'serial_number' in str(e):
-                    return JsonResponse({'status': 'error', 'message': 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'})
-                else:
-                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al guardar el activo. Por favor, inténtelo de nuevo.'})
-            
+                if 'state_asset' in str(e):
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': 'Error: El bien de estado ya existe.'
+                    })
+                elif 'serial_number' in str(e):
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': 'Error: El número de serie ya existe.'
+                    })
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Error al guardar el activo.'
+                })
+                
             except Exception as e:
-                return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
+                return JsonResponse({
+                    'status': 'error',
+                    'message': f'Error inesperado: {str(e)}'
+                })
         
         else:
             errors = []
             for field, error_list in asset_create_form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo: {error}')
-            return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
+                    errors.append(f"{field}: {error}")
+            return JsonResponse({
+                'status': 'error',
+                'message': ' '.join(errors)
+            })
     
-    else:
-        asset_create_form = AssetCreate()
-    
-    return render(request, 'index.html', {
-        'form': asset_create_form,
-        'first_name': request.user.first_name,
-        'last_name': request.user.last_name,
-        })
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Método no permitido'
+    }, status=405)
 
 @login_required
 def delete_asset(request, asset_id):
@@ -239,22 +272,32 @@ def asset_edit(request, asset_id):
                 if not number:
                     return JsonResponse({'status': 'error', 'message': 'El número del activo no puede estar vacío.'})
                 
-                # 3. Validar número de serie
-                serial = form.cleaned_data.get('serial_number', '').strip()
-                if serial:
-                    existing_asset = Asset.objects.filter(serial_number=serial).exclude(pk=asset_id).first()
-                    if existing_asset:
-                        return JsonResponse({'status': 'error', 'message': f'El número de serie {serial} ya está asignado al activo {existing_asset.state_asset}'})
-                
-                # 4. Construir state_asset completo
+                # 3. Construir state_asset completo
                 full_st = f"{prefix}-{number}"
                 
-                # 5. Actualizar el activo
+                # 4. Validar state_asset solo si ha cambiado
+                if full_st != original_asset.state_asset:
+                    if Asset.objects.filter(state_asset=full_st).exclude(pk=asset_id).exists():
+                        return JsonResponse({
+                            'status': 'error', 
+                            'message': f'El bien de estado {full_st} ya existe.'
+                        })
+                
+                # 5. Validar número de serie solo si ha cambiado
+                serial = form.cleaned_data.get('serial_number', '').strip()
+                if serial and serial != original_asset.serial_number:
+                    if Asset.objects.filter(serial_number=serial).exclude(pk=asset_id).exists():
+                        return JsonResponse({
+                            'status': 'error', 
+                            'message': f'El número de serie {serial} ya está asignado a otro activo'
+                        })
+                
+                # 6. Actualizar el activo
                 updated_asset = form.save(commit=False)
                 updated_asset.state_asset = full_st
                 updated_asset.save()
 
-                # 6. Obtener nuevos valores
+                # 7. Obtener nuevos valores
                 updated_asset.refresh_from_db()
                 new_values = {
                     'model': updated_asset.model,
@@ -266,7 +309,7 @@ def asset_edit(request, asset_id):
                     'fk_brand': updated_asset.fk_brand
                 }
                 
-                # 7. Detectar cambios (CORRECCIÓN PRINCIPAL)
+                # 8. Detectar cambios
                 changes = []
                 for field in old_values:
                     old_val = old_values[field]
@@ -279,29 +322,32 @@ def asset_edit(request, asset_id):
                         else:
                             changes.append(f"{field_name}: '{old_val}' → '{new_val}'")
 
-                # 8. Crear mensaje de auditoría
+                # 9. Crear mensaje de auditoría
                 if changes:
                     changes_str = "; ".join(changes)
                     audit_message = f"Actualización de activo {updated_asset.state_asset} (ID: {updated_asset.id}): {changes_str}"
                 else:
                     audit_message = f"Activo {updated_asset.state_asset} (ID: {updated_asset.id}) editado sin cambios significativos."
 
-                # 9. Registrar auditoría
+                # 10. Registrar auditoría
                 AuditLog.objects.create(
                     user=request.user,
                     action='update',
                     model_name='Asset',
                     object_id=asset.id,
-                    description=audit_message
+                    description=audit_message,
+                    username=request.user.username
                 )
                 
                 return JsonResponse({'status': 'success', 'message': 'El activo se ha actualizado correctamente.'})
             
             except IntegrityError as e:
+                error_message = 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.'
                 if 'serial_number' in str(e):
-                    return JsonResponse({'status': 'error', 'message': 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'})
-                else:
-                    return JsonResponse({'status': 'error', 'message': 'Error: Ocurrió un problema al actualizar el activo. Por favor, inténtelo de nuevo.'})
+                    error_message = 'Error: El número de serie ya existe. Por favor, ingrese un número de serie único.'
+                elif 'state_asset' in str(e):
+                    error_message = 'Error: El bien de estado ya existe. Por favor, ingrese un valor único.'
+                return JsonResponse({'status': 'error', 'message': error_message})
             
             except Exception as e:
                 return JsonResponse({'status': 'error', 'message': f'Error inesperado: {str(e)}'})
@@ -310,7 +356,7 @@ def asset_edit(request, asset_id):
             errors = []
             for field, error_list in form.errors.items():
                 for error in error_list:
-                    errors.append(f'Error en el campo: {error}')
+                    errors.append(f'Error en el campo {FIELD_NAMES.get(field, field)}: {error}')
             return JsonResponse({'status': 'error', 'message': ' '.join(errors)})
     
     else:

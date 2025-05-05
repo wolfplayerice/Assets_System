@@ -13,7 +13,7 @@ ACTIVE_CHOICES = [
 class Asset(models.Model):
     model = models.CharField(max_length=255, null=False,  verbose_name='Modelo')
     serial_number = models.CharField(max_length=255, null=False, unique=True, verbose_name='Número de serie')
-    state_asset = models.CharField(max_length=255, null=False, verbose_name='Bien del estado')
+    state_asset = models.CharField(max_length=255, null=False, unique=True, verbose_name='Bien del estado')
     status = models.BooleanField(default=True, null=False, choices=ACTIVE_CHOICES)
     observation = models.TextField(blank=True)
     modified_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
