@@ -206,7 +206,14 @@ def user_edit(request, user_id):
                 AuditLog.objects.create(
                     user=request.user,
                     action="update",
-                    model_name="User/Profile",
+                    model_name="User",
+                    object_id=user.id,
+                    description="; ".join(changes) or "Edición sin cambios."
+                )
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="update",
+                    model_name="Profile",
                     object_id=user.id,
                     description="; ".join(changes) or "Edición sin cambios."
                 )

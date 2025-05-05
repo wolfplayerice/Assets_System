@@ -22,8 +22,8 @@ class Asset(models.Model):
     
 
     #Llaves foraneas
-    fk_category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    fk_brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
+    fk_category = models.ForeignKey(Category, on_delete=models.RESTRICT)
+    fk_brand = models.ForeignKey(Brand, on_delete=models.RESTRICT)
 
     def to_dict(self):
         return {

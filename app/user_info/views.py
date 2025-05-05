@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from .forms import EditUserInfo, SecurityQuestionForm
+from audit.models import AuditLog 
+from users.models import Profile
 
 @login_required
 def user_info(request): 
@@ -32,12 +34,54 @@ def user_edit(request, user_id):
 
         if user_form.is_valid() and security_form.is_valid():
             try:
+                original_user = User.objects.get(pk=user.id)
+                original_profile = Profile.objects.get(user=user)
                 # Guarda los cambios en el usuario
                 user_form.save()
 
                 # Guarda los cambios en el perfil si han cambiado
                 if security_form.has_changed():
                     security_form.save()
+
+                #Auditoria
+                changes = []
+                field_map = {
+                    'username': 'Usuario',
+                    'first_name': 'Nombre',
+                    'last_name': 'Apellido',
+                    'email': 'Correo electrónico',
+                    'security_question': 'Pregunta de seguridad',
+                    'security_answer': 'Respuesta de seguridad'
+                }
+
+                # Comparar User
+                for field in ['username', 'first_name', 'last_name', 'email']:
+                    old = getattr(original_user, field)
+                    new = getattr(user, field)
+                    if str(old) != str(new):
+                        changes.append(f"{field_map[field]}: '{old}' cambió a '{new}'")
+
+                # Comparar Profile
+                if original_profile.security_question != profile.security_question:
+                    changes.append(f"{field_map['security_question']}: '{original_profile.get_security_question_display()}' cambió a '{profile.get_security_question_display()}'")
+
+                if not profile.check_security_answer(original_profile.security_answer):
+                    changes.append(f"{field_map['security_answer']} fue actualizada")
+
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="update",
+                    model_name="User",
+                    object_id=user.id,
+                    description="; ".join(changes) or "Edición sin cambios."
+                )
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="update",
+                    model_name="Profile",
+                    object_id=user.id,
+                    description="; ".join(changes) or "Edición sin cambios."
+                )
 
                 return JsonResponse({'status': 'success', 'message': 'Los datos se han actualizado correctamente.'})
             except Exception as e:
