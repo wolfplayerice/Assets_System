@@ -273,7 +273,7 @@ $(document).on('click', '.restore-btn', function () {
                                 icon: 'success'
                             }).then(() => {
                                 sessionStorage.setItem('restore_success', 'true');
-                                window.location.href = '/login/';
+                                window.location.href = login;
                             });
                         },
                         error: (jqXHR) => {
