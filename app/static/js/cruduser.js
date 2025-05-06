@@ -265,6 +265,9 @@ $(document).on('click', '.edit-user-btn', function () {
     $('#edit-user-email').val(email);
     $('#security_question').val(securityQuestion).trigger('change');
 
+    // Guardar el valor inicial de la pregunta de seguridad
+    initialSecurityQuestionValue = securityQuestion;
+
     $('#edit-user-form').attr('action', editUserUrl.replace('0', userId));
 
     $('#editUserModal').modal('show');
@@ -306,17 +309,21 @@ $(document).on('submit', '#edit-user-form', function (e) {
         return; // Detenemos el flujo si la contraseña no cumple con los requisitos.
     }
 
+    // Validar si la pregunta de seguridad cambió
     const securityQuestionField = $('#security_question').val();
-    const securityAnswerField = $('#security_answer').val();
+    const securityAnswerField = $('#security_answer');
 
-    if (securityQuestionField && !securityAnswerField) {
-        Swal.fire({
-            icon: 'error',
-            title: '¡Error!',
-            text: 'Debes proporcionar una respuesta de seguridad si cambias la pregunta.',
-            confirmButtonText: 'Aceptar'
-        });
-        return; // Detenemos el flujo si la respuesta de seguridad está vacía.
+    if (initialSecurityQuestionValue != securityQuestionField) {
+        // Si la pregunta cambió, la respuesta es obligatoria
+        if (!securityAnswerField.val()) {
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: 'Por favor, completa la respuesta de seguridad antes de continuar.',
+                confirmButtonText: 'Aceptar'
+            });
+            return; // Detenemos el flujo si la respuesta de seguridad no está llena.
+        }
     }
 
     // Alerta de confirmación
@@ -376,28 +383,7 @@ window.addEventListener('load', async () => {
     await initDataTableuser();
 });
 
-// Script para la funcionalidad del ojo (mostrar/ocultar contraseñas)
-document.addEventListener('DOMContentLoaded', function () {
-    const togglePassword = document.querySelector('[data-target="#edit-user-password"]');
-    const passwordField = document.getElementById('edit-user-password');
 
-    togglePassword.addEventListener('click', function () {
-        const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordField.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('fa-eye');
-        this.querySelector('i').classList.toggle('fa-eye-slash');
-    });
-
-    const togglePassword2 = document.querySelector('[data-target="#edit-user-password2"]');
-    const passwordField2 = document.getElementById('edit-user-password2');
-
-    togglePassword2.addEventListener('click', function () {
-        const type = passwordField2.getAttribute('type') === 'password' ? 'text' : 'password';
-        passwordField2.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('fa-eye');
-        this.querySelector('i').classList.toggle('fa-eye-slash');
-    });
-});
 
 
 $(document).on('submit', '#register-modal form', function (e) {
@@ -420,17 +406,3 @@ $(document).on('submit', '#register-modal form', function (e) {
 });
 
 window.addEventListener('load', initDataTableuser);
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    const securityQuestionField = document.getElementById('security_question');
-    const securityAnswerField = document.getElementById('security_answer');
-
-    securityQuestionField.addEventListener('change', function () {
-        if (this.value) {
-            securityAnswerField.required = true; // Hacer obligatorio
-        } else {
-            securityAnswerField.required = false; // No obligatorio
-        }
-    });
-});

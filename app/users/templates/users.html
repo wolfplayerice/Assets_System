@@ -121,7 +121,7 @@
                           {{ edit_user_form.security_answer }}
                         </div> -->
           <div class="form-group form-floating mb-3">
-            <select class="form-select" id="security_question" name="security_question" required>
+            <select class="form-select" id="security_question" name="security_question">
               {% for value, label in edit_user_form.fields.security_question.choices %}
               <option value="{{ value }}" {% if
                 edit_user_form.security_question.value|default:''==value|stringformat:"s" %}selected{% 
