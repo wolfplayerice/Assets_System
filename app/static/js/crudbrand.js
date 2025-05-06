@@ -259,7 +259,7 @@ $(document).on('click', '.delete-btn-brand', function () {
                     dataTablebrand.ajax.reload();
                 },
                 error: (jqXHR, textStatus, errorThrown) => {
-                    Swal.fire('Error!', "Error al eliminar la categoría: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
+                    Swal.fire('Error!', "Error al eliminar la marca: " + (jqXHR.responseJSON?.error || "Error desconocido"), 'error');
                 },
             });
         }

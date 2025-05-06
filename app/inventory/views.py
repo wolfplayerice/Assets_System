@@ -10,6 +10,8 @@ from django.core.paginator import Paginator, EmptyPage
 from django.contrib.auth.decorators import login_required
 from audit.models import AuditLog 
 from django.db.models import Q
+from django.db.models.functions import Substr, StrIndex
+from django.db.models import Value, CharField
 
 @login_required
 def inventory(request):
@@ -134,11 +136,19 @@ def asset_create(request):
                 state_num = asset_create_form.cleaned_data['state_asset'].strip()
                 full_st = f"{prefix}-{state_num}"
                 
-                # Validación explícita de state_asset
-                if Asset.objects.filter(state_asset=full_st).exists():
+                # Validación optimizada para solo la parte numérica
+                existing_numbers = Asset.objects.annotate(
+                    num_part=Substr(
+                        'state_asset', 
+                        StrIndex('state_asset', Value('-')) + 1,
+                        output_field=CharField()
+                    )
+                ).filter(num_part=state_num).exists()
+
+                if existing_numbers:
                     return JsonResponse({
                         'status': 'error', 
-                        'message': f'El bien de estado {full_st} ya existe.'
+                        'message': f'El número de activo {state_num} ya existe (en otro prefijo).'
                     })
                 
                 # Validación de serial_number
@@ -275,12 +285,20 @@ def asset_edit(request, asset_id):
                 # 3. Construir state_asset completo
                 full_st = f"{prefix}-{number}"
                 
-                # 4. Validar state_asset solo si ha cambiado
+                # 4. Validar solo la parte numérica si ha cambiado (versión optimizada)
                 if full_st != original_asset.state_asset:
-                    if Asset.objects.filter(state_asset=full_st).exclude(pk=asset_id).exists():
+                    existing_numbers = Asset.objects.exclude(pk=asset_id).annotate(
+                        num_part=Substr(
+                            'state_asset', 
+                            StrIndex('state_asset', Value('-')) + 1,
+                            output_field=CharField()
+                        )
+                    ).filter(num_part=number).exists()
+                    
+                    if existing_numbers:
                         return JsonResponse({
                             'status': 'error', 
-                            'message': f'El bien de estado {full_st} ya existe.'
+                            'message': f'El número de activo {number} ya existe (en otro prefijo).'
                         })
                 
                 # 5. Validar número de serie solo si ha cambiado

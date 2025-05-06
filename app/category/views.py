@@ -150,7 +150,7 @@ def delete_category(request, category_id):
         
         except Exception as e:
             return JsonResponse({
-                "error": str(e),
+                "error": "Esta Categoria tiene bienes asociados",
                 "status": "error"
             }, status=500)
     

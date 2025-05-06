@@ -150,11 +150,11 @@ def delete_brand(request, brand_id):
                     object_id=brand_id,
                     description=f"Marca eliminada: {brand.name}"
                 )
-            return JsonResponse({"message": "Categoría eliminada correctamente."})
+            return JsonResponse({"message": "Marca eliminada correctamente."})
         except Brand.DoesNotExist:
-            return JsonResponse({"error": "Categoría no encontrada."}, status=404)
+            return JsonResponse({"error": "Marca no encontrada."}, status=404)
         except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+            return JsonResponse({"error": "Esta Marca tiene bienes asociados"}, status=500)
     else:
         return HttpResponse(status=405)  # Método no permitido
     
