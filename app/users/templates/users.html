@@ -45,7 +45,6 @@
     </div>
   </div>
 </div>
-
 <!-- Modal para editar usuarios -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -125,7 +124,8 @@
             <select class="form-select" id="security_question" name="security_question" required>
               {% for value, label in edit_user_form.fields.security_question.choices %}
               <option value="{{ value }}" {% if
-                edit_user_form.security_question.value|default:''==value|stringformat:"s" %}selected{% endif %}>
+                edit_user_form.security_question.value|default:''==value|stringformat:"s" %}selected{% 
+                  endif %}>
                 {{ label }}
               </option>
               {% endfor %}
