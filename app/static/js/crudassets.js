@@ -116,12 +116,11 @@ async function generateAssetPDF() {
 
     // Obtener datos del receptor
     const receiverName = $('#receiverName').val();
-
+    const showIssuer = $('#showIssuerCheckbox').is(':checked');
     // Obtener datos del usuario logueado
     const issuerName = $('#pdfOptionsModal').data('user-name');
     const issuerVig = $('#receiverVig').val();
     const issuerAsset = $('#receiverAsset').val();
-
     // Iniciar animación de carga
     pdfButton.addClass('pdf-button-loading').prop('disabled', true);
 
@@ -144,7 +143,7 @@ async function generateAssetPDF() {
             setTimeout(() => {
                 pdfButton.removeClass('pdf-button-error').prop('disabled', false);
             }, 2000);
-            
+
             Swal.fire('Advertencia!', 'No se encontraron bienes con los filtros seleccionados.', 'warning');
             return; // Salir de la función
         }
@@ -203,7 +202,7 @@ async function generateAssetPDF() {
                             })))
                         ]
                     },
-                    
+
                 }
             ],
             styles: {
@@ -213,7 +212,7 @@ async function generateAssetPDF() {
                 signature: { fontSize: 12, margin: [0, 20, 0, 0] } // Añadido margen superior a las firmas
             },
             defaultStyle: { fontSize: 12, color: '#2c3e50' },
-            footer: function(currentPage, pageCount) {
+            footer: function (currentPage, pageCount) {
                 return {
                     stack: [
                         {
@@ -222,28 +221,28 @@ async function generateAssetPDF() {
                                 body: [
                                     [
                                         {
-                                            text: `Entregado:\n\n\n_________________________\n${issuerName.toUpperCase()}`,
+                                            text: `Entregado:\n\n\n_________________________\n${showIssuer ? issuerName.toUpperCase() : ' '}`,
                                             alignment: 'center',
                                             style: 'signature',
-                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                            margin: [0, 15, 0, 5]
                                         },
                                         {
                                             text: `Recibido:\n\n\n_________________________\n${receiverName.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
-                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                            margin: [0, 15, 0, 5]
                                         },
                                         {
                                             text: `Vigilancia:\n\n\n_________________________\n${issuerVig.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
-                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                            margin: [0, 15, 0, 5]
                                         },
                                         {
                                             text: `Unidad de bienes:\n\n\n_________________________\n${issuerAsset.toUpperCase()}`,
                                             alignment: 'center',
                                             style: 'signature',
-                                            margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
+                                            margin: [0, 15, 0, 5]
                                         }
                                     ]
                                 ]
@@ -254,10 +253,10 @@ async function generateAssetPDF() {
                             text: `Página ${currentPage} de ${pageCount} | Fecha de impresión: ${formattedDateTime}`,
                             style: 'footer',
                             alignment: 'center',
-                            margin: [0, 5, 0, 0] // Reducir margen superior si es necesario
+                            margin: [0, 5, 0, 0]
                         }
                     ],
-                    margin: [40, 0, 40, 10] // Margen general del footer: left, top, right, bottom
+                    margin: [40, 0, 40, 10]
                 };
             }
         };
@@ -325,9 +324,9 @@ $(document).ready(function () {
     // Botón de generación dentro del modal
     $('#generatePdfButton').on('click', function (e) {
         e.preventDefault(); // Previene el comportamiento por defecto
-    
+
         const form = document.getElementById('pdfOptionsForm');
-        
+
         if (form.checkValidity()) {
             $('#pdfOptionsModal').modal('hide');
             generateAssetPDF();
@@ -496,7 +495,7 @@ $(document).ready(function () {
         placeholder: "Seleccione una categoría", // Placeholder para categoría
         theme: 'bootstrap-5',
         allowClear: true // Permite limpiar la selección
-        
+
     });
 
     $('#fk_brand_select').select2({
@@ -544,23 +543,23 @@ $(document).on('click', '.btn-edit', function () {
 });
 
 $(document).ready(function () {
-  // Obtén referencias a los campos usando los ids personalizados
-  const $statusField = $('#status_select');  // Campo de status con id personalizado
-  const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
+    // Obtén referencias a los campos usando los ids personalizados
+    const $statusField = $('#status_select');  // Campo de status con id personalizado
+    const $observationsField = $('#id_observation').closest('.form-group');  // Campo de observaciones
 
-  // Función para mostrar u ocultar el campo de observaciones
-  function toggleObservationsField() {
-    if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
-      $observationsField.show();  // Muestra el campo
-    } else {  // Si se selecciona "Operativo"
-      $observationsField.hide();  // Oculta el campo
+    // Función para mostrar u ocultar el campo de observaciones
+    function toggleObservationsField() {
+        if ($statusField.val() === 'False') {  // Si se selecciona "No operativo"
+            $observationsField.show();  // Muestra el campo
+        } else {  // Si se selecciona "Operativo"
+            $observationsField.hide();  // Oculta el campo
+        }
     }
-  }
 
-  // Escucha cambios en el campo de status
-  $statusField.on('change', toggleObservationsField);
+    // Escucha cambios en el campo de status
+    $statusField.on('change', toggleObservationsField);
 
-  // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
-  toggleObservationsField();
+    // Ejecuta la función al cargar la página (por si ya hay un valor seleccionado)
+    toggleObservationsField();
 });
 

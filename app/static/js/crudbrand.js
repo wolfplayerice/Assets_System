@@ -70,6 +70,7 @@ const initDataTablebrand = async () => {
 async function generateBrandPDF() {
     const pdfButton = $('#external-pdf-button');
 
+    const showIssuer = $('#showIssuerCheckbox').is(':checked');
 
     // Obtener datos del receptor
     const receiverName = $('#receiverName').val();
@@ -150,7 +151,7 @@ async function generateBrandPDF() {
                                 body: [
                                     [
                                         {
-                                            text: `Entregado:\n\n\n_________________________\n${issuerName.toUpperCase()}`,
+                                            text: `Entregado:\n\n\n_________________________\n${showIssuer ? issuerName.toUpperCase() : ' '}`,
                                             alignment: 'center',
                                             style: 'signature',
                                             margin: [0, 15, 0, 5] // Margen: top, right, bottom, left
