@@ -170,7 +170,7 @@ function generateUserPDF() {
                     pdfButton.prop('disabled', false);
                 }, 2000);
 
-                saveAs(blob, `Usuarios_${formattedDateTime}.pdf`);
+                saveAs(blob, `Listado_Usuarios_${formattedDateTime}.pdf`);
             });
         },
         error: (jqXHR, textStatus, errorThrown) => {

@@ -194,7 +194,7 @@ async function generateBrandPDF() {
         // Animación de éxito
         pdfButton.removeClass('pdf-button-loading').addClass('pdf-button-success');
 
-        pdfMake.createPdf(docDefinition).download(`Inventario_bienes_${formattedDateTime.replace(/[/,:]/g, '-')}.pdf`);
+        pdfMake.createPdf(docDefinition).download(`Listado_Marcas_${formattedDateTime.replace(/[/,:]/g, '-')}.pdf`);
 
         setTimeout(() => {
             pdfButton.removeClass('pdf-button-success').prop('disabled', false);

@@ -174,7 +174,7 @@ function generateBackupsPDF() {
                     pdfButton.prop('disabled', false);
                 }, 2000);
 
-                saveAs(blob, `Respaldo_BD_${formattedDateTime}.pdf`);
+                saveAs(blob, `Respaldos_BD_${formattedDateTime}.pdf`);
             });
         },
         error: (jqXHR, textStatus, errorThrown) => {
