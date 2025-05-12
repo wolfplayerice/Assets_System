@@ -57,14 +57,25 @@ def list_users(request):
 
         # users = User.objects.filter(is_staff=False).order_by(order_field)
         users = User.objects.filter(is_staff=False).select_related('profile').order_by(order_field)
-
+        search_value = request.GET.get('search[value]', '').strip().lower()
         if search_value:
+            status_mapping = {
+                'activo': True,
+                'inactivo': False
+            }
+            
+            status_filter = None
+            for term, bool_value in status_mapping.items():
+                if term.startswith(search_value):
+                    status_filter = bool_value
+                    break
             users = users.filter(
                 Q(username__icontains=search_value) |
                 Q(first_name__icontains=search_value) |
                 Q(last_name__icontains=search_value) |
                 Q(email__icontains=search_value) |
-                Q(id__icontains=search_value)
+                Q(id__icontains=search_value) |
+                (Q(is_active=status_filter) if status_filter is not None else Q())
             )
 
         if all_data:
