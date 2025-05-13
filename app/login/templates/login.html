@@ -109,72 +109,17 @@
     <script src="{% static 'bootstrap-5.3.5-dist/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/sweetalert2@11.js' %}"></script>
     <script src="{% static 'js/verify_user.js' %}"></script>
-
-    {% if error_disabled %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Usuario deshabilitado',
-                text: '{{ error_disabled }}',
-                confirmButtonText: 'Aceptar'
-            });
-        });
-    </script>
-    {% endif %}
-
-    {% if error_invalid %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'error',
-                title: 'Datos incorrectos',
-                text: '{{ error_invalid }}',
-                confirmButtonText: 'Aceptar'
-            });
-        });
-    </script>
-    {% endif %}
+    <script src="{% static 'js/toggle-password-login.js' %}"></script>
+    <script src="{% static 'js/password_change.js' %}"></script>
+    <script src="{% static 'js/login_error.js' %}"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const togglePassword = document.getElementById('toggle-password');
-            const passwordField = document.getElementById('password');
-            const passwordIcon = document.getElementById('password-icon');
-
-            togglePassword.addEventListener('click', function () {
-                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordField.setAttribute('type', type);
-                passwordIcon.classList.toggle('fa-eye');
-                passwordIcon.classList.toggle('fa-eye-slash');
-            });
-
-            const visibilityButtons = document.querySelectorAll('.toggle-visibility');
-            visibilityButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const inputField = this.parentElement.previousElementSibling;
-                    const type = inputField.getAttribute('type') === 'password' ? 'text' : 'password';
-                    inputField.setAttribute('type', type);
-                    this.querySelector('i').classList.toggle('fa-eye');
-                    this.querySelector('i').classList.toggle('fa-eye-slash');
-                });
-            });
-        });
+        const errorDisabled = "{{ error_disabled|escapejs }}";
+        const errorInvalid = "{{ error_invalid|escapejs }}";
+        const sessionTerminated = "{{ session_terminated|escapejs }}";
     </script>
 
-    {% if session_terminated %}
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            Swal.fire({
-                icon: 'warning',
-                title: 'Sesión interrumpida',
-                text: 'Tu sesión fue cerrada porque iniciaste sesión desde otro dispositivo.',
-                confirmButtonText: 'Entendido'
-            });
-        });
-    </script>
-    {% endif %}
-
+    
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const form = document.getElementById("security-form");

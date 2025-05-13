@@ -1,5 +1,4 @@
 from django.db import models
-from django.forms import ModelForm
 from brand.models import Brand
 from category.models import Category
 from django.contrib.auth.models import User

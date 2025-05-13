@@ -7,3 +7,18 @@
     font-size: 10px;
     line-height: 1.42857;
 }
+
+.info-box-content {
+    margin-left: 15px;
+    /* Aumenta el espacio entre el ícono y el contenido */
+}
+
+.info-box-text {
+    font-weight: bold;
+    /* Aplica negrita a los títulos */
+}
+
+.info-box-number {
+    margin-top: 5px;
+    /* Añade un poco de espacio entre el título y el número */
+}

@@ -179,3 +179,23 @@ html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown {
 html[data-bs-theme="dark"] .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option[role=group] .select2-results__group {
     color: var(--bs-secondary-color) !important;
 }
+
+.brand-link {
+  height: 56px;
+  /* Tamaño predeterminado */
+  transition: height 0.3s ease;
+}
+
+.brand-link.collapsed {
+  height: 40px;
+  /* Tamaño reducido cuando el menú está colapsado */
+}
+
+.brand-icon {
+  margin-left: 5px;
+}
+
+#dark-mode-toggle {
+  margin-left: auto;
+  /* Asegura que el botón esté alineado a la derecha */
+}
