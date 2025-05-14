@@ -2,9 +2,11 @@
 {% load static %}
 
 {% block content %}
+
 <div class="container">
   <h1 class="title">Manuales</h1>
   <div class="folders">
+    <a href="{% static 'manuals/InvenTrack - Manual de Usuario.pdf' %}" download>
     <div class="folder-container">
       <div class="folder">
         <div class="front-side">
@@ -13,8 +15,12 @@
         </div>
         <div class="back-side cover"></div>
       </div>
-      <div class="folder-title">Manual de Usuario</div>
+      <div class="folder-title">
+        Manual de Usuario
+      </div>
     </div>
+    </a>
+    <a href="{% static 'manuals/InvenTrack - Manual de Instalación.pdf' %}" download>
     <div class="folder-container">
       <div class="folder">
         <div class="front-side">
@@ -23,193 +29,12 @@
         </div>
         <div class="back-side cover"></div>
       </div>
-      <div class="folder-title">Manual de Instalación</div>
+      <div class="folder-title">
+        Manual de Instalación
+      </div>
     </div>
+    </a>
   </div>
 </div>
-<style>
-  .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 30px;
-    height: 10vh;
-  }
 
-  .title {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    transition: color 0.3s ease;
-  }
-
-  .folders {
-    display: flex;
-    gap: 160px;
-    justify-content: center;
-    align-items: center;
-    margin-top: auto;
-    /* Baja las carpetas hacia la mitad de la pantalla */
-  }
-
-  .folder-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .folder {
-    --folder-W: 200px;
-    /* Tamaño más grande */
-    --folder-H: 150px;
-    position: relative;
-    animation: float 2.5s infinite ease-in-out;
-    transition: transform var(--transition) ease;
-    width: var(--folder-W);
-    height: var(--folder-H);
-  }
-
-  .folder:hover {
-    transform: scale(1.05);
-  }
-
-  .folder .front-side,
-  .folder .back-side {
-    position: absolute;
-    transition: transform var(--transition);
-    transform-origin: bottom center;
-  }
-
-  .folder .back-side::before,
-  .folder .back-side::after {
-    content: "";
-    display: block;
-    background-color: white;
-    opacity: 0.5;
-    z-index: 0;
-    width: var(--folder-W);
-    height: var(--folder-H);
-    position: absolute;
-    transform-origin: bottom center;
-    border-radius: 15px;
-    transition: transform 350ms;
-  }
-
-  .folder .front-side {
-    z-index: 1;
-  }
-
-  .folder .tip {
-    background: linear-gradient(135deg, #ff9a56, #ff6f56);
-    width: 140px;
-    height: 40px;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    top: -20px;
-    z-index: 2;
-  }
-
-  .folder .cover {
-    background: linear-gradient(135deg, #ffe563, #ffc663);
-    width: var(--folder-W);
-    height: var(--folder-H);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-  }
-
-  .folder-container:hover .back-side::before {
-    transform: rotateX(-5deg) skewX(5deg);
-  }
-
-  .folder-container:hover .back-side::after {
-    transform: rotateX(-15deg) skewX(12deg);
-  }
-
-  .folder-container:hover .front-side {
-    transform: rotateX(-40deg) skewX(15deg);
-  }
-
-  .folder-title {
-    font-size: 1.1rem;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.1);
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: #333;
-    width: fit-content;
-    transition: color 0.3s ease, background 0.3s ease;
-  }
-
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-
-    50% {
-      transform: translateY(-10px);
-    }
-
-    100% {
-      transform: translateY(0px);
-    }
-  }
-
-  /* Estilos para modo oscuro */
-  body.dark-mode .title {
-    color: #fff;
-    /* Cambia el color del título en modo oscuro */
-  }
-
-  body.dark-mode .folder-title {
-    color: #fff;
-    /* Cambia el color del texto de las carpetas en modo oscuro */
-    background: rgba(255, 255, 255, 0.1);
-    /* Ajusta el fondo en modo oscuro */
-  }
-
-  /* Estilos responsivos para pantallas pequeñas */
-  @media (max-width: 768px) {
-    .folders {
-      flex-direction: column;
-      /* Cambia la dirección a columna */
-      gap: 30px;
-      /* Aumenta el espacio vertical entre las carpetas */
-    }
-
-    .folder-container {
-      align-items: center;
-      /* Asegura que los títulos estén centrados */
-    }
-
-    .folder {
-      --folder-W: 150px;
-      /* Reduce el ancho de las carpetas */
-      --folder-H: 100px;
-      /* Reduce la altura de las carpetas */
-      width: var(--folder-W);
-      height: var(--folder-H);
-    }
-
-    .folder .tip {
-      width: 100px;
-      /* Ajusta el tamaño de la "punta" */
-      height: 30px;
-    }
-
-    .folder-title {
-      font-size: 0.9rem;
-      /* Reduce el tamaño del texto */
-    }
-  }
-</style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    console.log('Página de manuales cargada correctamente.');
-  });
-</script>
 {% endblock %}

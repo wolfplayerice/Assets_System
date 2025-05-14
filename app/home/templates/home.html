@@ -18,6 +18,7 @@
   <link href="{% static 'bootstrap-5.3.5-dist/css/bootstrap.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/all.min.css' %} " rel="stylesheet">
   <link href="{% static 'css/home.css' %} " rel="stylesheet">
+  <link href="{% static 'css/manuals.css' %} " rel="stylesheet">
   <link href="{% static 'css/dashboard.css' %} " rel="stylesheet">
   <link href="{% static 'select2/dist/css/select2.min.css' %} " rel="stylesheet">
   <link href="{% static 'select2-bootstrap/select2-bootstrap-5-theme.min.css' %} " rel="stylesheet">
@@ -108,7 +109,7 @@
             </li>
             {% endif %}
             <li class="nav-item">
-              <a href="{% url 'manuals' %}" class="nav-link" id="nav-manuales">
+              <a href="{% url 'home:manuals' %}" class="nav-link" id="nav-manuales">
                 <i class="nav-icon fa-solid fa-book-open-reader"></i>
                 <p>Manuales</p>
               </a>

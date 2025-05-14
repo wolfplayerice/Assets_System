@@ -55,7 +55,6 @@ def list_users(request):
         if order_direction == 'desc':
             order_field = f'-{order_field}'
 
-        # users = User.objects.filter(is_staff=False).order_by(order_field)
         users = User.objects.filter(is_staff=False).select_related('profile').order_by(order_field)
         search_value = request.GET.get('search[value]', '').strip().lower()
         if search_value:
@@ -134,7 +133,7 @@ def user_create(request):
 
         if user_create_form.is_valid():
             try:
-                user = user_create_form.save()  # Aquí ya se guarda el perfil también (desde el form)
+                user = user_create_form.save()
 
                 # Auditoría
                 AuditLog.objects.create(
@@ -254,7 +253,7 @@ def user_edit(request, user_id):
 def disable_user(request, user_id):
     if request.method == "POST":
         user = get_object_or_404(User, pk=user_id)
-        if not user.is_staff:  # Asegúrate de que no sea un administrador
+        if not user.is_staff:  # Asegura que no sea un administrador
             user.is_active = False
             user.save()
             AuditLog.objects.create(
@@ -276,7 +275,7 @@ def disable_user(request, user_id):
 def enable_user(request, user_id):
     if request.method == "POST":
         user = get_object_or_404(User, pk=user_id)
-        if not user.is_staff:  # Asegúrate de que no sea un administrador
+        if not user.is_staff:  # Asegura que no sea un administrador
             user.is_active = True
             user.save()
             AuditLog.objects.create(
