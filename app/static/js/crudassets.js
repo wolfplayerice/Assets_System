@@ -58,7 +58,8 @@ function getDataTableConfig(includeActions = true, tableId = "datatable-assets")
             render: (data, type, row) => {
                 let buttons = '';
                 if (row.status === 'Inoperativo') {
-                    buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation}"><i class='fa-solid fa-question'></i></button>`;
+                    buttons += `<button class='btn btn-sm btn-warning btn-inoperativo centered' data-observation="${row.observation || 'desconocido'}">
+                    <i class='fa-solid fa-question'></i></button>`;
                 }
                 buttons += `
                     <button class='btn btn-sm btn-primary btn-edit centered' 
