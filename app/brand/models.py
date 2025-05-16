@@ -13,6 +13,6 @@ class Brand(models.Model):
     class Meta:
         verbose_name= 'Marca'
         verbose_name_plural = 'Marcas'
-        db_table= 'Brands'
+        db_table= 'brands'
         ordering = ['id']
 # Create your models here.

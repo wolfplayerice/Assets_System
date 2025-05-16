@@ -13,6 +13,6 @@ class Category(models.Model):
     class Meta:
         verbose_name= 'Categoria'
         verbose_name_plural = 'Categorias'
-        db_table= 'Categories'
+        db_table= 'categories'
         ordering = ['id']
 # Create your models here.

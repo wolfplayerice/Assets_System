@@ -42,6 +42,6 @@ class Asset(models.Model):
     class Meta:
         verbose_name= 'Bien'
         verbose_name_plural = 'Bienes'
-        db_table= 'Assets'
+        db_table= 'assets'
         ordering = ['id']
 
