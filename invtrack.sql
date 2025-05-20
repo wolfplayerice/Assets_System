@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 4.9.5deb2
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 12-05-2025 a las 17:05:01
--- Versión del servidor: 11.7.2-MariaDB
--- Versión de PHP: 8.2.12
+-- Servidor: localhost:3306
+-- Tiempo de generación: 20-05-2025 a las 11:16:11
+-- Versión del servidor: 8.0.42-0ubuntu0.20.04.1
+-- Versión de PHP: 7.4.3-4ubuntu2.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -21,31 +22,29 @@ SET time_zone = "+00:00";
 -- Base de datos: `invtrack`
 --
 
+-- --------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS `invtrack`;
 
 --
 
 -- Seleccionar la base de datos
 USE `invtrack`;
-
--- --------------------------------------------------------
-
 --
 -- Estructura de tabla para la tabla `assets`
 --
 
 CREATE TABLE `assets` (
-  `id` bigint(20) NOT NULL,
-  `model` varchar(255) NOT NULL,
-  `serial_number` varchar(255) NOT NULL,
-  `state_asset` varchar(255) NOT NULL,
+  `id` bigint NOT NULL,
+  `model` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `serial_number` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `state_asset` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `status` tinyint(1) NOT NULL,
-  `observation` longtext NOT NULL,
+  `observation` longtext COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `modified_at` datetime(6) NOT NULL,
-  `fk_brand_id` bigint(20) NOT NULL,
-  `fk_category_id` bigint(20) NOT NULL,
-  `modified_by_id` int(11) DEFAULT NULL
+  `fk_brand_id` bigint NOT NULL,
+  `fk_category_id` bigint NOT NULL,
+  `modified_by_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -55,15 +54,15 @@ CREATE TABLE `assets` (
 --
 
 CREATE TABLE `audit_auditlog` (
-  `id` bigint(20) NOT NULL,
-  `action` varchar(10) NOT NULL,
-  `username` varchar(255) DEFAULT NULL,
-  `model_name` varchar(100) NOT NULL,
-  `object_id` int(10) UNSIGNED NOT NULL CHECK (`object_id` >= 0),
-  `description` longtext NOT NULL,
+  `id` bigint NOT NULL,
+  `action` varchar(10) COLLATE utf8mb4_general_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `model_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `object_id` int UNSIGNED NOT NULL,
+  `description` longtext COLLATE utf8mb4_general_ci NOT NULL,
   `timestamp` datetime(6) NOT NULL,
-  `user_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `user_id` int DEFAULT NULL
+) ;
 
 --
 -- Volcado de datos para la tabla `audit_auditlog`
@@ -71,7 +70,13 @@ CREATE TABLE `audit_auditlog` (
 
 INSERT INTO `audit_auditlog` (`id`, `action`, `username`, `model_name`, `object_id`, `description`, `timestamp`, `user_id`) VALUES
 (1, 'update', 'almacentecnologia', 'User', 1, 'Respuesta de seguridad fue actualizada', '2025-05-12 14:57:10.057677', 1),
-(2, 'update', 'almacentecnologia', 'Profile', 1, 'Respuesta de seguridad fue actualizada', '2025-05-12 14:57:10.062506', 1);
+(2, 'update', 'almacentecnologia', 'Profile', 1, 'Respuesta de seguridad fue actualizada', '2025-05-12 14:57:10.062506', 1),
+(3, 'create', 'almacentecnologia', 'Category', 1, 'Categoría creada: Monitor (ID: 1)', '2025-05-16 12:54:43.897057', 1),
+(4, 'update', 'almacentecnologia', 'Category', 1, 'Categoría actualizada (ID: 1): Nombre: \'Monitor\' cambio a \'Torre PC\'', '2025-05-16 12:54:55.549735', 1),
+(5, 'create', 'almacentecnologia', 'Brand', 1, 'Marca creada: HP', '2025-05-16 12:55:02.712454', 1),
+(6, 'update', 'almacentecnologia', 'Brand', 1, 'Marca editada: Dell', '2025-05-16 12:55:09.931961', 1),
+(7, 'Delete', 'almacentecnologia', 'FileBackup', 0, 'Respaldo eliminado: backup_20250430_171050.enc (Tamaño: 337.30 KB, Ruta: /var/www/invtrack/Assets_System/app/backups/backup_20250430_171050.enc)', '2025-05-16 14:30:36.151219', 1),
+(8, 'Delete', 'almacentecnologia', 'FileBackup', 0, 'Respaldo eliminado: backup_20250430_171050.enc (Tamaño: 337.30 KB, Ruta: /var/www/invtrack/Assets_System/app/backups/backup_20250430_171050.enc)', '2025-05-16 14:31:48.960408', 1);
 
 -- --------------------------------------------------------
 
@@ -80,8 +85,8 @@ INSERT INTO `audit_auditlog` (`id`, `action`, `username`, `model_name`, `object_
 --
 
 CREATE TABLE `auth_group` (
-  `id` int(11) NOT NULL,
-  `name` varchar(150) NOT NULL
+  `id` int NOT NULL,
+  `name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -91,9 +96,9 @@ CREATE TABLE `auth_group` (
 --
 
 CREATE TABLE `auth_group_permissions` (
-  `id` bigint(20) NOT NULL,
-  `group_id` int(11) NOT NULL,
-  `permission_id` int(11) NOT NULL
+  `id` bigint NOT NULL,
+  `group_id` int NOT NULL,
+  `permission_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -103,10 +108,10 @@ CREATE TABLE `auth_group_permissions` (
 --
 
 CREATE TABLE `auth_permission` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `content_type_id` int(11) NOT NULL,
-  `codename` varchar(100) NOT NULL
+  `id` int NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `content_type_id` int NOT NULL,
+  `codename` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -166,14 +171,14 @@ INSERT INTO `auth_permission` (`id`, `name`, `content_type_id`, `codename`) VALU
 --
 
 CREATE TABLE `auth_user` (
-  `id` int(11) NOT NULL,
-  `password` varchar(128) NOT NULL,
+  `id` int NOT NULL,
+  `password` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
   `last_login` datetime(6) DEFAULT NULL,
   `is_superuser` tinyint(1) NOT NULL,
-  `username` varchar(150) NOT NULL,
-  `first_name` varchar(150) NOT NULL,
-  `last_name` varchar(150) NOT NULL,
-  `email` varchar(254) NOT NULL,
+  `username` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `first_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `last_name` varchar(150) COLLATE utf8mb4_general_ci NOT NULL,
+  `email` varchar(254) COLLATE utf8mb4_general_ci NOT NULL,
   `is_staff` tinyint(1) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   `date_joined` datetime(6) NOT NULL
@@ -184,7 +189,7 @@ CREATE TABLE `auth_user` (
 --
 
 INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `username`, `first_name`, `last_name`, `email`, `is_staff`, `is_active`, `date_joined`) VALUES
-(1, 'pbkdf2_sha256$1000000$rFmf5PJjE7fZHVxWIQXOzn$RCyNdDc6dNmgdwwpwoPro3SRWEESOeAg3hJYfDHllWI=', '2025-05-12 14:56:46.347687', 1, 'almacentecnologia', 'Almacén', 'Tecnología', 'almacentecnologia@gmail.com', 1, 1, '2025-05-12 14:40:40.386390');
+(1, 'pbkdf2_sha256$600000$vTBcL8FoZGGWYuY6fgtXto$mnoPwZIrYRmU0hxjd2xx8uX5zmswmZatZzWRTULLoBs=', '2025-05-20 14:09:54.798586', 1, 'almacentecnologia', 'Almacén', 'Tecnología', 'almacentecnologia@gmail.com', 1, 1, '2025-05-12 14:40:40.386390');
 
 -- --------------------------------------------------------
 
@@ -193,9 +198,9 @@ INSERT INTO `auth_user` (`id`, `password`, `last_login`, `is_superuser`, `userna
 --
 
 CREATE TABLE `auth_user_groups` (
-  `id` bigint(20) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `group_id` int(11) NOT NULL
+  `id` bigint NOT NULL,
+  `user_id` int NOT NULL,
+  `group_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -205,9 +210,9 @@ CREATE TABLE `auth_user_groups` (
 --
 
 CREATE TABLE `auth_user_user_permissions` (
-  `id` bigint(20) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `permission_id` int(11) NOT NULL
+  `id` bigint NOT NULL,
+  `user_id` int NOT NULL,
+  `permission_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -217,12 +222,19 @@ CREATE TABLE `auth_user_user_permissions` (
 --
 
 CREATE TABLE `brands` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(35) NOT NULL,
+  `id` bigint NOT NULL,
+  `name` varchar(35) COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `modified_at` datetime(6) NOT NULL,
-  `modified_by_id` int(11) DEFAULT NULL
+  `modified_by_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `brands`
+--
+
+INSERT INTO `brands` (`id`, `name`, `created_at`, `modified_at`, `modified_by_id`) VALUES
+(1, 'Dell', '2025-05-16 12:55:02.653668', '2025-05-16 12:55:09.872174', NULL);
 
 -- --------------------------------------------------------
 
@@ -231,12 +243,19 @@ CREATE TABLE `brands` (
 --
 
 CREATE TABLE `categories` (
-  `id` bigint(20) NOT NULL,
-  `name` varchar(35) NOT NULL,
+  `id` bigint NOT NULL,
+  `name` varchar(35) COLLATE utf8mb4_general_ci NOT NULL,
   `created_at` datetime(6) NOT NULL,
   `modified_at` datetime(6) NOT NULL,
-  `modified_by_id` int(11) DEFAULT NULL
+  `modified_by_id` int DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `created_at`, `modified_at`, `modified_by_id`) VALUES
+(1, 'Torre PC', '2025-05-16 12:54:43.828361', '2025-05-16 12:54:55.494739', 1);
 
 -- --------------------------------------------------------
 
@@ -245,15 +264,15 @@ CREATE TABLE `categories` (
 --
 
 CREATE TABLE `django_admin_log` (
-  `id` int(11) NOT NULL,
+  `id` int NOT NULL,
   `action_time` datetime(6) NOT NULL,
-  `object_id` longtext DEFAULT NULL,
-  `object_repr` varchar(200) NOT NULL,
-  `action_flag` smallint(5) UNSIGNED NOT NULL CHECK (`action_flag` >= 0),
-  `change_message` longtext NOT NULL,
-  `content_type_id` int(11) DEFAULT NULL,
-  `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `object_id` longtext COLLATE utf8mb4_general_ci,
+  `object_repr` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `action_flag` smallint UNSIGNED NOT NULL,
+  `change_message` longtext COLLATE utf8mb4_general_ci NOT NULL,
+  `content_type_id` int DEFAULT NULL,
+  `user_id` int NOT NULL
+) ;
 
 -- --------------------------------------------------------
 
@@ -262,9 +281,9 @@ CREATE TABLE `django_admin_log` (
 --
 
 CREATE TABLE `django_content_type` (
-  `id` int(11) NOT NULL,
-  `app_label` varchar(100) NOT NULL,
-  `model` varchar(100) NOT NULL
+  `id` int NOT NULL,
+  `app_label` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `model` varchar(100) COLLATE utf8mb4_general_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -291,9 +310,9 @@ INSERT INTO `django_content_type` (`id`, `app_label`, `model`) VALUES
 --
 
 CREATE TABLE `django_migrations` (
-  `id` bigint(20) NOT NULL,
-  `app` varchar(255) NOT NULL,
-  `name` varchar(255) NOT NULL,
+  `id` bigint NOT NULL,
+  `app` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
   `applied` datetime(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -333,10 +352,18 @@ INSERT INTO `django_migrations` (`id`, `app`, `name`, `applied`) VALUES
 --
 
 CREATE TABLE `django_session` (
-  `session_key` varchar(40) NOT NULL,
-  `session_data` longtext NOT NULL,
+  `session_key` varchar(40) COLLATE utf8mb4_general_ci NOT NULL,
+  `session_data` longtext COLLATE utf8mb4_general_ci NOT NULL,
   `expire_date` datetime(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `django_session`
+--
+
+INSERT INTO `django_session` (`session_key`, `session_data`, `expire_date`) VALUES
+('dewzbbyjszlmd6uhcaecbwlq4dsxhxq9', '.eJxVjEEOwiAURO_C2hB-C_3QpXvPQKB8LWrBFLoy3t2SdKG7ybx582bWbXW2W6HVxsBGBuz023k3PSg1EO4u3TKfcqpr9LxN-EELv-RAz_Ox_TuYXZmb7Y2Rk_QgNSJ5cyVhnAZlyEgHwSkQIKSQQXUAcs8KiXrRo4GgsdPttFApMScbU6y2xoVKdcvLshFQIiqxq3zYU6eGzxcNmETZ:1uHNkX:3o-l8sFZaNUrwZ1uOLJM85q3S7ejoaecM8BzUjiOZR0', '2025-06-03 14:15:21.730364'),
+('zz4vvo7a7ejc3p0albxv7641zwlp430o', '.eJxVjMEOwiAQRP-FsyG77RKgR-9-A4GyWtSCKfRk_HfbpJfeJvPezFe4yrWmkl3KqbmWZq7Nzx8nBtSkCQCNlrBFpO4inF_b5NbKi0tRDALFqQt-fHHeQXz6_ChyLLktKchdkQet8lYiv6-HezqYfJ32dbCWRgpIRmsO9s5gvUFl2ZLH6BUCAgFF1SHSlpVm7qHXFqPRnRG_P-ioRM0:1uFubz:57BV1JflUZ1s70o2jOinTsrTR1gZX4rCjmuL9tLMjBk', '2025-05-30 12:56:27.169726');
 
 -- --------------------------------------------------------
 
@@ -345,10 +372,10 @@ CREATE TABLE `django_session` (
 --
 
 CREATE TABLE `users_profile` (
-  `id` bigint(20) NOT NULL,
-  `security_question` int(11) NOT NULL,
-  `security_answer` varchar(128) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `id` bigint NOT NULL,
+  `security_question` int NOT NULL,
+  `security_answer` varchar(128) COLLATE utf8mb4_general_ci NOT NULL,
+  `user_id` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -482,85 +509,85 @@ ALTER TABLE `users_profile`
 -- AUTO_INCREMENT de la tabla `assets`
 --
 ALTER TABLE `assets`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `audit_auditlog`
 --
 ALTER TABLE `audit_auditlog`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `auth_group`
 --
 ALTER TABLE `auth_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `auth_group_permissions`
 --
 ALTER TABLE `auth_group_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `auth_permission`
 --
 ALTER TABLE `auth_permission`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `auth_user`
 --
 ALTER TABLE `auth_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `auth_user_groups`
 --
 ALTER TABLE `auth_user_groups`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `auth_user_user_permissions`
 --
 ALTER TABLE `auth_user_user_permissions`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `brands`
 --
 ALTER TABLE `brands`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `django_admin_log`
 --
 ALTER TABLE `django_admin_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `django_content_type`
 --
 ALTER TABLE `django_content_type`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `django_migrations`
 --
 ALTER TABLE `django_migrations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `users_profile`
 --
 ALTER TABLE `users_profile`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Restricciones para tablas volcadas
