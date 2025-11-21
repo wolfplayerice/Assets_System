@@ -4,7 +4,7 @@ from .models import ACTIVE_CHOICES, Category, Brand, Asset
 class AssetCreate(forms.Form):
     model = forms.CharField(label="Modelo del equipo", max_length=255)
     serial_number = forms.CharField(label="Número de serie", max_length=255)
-    prefix = forms.ChoiceField(choices=[('BBVA-', 'BBVA'), ('BE-', 'BE'), ('ILE-', 'ILE')], label="Prefijo")
+    prefix = forms.ChoiceField(choices=[('BBVA-', 'BBVA'), ('BE-', 'BE'), ('ILE-', 'ILE'), ('NO COD-', 'NO COD')], label="Prefijo")
     state_asset = forms.CharField(label="BBVA/BE", max_length=255)
     fk_category = forms.ModelChoiceField(
         queryset=Category.objects.all(),
@@ -40,7 +40,7 @@ class AssetEdit(forms.ModelForm):
     )
     
     prefix = forms.ChoiceField(
-        choices=[('BBVA-', 'BBVA'), ('BE-', 'BE'), ('ILE-', 'ILE')],
+        choices=[('BBVA-', 'BBVA'), ('BE-', 'BE'), ('ILE-', 'ILE') ('NO COD-', 'NO COD')],
         widget=forms.Select(attrs={
             'class': 'form-control',
             'id': 'id_prefix'
